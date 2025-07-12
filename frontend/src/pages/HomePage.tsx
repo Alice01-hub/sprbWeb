@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
-import AudioPlayer from '../components/AudioPlayer'
 
 const sparkle = keyframes`
   0%, 100% { opacity: 0.3; }
@@ -347,7 +346,6 @@ const HomePage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <AudioPlayer />
     </Container>
   )
 }

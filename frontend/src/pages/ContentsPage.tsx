@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
-import AudioPlayer from '../components/AudioPlayer'
+
 
 const Container = styled.div`
   height: 100vh;
@@ -342,7 +342,7 @@ const ContentsPage: React.FC = () => {
     } else if (chapter === 'checkin') {
       navigate('/checkin')
     } else if (chapter === 'other') {
-      navigate('/other-pilgrimage')
+      navigate('/divine-realm')
     }
   }
 
@@ -468,7 +468,6 @@ const ContentsPage: React.FC = () => {
         🏠 返回首页
       </BackButton>
 
-      <AudioPlayer />
     </Container>
   )
 }

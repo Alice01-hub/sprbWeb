@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
+
 
 // 暂时使用简单的文本编辑器，后续可以替换为更复杂的富文本编辑器
 const EditorContainer = styled.div`
