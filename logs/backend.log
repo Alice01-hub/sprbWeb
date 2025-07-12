@@ -1,0 +1,20 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.107.179.30:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 125-009-547
+127.0.0.1 - - [12/Jul/2025 07:25:35] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:25:50] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:25:54] "GET /api/audio-files HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:26:12] "GET /api/download-checklist HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:27:35] "[33mGET / HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Jul/2025 07:27:41] "GET /api/audio-files HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:27:41] "GET /api/audio-files HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:27:47] "GET /api/audio-files HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:27:47] "GET /api/audio-files HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2025 07:28:32] "GET /api/download-checklist HTTP/1.1" 200 -

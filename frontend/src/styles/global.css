@@ -1,0 +1,113 @@
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 夏日主题配色 */
+:root {
+  --primary-orange: #ff9a6b;
+  --primary-yellow: #ffd06b;
+  --sky-blue: #87ceeb;
+  --ocean-blue: #4682b4;
+  --warm-white: #faf8f3;
+  --diary-brown: #8b4513;
+  --text-brown: #5d4037;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-yellow), var(--sky-blue));
+  min-height: 100vh;
+  color: var(--text-brown);
+  overflow-x: hidden;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* 通用动画类 */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* 日记本样式 */
+.diary-paper {
+  background: var(--warm-white);
+  box-shadow: 0 10px 30px var(--shadow-color);
+  border-radius: 8px;
+}
+
+/* 夏日按钮样式 */
+.summer-button {
+  background: linear-gradient(45deg, var(--primary-orange), var(--primary-yellow));
+  border: none;
+  border-radius: 25px;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 154, 107, 0.3);
+}
+
+.summer-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 154, 107, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .summer-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* 音频播放器样式 */
+.audio-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  padding: 10px 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px var(--shadow-color);
+} 

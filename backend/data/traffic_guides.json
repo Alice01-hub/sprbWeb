@@ -1,0 +1,27 @@
+{
+  "domestic": {
+    "kansai-takamatsu": {
+      "cards": [],
+      "name": "关西机场→高松（电车）"
+    }
+  },
+  "international": {
+    "guangzhou": {
+      "cards": [
+        {
+          "content": "sadfasfsda",
+          "icon": "📋fasdfsa",
+          "id": "1752303503123",
+          "title": "dsfasfa"
+        },
+        {
+          "title": "sadfadsfads",
+          "content": "fadsfasdfadsfads",
+          "icon": "📋fsdafs",
+          "id": "1752303537887"
+        }
+      ],
+      "name": "广州-春秋航空"
+    }
+  }
+}

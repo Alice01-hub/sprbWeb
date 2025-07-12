@@ -1,0 +1,13 @@
+nohup: ignoring input
+
+> sprb-web@1.0.0 dev
+> vite
+
+
+  VITE v4.5.14  ready in 212 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://10.107.179.30:3000/
+3:29:13 PM [vite] hmr update /src/pages/HomePage.tsx
+3:29:28 PM [vite] hmr update /src/pages/HomePage.tsx
+3:29:39 PM [vite] hmr update /src/pages/HomePage.tsx
