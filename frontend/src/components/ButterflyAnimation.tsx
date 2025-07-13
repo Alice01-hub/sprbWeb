@@ -75,15 +75,7 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
         src={butterflyImages[currentImageIndex]}
         alt="蝴蝶动画"
         size={size}
-        animate={{
-          // 悬停时添加微妙的缩放和旋转动画
-          scale: isHovered ? (currentImageIndex === 0 ? [1, 1.1, 1] : [1, 1.05, 1]) : 1,
-          rotate: isHovered ? (currentImageIndex === 0 ? [0, 5, 0] : [0, -5, 0]) : 0,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut"
-        }}
+        // 🦋 简化动画：只保留图片循环播放，无缩放和旋转特效
       />
     </ButterflyContainer>
   )
