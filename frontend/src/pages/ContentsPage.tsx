@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
+import ButterflyAnimation from '../components/ButterflyAnimation'
+import StarryBackground from '../components/StarryBackground'
 
 
 const Container = styled.div`
@@ -153,19 +155,28 @@ const ChapterItem = styled(motion.div)<{ isActive: boolean }>`
   border-radius: 15px;
   cursor: pointer;
   position: relative;
-  background: ${props => props.isActive 
-    ? 'linear-gradient(45deg, rgba(255, 182, 193, 0.3), rgba(255, 165, 0, 0.2))'
-    : 'transparent'
-  };
+  background: transparent;
   transition: all 0.4s ease;
+  overflow: hidden;
   
   &:hover {
-    background: linear-gradient(45deg, rgba(255, 182, 193, 0.3), rgba(255, 165, 0, 0.2));
+    /* 🌃 悬停时的变换效果 */
     transform: translateX(15px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 165, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(10, 25, 50, 0.8);
+    
+    /* 悬停时图标也变成夜空主题 */
+    & > div:first-child {
+      background: linear-gradient(45deg, 
+        rgba(100, 149, 237, 0.9), 
+        rgba(135, 206, 235, 0.8)
+      );
+      box-shadow: 
+        0 8px 25px rgba(30, 70, 123, 0.6),
+        inset 0 2px 5px rgba(255, 255, 255, 0.4);
+    }
   }
   
-  /* 手写下划线效果 */
+  /* 星空下划线效果 */
   &::after {
     content: '';
     position: absolute;
@@ -174,11 +185,12 @@ const ChapterItem = styled(motion.div)<{ isActive: boolean }>`
     right: 20px;
     height: 2px;
     background: ${props => props.isActive 
-      ? 'linear-gradient(to right, #FF6B35, #FFB347, #FF6B35)'
+      ? 'linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(135, 206, 235, 0.9), rgba(255, 255, 255, 0.8))'
       : 'transparent'
     };
     transform: scaleX(${props => props.isActive ? 1 : 0});
     transition: transform 0.3s ease;
+    z-index: 10;
   }
 `
 
@@ -195,6 +207,8 @@ const ChapterIcon = styled.div`
     0 6px 20px rgba(255, 107, 53, 0.4),
     inset 0 2px 5px rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
   
   &:hover {
     transform: rotateY(15deg) rotateX(5deg);
@@ -205,7 +219,7 @@ const ChapterIcon = styled.div`
 `
 
 const ChapterTitle = styled.h3<{ isActive: boolean }>`
-  color: ${props => props.isActive ? '#FF6B35' : '#2E8B57'};
+  color: ${props => props.isActive ? '#FFFFFF' : '#2E8B57'};
   font-size: 32px;
   margin: 0;
   flex: 1;
@@ -213,9 +227,11 @@ const ChapterTitle = styled.h3<{ isActive: boolean }>`
   font-family: '华文行楷', 'STXingkai', 'KaiTi', 'SimKai', cursive;
   transition: all 0.3s ease;
   text-shadow: ${props => props.isActive 
-    ? '2px 2px 4px rgba(255, 107, 53, 0.3)'
+    ? '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(135, 206, 235, 0.6)'
     : '1px 1px 2px rgba(46, 139, 87, 0.2)'
   };
+  position: relative;
+  z-index: 10;
 `
 
 const SummaryArea = styled(motion.div)`
@@ -335,6 +351,7 @@ const summaryData: Record<Exclude<ChapterType, null>, SummaryData> = {
 const ContentsPage: React.FC = () => {
   const navigate = useNavigate()
   const [activeChapter, setActiveChapter] = useState<ChapterType>(null)
+  const [hoveredChapter, setHoveredChapter] = useState<ChapterType>(null)
 
   const handleChapterClick = (chapter: ChapterType) => {
     if (chapter === 'traffic') {
@@ -364,43 +381,73 @@ const ContentsPage: React.FC = () => {
           <ChapterList>
             <ChapterItem
               isActive={activeChapter === 'traffic'}
-              onMouseEnter={() => setActiveChapter('traffic')}
-              onMouseLeave={() => setActiveChapter(null)}
+              onMouseEnter={() => {
+                setActiveChapter('traffic')
+                setHoveredChapter('traffic')
+              }}
+              onMouseLeave={() => {
+                setActiveChapter(null)
+                setHoveredChapter(null)
+              }}
               onClick={() => handleChapterClick('traffic')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
+              {/* 🌃 星空背景特效 */}
+              <StarryBackground isVisible={activeChapter === 'traffic'} />
               <ChapterIcon>🚌</ChapterIcon>
               <ChapterTitle isActive={activeChapter === 'traffic'}>
                 交通篇
+                {/* 🦋 蝴蝶图片尺寸调整：修改size参数来调整蝴蝶图片大小（当前为40px） */}
+                <ButterflyAnimation isHovered={hoveredChapter === 'traffic'} size={40} />
               </ChapterTitle>
             </ChapterItem>
 
             <ChapterItem
               isActive={activeChapter === 'checkin'}
-              onMouseEnter={() => setActiveChapter('checkin')}
-              onMouseLeave={() => setActiveChapter(null)}
+              onMouseEnter={() => {
+                setActiveChapter('checkin')
+                setHoveredChapter('checkin')
+              }}
+              onMouseLeave={() => {
+                setActiveChapter(null)
+                setHoveredChapter(null)
+              }}
               onClick={() => handleChapterClick('checkin')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
+              {/* 🌃 星空背景特效 */}
+              <StarryBackground isVisible={activeChapter === 'checkin'} />
               <ChapterIcon>📍</ChapterIcon>
               <ChapterTitle isActive={activeChapter === 'checkin'}>
                 打卡篇
+                {/* 🦋 蝴蝶图片尺寸调整：修改size参数来调整蝴蝶图片大小（当前为40px） */}
+                <ButterflyAnimation isHovered={hoveredChapter === 'checkin'} size={40} />
               </ChapterTitle>
             </ChapterItem>
 
             <ChapterItem
               isActive={activeChapter === 'other'}
-              onMouseEnter={() => setActiveChapter('other')}
-              onMouseLeave={() => setActiveChapter(null)}
+              onMouseEnter={() => {
+                setActiveChapter('other')
+                setHoveredChapter('other')
+              }}
+              onMouseLeave={() => {
+                setActiveChapter(null)
+                setHoveredChapter(null)
+              }}
               onClick={() => handleChapterClick('other')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
+              {/* 🌃 星空背景特效 */}
+              <StarryBackground isVisible={activeChapter === 'other'} />
               <ChapterIcon>🦋</ChapterIcon>
               <ChapterTitle isActive={activeChapter === 'other'}>
                 神域
+                {/* 🦋 蝴蝶图片尺寸调整：修改size参数来调整蝴蝶图片大小（当前为40px） */}
+                <ButterflyAnimation isHovered={hoveredChapter === 'other'} size={40} />
               </ChapterTitle>
             </ChapterItem>
           </ChapterList>
