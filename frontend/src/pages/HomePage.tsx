@@ -182,44 +182,43 @@ const CoverImage = styled.img`
 const Lock = styled(motion.div)`
   position: absolute;
   top: 50%;
-  right: -15px;
-  transform: translateY(-50%);
-  transform-origin: center center;
-  width: 30px;
-  height: 40px;
-  background: linear-gradient(145deg, #C0C0C0, #808080);
-  border-radius: 8px 8px 15px 15px;
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  
+  /* 🦋 ====== 蝴蝶水平位置控制区域 ====== */
+  right: -70px; /* 
+    🔧 蝴蝶图标水平位置调整参数
+    
+    📏 调整说明：
+    - 负值(-15px)：蝴蝶向右移动，超出书本边缘
+    - 正值(15px)：蝴蝶向左移动，靠近书本内部
+    - 0px：蝴蝶位于书本右边缘
+    
+    💡 推荐调整范围：
+    - 向右移动更多：-20px ~ -30px
+    - 向左移动到书本内：0px ~ 20px
+    - 贴近书本边缘：-5px ~ 5px
+    
+    🎯 当前值 -15px = 蝴蝶图标向右突出书本边缘15像素
+  */
+  /* ======================================= */
+  
+  /* 🔧 移除CSS transform，完全由Framer Motion管理 */
+  transform-origin: center center; /* 🔧 保持中心点为变换原点 */
+  width: 100px; /* 图片容器宽度 */
+  height: 100px; /* 图片容器高度 */
   cursor: pointer;
   z-index: 10;
-  transition: all 0.2s ease-in-out;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 15px;
-    border: 3px solid #808080;
-    border-bottom: none;
-    border-radius: 10px 10px 0 0;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    background: #333;
-    border-radius: 50%;
-  }
+  /* 🔧 确保悬停时位置稳定 */
+  will-change: transform, filter;
+`
+
+const LockImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 🔧 保持图片完整性，不裁剪 */
+  object-position: center center; /* 🔧 图片居中对齐 */
+  transition: none; /* 🔧 移除过渡效果，图片直接切换 */
+  display: block;
 `
 
 const FadeOverlay = styled(motion.div)`
@@ -238,6 +237,7 @@ const FadeOverlay = styled(motion.div)`
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const [isOpening, setIsOpening] = useState(false)
+  const [isLockHovered, setIsLockHovered] = useState(false) // 🔧 添加悬停状态管理
   const [stars, setStars] = useState<Array<{
     id: number;
     left: number;
@@ -319,16 +319,30 @@ const HomePage: React.FC = () => {
             </DiaryFront>
           </BookCover>
           
+          {/* 🔓 锁图标 - 蝴蝶特效 */}
           <Lock
             onClick={handleLockClick}
+            onMouseEnter={() => setIsLockHovered(true)}
+            onMouseLeave={() => setIsLockHovered(false)}
+            initial={{ y: "-50%" }} // 🔧 初始状态设置垂直居中
             whileHover={{ 
-              boxShadow: "0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4)",
-              filter: "brightness(1.2)"
+              scale: 1.1,
+              y: "-50%", // 🔧 悬停时保持垂直居中
+              filter: "brightness(1.1) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6))"
             }}
-            whileTap={{ scale: 0.95 }}
-            animate={isOpening ? { opacity: 0 } : { opacity: 1 }}
+            whileTap={{ 
+              scale: 0.95,
+              y: "-50%" // 🔧 点击时也保持垂直居中
+            }}
+            animate={isOpening ? { opacity: 0, y: "-50%" } : { opacity: 1, y: "-50%" }} // 🔧 所有状态都保持垂直居中
             transition={{ duration: 0.2 }}
-          />
+          >
+            {/* 🔧 根据悬停状态切换图片 */}
+            <LockImage
+              src={isLockHovered ? "/images/七影碟-3.png" : "/images/七影碟-4.png"}
+              alt="蝴蝶锁图标"
+            />
+          </Lock>
         </DiaryBook>
       </DiaryBookContainer>
 

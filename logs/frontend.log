@@ -3,7 +3,13 @@
 > vite
 
 
-  VITE v4.5.14  ready in 268 ms
+  VITE v4.5.14  ready in 235 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://10.107.179.30:3000/
+1:43:02 PM [vite] hmr update /src/pages/HomePage.tsx
+1:45:27 PM [vite] hmr update /src/pages/HomePage.tsx
+1:45:32 PM [vite] hmr update /src/pages/HomePage.tsx
+1:45:41 PM [vite] hmr update /src/pages/HomePage.tsx
+1:45:47 PM [vite] hmr update /src/pages/HomePage.tsx
+1:45:51 PM [vite] hmr update /src/pages/HomePage.tsx

@@ -1,198 +1,266 @@
 #!/bin/bash
 
-# Summer Pockets 巡礼网站一键启动脚本
-echo "🌟 启动 Summer Pockets 巡礼网站..."
+# Summer Pockets 圣地巡礼网站 - 一键启动脚本
+# 功能：强制清理端口、激活虚拟环境、检查依赖、启动前后端服务
 
-# 1. 强制清理所有相关端口和进程
-echo "🔥 强制清理所有相关端口和进程..."
-PORTS_TO_CLEAN=(3000 8000 5000 5173 5174 5175 5176 5177)
+set -e  # 遇到错误时立即退出
 
-for port in "${PORTS_TO_CLEAN[@]}"; do
-    echo "🔍 清理端口 $port..."
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# 项目配置
+PROJECT_DIR="/home/devbox/project/sprb-web"
+VENV_NAME="sprb-web"
+FRONTEND_PORT=3000
+BACKEND_PORT=8000
+
+# 日志文件
+LOG_DIR="$PROJECT_DIR/logs"
+BACKEND_LOG="$LOG_DIR/backend.log"
+FRONTEND_LOG="$LOG_DIR/frontend.log"
+
+# 创建日志目录
+mkdir -p "$LOG_DIR"
+
+# 函数：打印带颜色的消息
+print_message() {
+    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] ✅ $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')] ⚠️  $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')] ❌ $1${NC}"
+}
+
+# 函数：强制关闭端口占用进程
+kill_port_processes() {
+    local port=$1
+    print_message "正在检查端口 $port 的占用情况..."
     
-    # 使用netstat查找进程
-    pids=$(netstat -tulpn 2>/dev/null | grep ":$port " | awk '{print $7}' | cut -d'/' -f1 | grep -v '-' | sort -u 2>/dev/null || true)
+    # 查找占用端口的进程
+    local pids=$(lsof -ti:$port 2>/dev/null || true)
     
     if [ ! -z "$pids" ]; then
-        echo "⚠️  端口 $port 被以下进程占用: $pids"
-        for pid in $pids; do
-            if [ ! -z "$pid" ] && [ "$pid" != "-" ]; then
-                echo "🔥 终止进程 $pid..."
-                kill -9 $pid 2>/dev/null || true
-            fi
-        done
-    fi
-    
-    # 使用fuser作为备选方法
-    fuser -k $port/tcp 2>/dev/null || true
-    
-    # 使用lsof作为第三重保险（如果存在）
-    if command -v lsof >/dev/null 2>&1; then
-        lsof -ti:$port | xargs kill -9 2>/dev/null || true
-    fi
-    
-    echo "✅ 端口 $port 已清理"
-done
-
-# 额外清理可能的项目相关进程
-echo "🧹 清理项目相关进程..."
-pkill -f "sprb-web" 2>/dev/null || true
-pkill -f "vite.*3000" 2>/dev/null || true
-pkill -f "node.*vite" 2>/dev/null || true
-pkill -f "uvicorn.*app:app" 2>/dev/null || true
-pkill -f "npm.*run.*dev" 2>/dev/null || true
-
-# 清理旧的PID文件
-rm -f logs/backend.pid logs/frontend.pid 2>/dev/null || true
-
-echo "✅ 端口和进程清理完成"
-
-# 等待进程完全关闭
-sleep 3
-
-# 2. 激活conda环境（如果存在）
-echo "🐍 激活conda环境..."
-if command -v conda >/dev/null 2>&1; then
-    # 检查sprb-web环境是否存在
-    if conda env list | grep -q "sprb-web"; then
-        echo "激活现有的sprb-web环境"
-        eval "$(conda shell.bash hook)"
-        conda activate sprb-web
+        print_warning "发现端口 $port 被占用，正在强制关闭进程..."
+        echo "$pids" | xargs kill -9 2>/dev/null || true
+        sleep 2
+        
+        # 再次检查
+        local remaining_pids=$(lsof -ti:$port 2>/dev/null || true)
+        if [ -z "$remaining_pids" ]; then
+            print_success "端口 $port 已成功释放"
+        else
+            print_error "端口 $port 仍被占用，请手动处理"
+        fi
     else
-        echo "sprb-web环境不存在，使用base环境"
+        print_success "端口 $port 未被占用"
     fi
-else
-    echo "conda未安装，使用系统Python"
-fi
+}
 
-# 3. 安装后端依赖
-echo "📦 检查并安装后端依赖..."
-cd backend
-if [ ! -f "requirements.txt" ]; then
-    echo "错误: requirements.txt 不存在"
-    exit 1
-fi
+# 函数：激活虚拟环境
+activate_venv() {
+    print_message "正在激活虚拟环境 $VENV_NAME..."
+    
+    # 检查conda是否存在
+    if ! command -v conda &> /dev/null; then
+        print_error "conda 未安装，请先安装 Anaconda 或 Miniconda"
+        exit 1
+    fi
+    
+    # 初始化conda
+    eval "$(conda shell.bash hook)"
+    
+    # 检查虚拟环境是否存在
+    if conda env list | grep -q "$VENV_NAME"; then
+        print_success "虚拟环境 $VENV_NAME 已存在"
+    else
+        print_message "创建虚拟环境 $VENV_NAME..."
+        conda create -n "$VENV_NAME" python=3.9 -y
+        print_success "虚拟环境 $VENV_NAME 创建成功"
+    fi
+    
+    # 激活虚拟环境
+    conda activate "$VENV_NAME"
+    print_success "虚拟环境 $VENV_NAME 已激活"
+}
 
-# 检查是否已安装依赖
-if ! pip list | grep -q "fastapi"; then
-    echo "安装后端依赖..."
+# 函数：检查并安装后端依赖
+check_backend_dependencies() {
+    print_message "正在检查后端依赖..."
+    
+    cd "$PROJECT_DIR/backend"
+    
+    # 检查requirements.txt是否存在
+    if [ ! -f "requirements.txt" ]; then
+        print_error "requirements.txt 文件不存在"
+        exit 1
+    fi
+    
+    # 安装依赖
+    print_message "正在安装后端依赖..."
     pip install -r requirements.txt
-else
-    echo "后端依赖已安装，跳过..."
-fi
+    print_success "后端依赖安装完成"
+}
 
-# 4. 启动后端服务
-echo "🚀 启动后端服务..."
-# 确保日志目录存在
-mkdir -p ../logs
-nohup python -m uvicorn app_simple:app --host 0.0.0.0 --port 8000 > ../logs/backend.log 2>&1 &
-BACKEND_PID=$!
-echo "后端服务已启动，PID: $BACKEND_PID"
-
-# 等待后端服务启动
-echo "⏳ 等待后端服务启动..."
-sleep 5
-
-# 验证后端服务是否启动成功
-if ! kill -0 $BACKEND_PID 2>/dev/null; then
-    echo "❌ 后端服务启动失败，请检查日志"
-    tail -20 ../logs/backend.log
-    exit 1
-fi
-
-# 5. 安装前端依赖
-echo "📦 检查并安装前端依赖..."
-cd ../frontend
-
-# 检查是否已安装依赖
-if [ ! -d "node_modules" ]; then
-    echo "安装前端依赖..."
-    npm install
-else
-    echo "前端依赖已安装，跳过..."
-fi
-
-# 6. 启动前端服务
-echo "🚀 启动前端服务..."
-nohup npm run dev > ../logs/frontend.log 2>&1 &
-FRONTEND_PID=$!
-echo "前端服务已启动，PID: $FRONTEND_PID"
-
-# 创建PID文件用于后续关闭
-cd ..
-echo "$BACKEND_PID" > logs/backend.pid
-echo "$FRONTEND_PID" > logs/frontend.pid
-
-# 7. 等待服务启动完成
-echo "⏳ 等待服务启动完成..."
-sleep 8
-
-# 8. 检查服务状态
-echo "🔍 检查服务状态..."
-
-# 检查后端服务
-BACKEND_OK=false
-for i in {1..10}; do
-    if curl -s "http://localhost:8000/api/health" >/dev/null 2>&1; then
-        echo "✅ 后端服务正常运行: http://localhost:8000"
-        BACKEND_OK=true
-        break
-    else
-        echo "⏳ 等待后端服务响应... ($i/10)"
-        sleep 2
+# 函数：检查并安装前端依赖
+check_frontend_dependencies() {
+    print_message "正在检查前端依赖..."
+    
+    cd "$PROJECT_DIR/frontend"
+    
+    # 检查package.json是否存在
+    if [ ! -f "package.json" ]; then
+        print_error "package.json 文件不存在"
+        exit 1
     fi
-done
-
-if [ "$BACKEND_OK" = false ]; then
-    echo "❌ 后端服务启动失败"
-    echo "📋 后端日志:"
-    tail -20 logs/backend.log
-    exit 1
-fi
-
-# 检查前端服务
-FRONTEND_OK=false
-for i in {1..10}; do
-    if curl -s "http://localhost:3000" >/dev/null 2>&1; then
-        echo "✅ 前端服务正常运行: http://localhost:3000"
-        FRONTEND_OK=true
-        break
+    
+    # 检查node_modules是否存在
+    if [ ! -d "node_modules" ]; then
+        print_message "正在安装前端依赖..."
+        npm install
+        print_success "前端依赖安装完成"
     else
-        echo "⏳ 等待前端服务响应... ($i/10)"
-        sleep 2
+        print_message "检查依赖更新..."
+        npm ci
+        print_success "前端依赖检查完成"
     fi
-done
+}
 
-if [ "$FRONTEND_OK" = false ]; then
-    echo "⚠️  前端服务可能还在启动中，请稍后访问 http://localhost:3000"
-fi
+# 函数：启动后端服务
+start_backend() {
+    print_message "正在启动后端服务..."
+    
+    cd "$PROJECT_DIR/backend"
+    
+    # 启动后端服务（后台运行）
+    nohup python app.py > "$BACKEND_LOG" 2>&1 &
+    local backend_pid=$!
+    
+    # 保存PID到文件
+    echo $backend_pid > "$PROJECT_DIR/backend.pid"
+    
+    print_success "后端服务已启动，PID: $backend_pid"
+    print_message "后端日志文件: $BACKEND_LOG"
+    
+    # 等待后端服务启动
+    sleep 3
+    
+    # 检查服务是否正常运行
+    if curl -s http://localhost:$BACKEND_PORT/api/health > /dev/null; then
+        print_success "后端服务运行正常 (http://localhost:$BACKEND_PORT)"
+    else
+        print_warning "后端服务可能启动失败，请检查日志"
+    fi
+}
 
-# 9. 输出服务信息
-echo ""
-echo "🎉 Summer Pockets 巡礼网站启动完成！"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🌐 前端地址: http://localhost:3000"
-echo "🔧 后端API: http://localhost:8000"
-echo "📊 API文档: http://localhost:8000/docs"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "🛠️  管理命令:"
-echo "  查看日志: tail -f logs/backend.log 或 tail -f logs/frontend.log"
-echo "  停止服务: ./stop.sh"
-echo "  重启服务: ./restart.sh"
-echo ""
-echo "🎵 音乐播放器已优化："
-echo "  ✅ 修复了音量调节重新播放的问题"
-echo "  ✅ 优化了BGM和标题匹配"
-echo "  ✅ 改善了播放体验"
-echo ""
-echo "💡 提示:"
-echo "  - 服务在后台运行，关闭终端不会影响服务"
-echo "  - 如需查看实时日志，请使用: tail -f logs/backend.log logs/frontend.log"
-echo "  - 如遇问题，请检查日志文件或重启服务"
-echo ""
-echo "按 Ctrl+C 退出日志查看，服务会在后台继续运行..."
+# 函数：启动前端服务
+start_frontend() {
+    print_message "正在启动前端服务..."
+    
+    cd "$PROJECT_DIR/frontend"
+    
+    # 启动前端服务（后台运行）
+    nohup npm run dev > "$FRONTEND_LOG" 2>&1 &
+    local frontend_pid=$!
+    
+    # 保存PID到文件
+    echo $frontend_pid > "$PROJECT_DIR/frontend.pid"
+    
+    print_success "前端服务已启动，PID: $frontend_pid"
+    print_message "前端日志文件: $FRONTEND_LOG"
+    
+    # 等待前端服务启动
+    sleep 5
+    
+    print_success "前端服务运行正常 (http://localhost:$FRONTEND_PORT)"
+}
 
-# 10. 实时显示日志
-trap 'echo ""; echo "退出日志查看，服务继续在后台运行..."; echo "访问 http://localhost:3000 使用网站"; exit 0' INT
-tail -f logs/backend.log logs/frontend.log 
+# 函数：检查服务状态
+check_services() {
+    print_message "正在检查服务状态..."
+    
+    # 检查后端服务
+    if curl -s http://localhost:$BACKEND_PORT/api/health > /dev/null; then
+        print_success "后端服务运行正常 ✅"
+    else
+        print_error "后端服务异常 ❌"
+    fi
+    
+    # 检查前端服务
+    if curl -s http://localhost:$FRONTEND_PORT > /dev/null; then
+        print_success "前端服务运行正常 ✅"
+    else
+        print_error "前端服务异常 ❌"
+    fi
+}
+
+# 主函数
+main() {
+    print_message "🚀 Summer Pockets 圣地巡礼网站 - 一键启动脚本"
+    print_message "=================================================="
+    
+    # 切换到项目目录
+    cd "$PROJECT_DIR"
+    
+    # 1. 强制关闭占用端口的进程
+    print_message "📋 步骤 1: 清理端口占用"
+    kill_port_processes $FRONTEND_PORT
+    kill_port_processes $BACKEND_PORT
+    
+    # 2. 激活虚拟环境
+    print_message "📋 步骤 2: 激活虚拟环境"
+    activate_venv
+    
+    # 3. 检查并安装依赖
+    print_message "📋 步骤 3: 检查依赖"
+    check_backend_dependencies
+    check_frontend_dependencies
+    
+    # 4. 启动后端服务
+    print_message "📋 步骤 4: 启动后端服务"
+    start_backend
+    
+    # 5. 启动前端服务
+    print_message "📋 步骤 5: 启动前端服务"
+    start_frontend
+    
+    # 6. 检查服务状态
+    print_message "📋 步骤 6: 检查服务状态"
+    check_services
+    
+    print_message "=================================================="
+    print_success "🎉 所有服务已成功启动！"
+    print_message "🌐 前端访问地址: http://localhost:$FRONTEND_PORT"
+    print_message "🔧 后端API地址: http://localhost:$BACKEND_PORT"
+    print_message "📚 API文档地址: http://localhost:$BACKEND_PORT/docs"
+    print_message "=================================================="
+    
+    # 显示进程信息
+    print_message "📊 运行中的服务进程："
+    if [ -f "$PROJECT_DIR/backend.pid" ]; then
+        local backend_pid=$(cat "$PROJECT_DIR/backend.pid")
+        print_message "   后端进程 PID: $backend_pid"
+    fi
+    if [ -f "$PROJECT_DIR/frontend.pid" ]; then
+        local frontend_pid=$(cat "$PROJECT_DIR/frontend.pid")
+        print_message "   前端进程 PID: $frontend_pid"
+    fi
+    
+    print_message "💡 提示：使用 'ps aux | grep -E \"(python|node)\"' 查看运行状态"
+    print_message "💡 提示：使用 './stop.sh' 停止所有服务"
+    print_message "💡 提示：日志文件位于 $LOG_DIR 目录"
+}
+
+# 运行主函数
+main "$@" 
