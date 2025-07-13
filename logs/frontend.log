@@ -2,14 +2,10 @@
 > sprb-web@1.0.0 dev
 > vite
 
+Port 3000 is in use, trying another one...
+Port 3001 is in use, trying another one...
 
-  VITE v4.5.14  ready in 235 ms
+  VITE v4.5.14  ready in 257 ms
 
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://10.107.179.30:3000/
-1:43:02 PM [vite] hmr update /src/pages/HomePage.tsx
-1:45:27 PM [vite] hmr update /src/pages/HomePage.tsx
-1:45:32 PM [vite] hmr update /src/pages/HomePage.tsx
-1:45:41 PM [vite] hmr update /src/pages/HomePage.tsx
-1:45:47 PM [vite] hmr update /src/pages/HomePage.tsx
-1:45:51 PM [vite] hmr update /src/pages/HomePage.tsx
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://10.107.179.30:3002/
