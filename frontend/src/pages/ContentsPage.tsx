@@ -300,9 +300,9 @@ const HintText = styled(motion.div)`
 `
 
 const BackButton = styled(motion.button)`
-  position: fixed;
-  top: 40px;
-  left: 40px;
+  position: relative;
+  margin-top: 30px;
+  margin-left: 20px;
   background: linear-gradient(45deg, #87CEEB, #98E4D6);
   border: none;
   border-radius: 50px;
@@ -451,6 +451,17 @@ const ContentsPage: React.FC = () => {
               </ChapterTitle>
             </ChapterItem>
           </ChapterList>
+
+          <BackButton
+            onClick={handleBack}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            🏠 返回首页
+          </BackButton>
         </LeftPage>
 
         <RightPage>
@@ -503,17 +514,6 @@ const ContentsPage: React.FC = () => {
           </AnimatePresence>
         </RightPage>
       </SummerBook>
-
-      <BackButton
-        onClick={handleBack}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-      >
-        🏠 返回首页
-      </BackButton>
 
     </Container>
   )

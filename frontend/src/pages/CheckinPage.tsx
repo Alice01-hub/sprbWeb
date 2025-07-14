@@ -81,6 +81,13 @@ const ComingSoonBadge = styled.div`
   display: inline-block;
 `
 
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+`
+
 const BackButton = styled(motion.button)`
   background: linear-gradient(45deg, #87ceeb, #add8e6);
   border: none;
@@ -95,6 +102,23 @@ const BackButton = styled(motion.button)`
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 35px rgba(135, 206, 235, 0.5);
+  }
+`
+
+const OtherPilgrimageButton = styled(motion.button)`
+  background: linear-gradient(45deg, #FF6B35, #FFB347);
+  border: none;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
   }
 `
 
@@ -121,6 +145,10 @@ const CheckinPage: React.FC = () => {
 
   const handleBack = () => {
     navigate('/contents')
+  }
+
+  const handleOtherPilgrimage = () => {
+    navigate('/other-pilgrimage')
   }
 
   return (
@@ -152,16 +180,29 @@ const CheckinPage: React.FC = () => {
         ))}
       </IslandsContainer>
 
-      <BackButton
-        onClick={handleBack}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        返回目录
-      </BackButton>
+      <ButtonContainer>
+        <BackButton
+          onClick={handleBack}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1 }}
+        >
+          返回目录
+        </BackButton>
+        
+        <OtherPilgrimageButton
+          onClick={handleOtherPilgrimage}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.2 }}
+        >
+          其他巡礼
+        </OtherPilgrimageButton>
+      </ButtonContainer>
     </Container>
   )
 }

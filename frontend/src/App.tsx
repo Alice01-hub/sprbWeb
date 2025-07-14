@@ -5,6 +5,7 @@ import ContentsPage from './pages/ContentsPage'
 import TrafficPage from './pages/TrafficPage'
 import CheckinPage from './pages/CheckinPage'
 import DivineRealmPage from './pages/DivineRealmPage'
+import OtherPilgrimagePage from './pages/OtherPilgrimagePage'
 import MusicPlayer from './components/MusicPlayer'
 import ImageCursor from './components/ImageCursor'
 import './styles/global.css'
@@ -20,6 +21,7 @@ function App() {
             <Route path="/traffic" element={<TrafficPage />} />
             <Route path="/checkin" element={<CheckinPage />} />
             <Route path="/divine-realm" element={<DivineRealmPage />} />
+            <Route path="/other-pilgrimage" element={<OtherPilgrimagePage />} />
           </Routes>
           <MusicPlayer />
           {/* 🦋 七影碟图片拖尾特效 - 基于TextCursor逻辑实现 */}
