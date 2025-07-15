@@ -10,7 +10,7 @@ import MegijimaPage from './pages/MegijimaPage'
 import OgijimaPage from './pages/OgijimaPage'
 import NaoshimaPage from './pages/NaoshimaPage'
 import MusicPlayer from './components/MusicPlayer'
-import ImageCursor from './components/ImageCursor'
+import ButterflyCustomCursor from './components/ButterflyCustomCursor'
 import './styles/global.css'
 
 function App() {
@@ -30,28 +30,8 @@ function App() {
             <Route path="/naoshima" element={<NaoshimaPage />} />
           </Routes>
           <MusicPlayer />
-          {/* 🦋 七影碟图片拖尾特效 - 基于TextCursor逻辑实现 */}
-          <div style={{ 
-            position: 'fixed', 
-            top: 0, 
-            left: 0, 
-            width: '100vw', 
-            height: '100vh', 
-            pointerEvents: 'none',
-            zIndex: 999
-          }}>
-            <ImageCursor
-              imageSrc="/images/七影碟.png"
-              delay={0.01}
-              spacing={80}
-              followMouseDirection={true}
-              randomFloat={false}
-              exitDuration={0.3}
-              removalInterval={20}
-              maxPoints={10}
-              imageSize={40}
-            />
-          </div>
+          {/* 🦋 蝴蝶扇动翅膀自定义鼠标特效 */}
+          <ButterflyCustomCursor />
         </div>
       </Router>
     </MusicProvider>

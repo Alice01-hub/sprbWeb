@@ -36,12 +36,8 @@ const SliderImage = styled(motion.img)<{ clickable?: boolean }>`
   height: 100%;
   object-fit: cover;
   user-select: none;
-  cursor: ${props => props.clickable ? 'pointer' : 'default'};
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: ${props => props.clickable ? 'scale(1.05)' : 'none'};
-  }
+  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
 `
 
 const ImageOverlay = styled.div`
@@ -87,17 +83,11 @@ const ControlButton = styled(motion.button)<{ active?: boolean }>`
   background: ${props => props.active ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)'};
   color: ${props => props.active ? '#333' : '#666'};
   font-size: 12px;
-  cursor: pointer;
+  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    transform: scale(1.1);
-  }
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
 `
 
 const DotsContainer = styled.div`
@@ -116,13 +106,8 @@ const Dot = styled(motion.button)<{ active?: boolean }>`
   border-radius: 50%;
   border: none;
   background: ${props => props.active ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.4)'};
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.7);
-    transform: scale(1.2);
-  }
+  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
 `
 
 const ImageSlider: React.FC<ImageSliderProps> = ({ 
@@ -197,7 +182,19 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            whileHover={onImageClick ? { 
+              scale: 1.02 
+            } : {}}
+            transition={{ 
+              duration: 0.5, 
+              ease: "easeInOut",
+              scale: {
+                type: "spring",
+                stiffness: 400,
+                damping: 25,
+                duration: 0.15
+              }
+            }}
           />
         </AnimatePresence>
         
@@ -218,8 +215,18 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
             <>
               <ControlButton
                 onClick={handlePrevious}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.9)",
+                  color: "#333"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               >
                 ‹
               </ControlButton>
@@ -227,16 +234,36 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
               <ControlButton
                 onClick={handlePlayPause}
                 active={isPlaying}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.9)",
+                  color: "#333"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               >
                 {isPlaying ? '⏸' : '▶'}
               </ControlButton>
               
               <ControlButton
                 onClick={handleNext}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.9)",
+                  color: "#333"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               >
                 ›
               </ControlButton>
@@ -252,8 +279,17 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
                 key={index}
                 active={index === currentIndex}
                 onClick={() => setCurrentIndex(index)}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ 
+                  scale: 1.1,
+                  background: "rgba(255, 255, 255, 0.7)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               />
             ))}
           </DotsContainer>

@@ -316,15 +316,11 @@ const CloseButton = styled(motion.button)`
   height: 40px;
   color: white;
   font-size: 20px;
-  cursor: pointer;
+  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
 `
 
 const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
@@ -339,15 +335,11 @@ const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   height: 50px;
   color: white;
   font-size: 24px;
-  cursor: pointer;
+  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
   
   @media (max-width: 768px) {
     ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
@@ -394,8 +386,18 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
         >
           <CloseButton
             onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ 
+              scale: 1.05,
+              background: "rgba(255, 255, 255, 0.2)",
+              borderColor: "rgba(255, 255, 255, 0.5)"
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 400,
+              damping: 25,
+              duration: 0.15
+            }}
           >
             ✕
           </CloseButton>
@@ -405,8 +407,18 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
               <NavigationButton
                 direction="prev"
                 onClick={onPrevious}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.2)",
+                  borderColor: "rgba(255, 255, 255, 0.5)"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               >
                 ‹
               </NavigationButton>
@@ -414,8 +426,18 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
               <NavigationButton
                 direction="next"
                 onClick={onNext}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.2)",
+                  borderColor: "rgba(255, 255, 255, 0.5)"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
               >
                 ›
               </NavigationButton>

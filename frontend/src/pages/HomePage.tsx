@@ -309,7 +309,7 @@ const HomePage: React.FC = () => {
             onAnimationComplete={handleAnimationComplete}
           >
             <DiaryFront>
-              <Title>Summer Pockets巡礼指南</Title>
+              <Title>Summer Pockets巡礼日记</Title>
               <CoverImageContainer>
                 <CoverImage 
                   src="/images/sprb封面图.png" 
