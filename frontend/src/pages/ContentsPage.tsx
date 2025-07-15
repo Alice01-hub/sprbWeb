@@ -353,7 +353,7 @@ const summaryData: Record<Exclude<ChapterType, null>, SummaryData> = {
     text: '📍 女木岛、男木岛、直岛圣地巡礼'
   },
   other: {
-    image: '/images/其他巡礼摘要图.jpg',
+    image: '/images/神域摘要图.bmp',
     text: '记得来神域寄存和领取自己的七影碟哦！🦋'
   }
 }

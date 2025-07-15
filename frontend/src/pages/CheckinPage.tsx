@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -94,6 +94,15 @@ const IslandCard = styled(motion.div)<{ selected: boolean }>`
 const IslandIcon = styled.div`
   font-size: 60px;
   margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+  }
 `
 
 const IslandName = styled.h3`
@@ -169,6 +178,15 @@ const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
   top: ${props => props.y}%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
 `
 
 const ButtonContainer = styled.div`
@@ -223,9 +241,77 @@ const OtherPilgrimageButton = styled(motion.button)`
   }
 `
 
+// 模态框样式组件
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+`
+
+const ModalContent = styled(motion.div)`
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+`
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+`
+
+const ModalImage = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+`
+
+const ModalText = styled.p`
+  font-size: 16px;
+  color: #5d4037;
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.6;
+`
+
 interface Island {
   name: string
   icon: string
+  iconType?: 'emoji' | 'image'
   description: string
   position: { x: number; y: number }
   id: string
@@ -242,7 +328,8 @@ const islands: Island[] = [
   {
     id: 'ogijima',
     name: '男木岛',
-    icon: '🌊',
+    icon: '/images/男木岛/灯塔.png',
+    iconType: 'image',
     description: '宁静的渔村小岛，保持着传统的日本乡村风貌和温馨的人情味。',
     position: { x: 75, y: 45 }
   },
@@ -258,12 +345,24 @@ const islands: Island[] = [
 const CheckinPage: React.FC = () => {
   const navigate = useNavigate()
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // 鸟白岛坐标 (页面中心位置)
+  const torishimaPosition = { x: 50, y: 50 }
 
   const handleIslandClick = (island: Island) => {
     setSelectedIsland(island.id)
     console.log('点击了岛屿:', island.name)
     // 跳转到对应的岛屿页面
     navigate(`/${island.id}`)
+  }
+
+  const handleTorishimaClick = () => {
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
   }
 
   const handleBack = () => {
@@ -301,7 +400,7 @@ const CheckinPage: React.FC = () => {
             避免手机频繁切换页面影响体验，让手机专注于拍照。
           </span>
           <span style={{ display: 'block', marginTop: '8px' }}>
-            游戏CG可在对应的岛屿页面下载。
+            右键下载需要的游戏CG。
           </span>
         </NoticeText>
       </NoticeBox>
@@ -318,7 +417,13 @@ const CheckinPage: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => handleIslandClick(island)}
           >
-            <IslandIcon>{island.icon}</IslandIcon>
+            <IslandIcon>
+              {island.iconType === 'image' ? (
+                <img src={island.icon} alt={island.name} />
+              ) : (
+                island.icon
+              )}
+            </IslandIcon>
             <IslandName>{island.name}</IslandName>
             <IslandDescription>{island.description}</IslandDescription>
             <ComingSoonBadge>点击前往</ComingSoonBadge>
@@ -346,6 +451,20 @@ const CheckinPage: React.FC = () => {
                 🚢
               </LocationIcon>
 
+              {/* 鸟白岛图标 */}
+              <LocationIcon
+                x={91}
+                y={60}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
+                whileHover={{ scale: 1.2 }}
+                onClick={handleTorishimaClick}
+                title="鸟白岛"
+              >
+                ❗❗❗
+              </LocationIcon>
+
               {/* 岛屿位置 */}
               {islands.map((island, index) => (
                 <LocationIcon
@@ -358,7 +477,11 @@ const CheckinPage: React.FC = () => {
                   whileHover={{ scale: 1.2 }}
                   onClick={() => handleIslandClick(island)}
                 >
-                  {island.icon}
+                  {island.iconType === 'image' ? (
+                    <img src={island.icon} alt={island.name} />
+                  ) : (
+                    island.icon
+                  )}
                 </LocationIcon>
               ))}
             </MapOverlay>
@@ -389,6 +512,36 @@ const CheckinPage: React.FC = () => {
           其他巡礼
         </OtherPilgrimageButton>
       </ButtonContainer>
+
+      {/* 鸟白岛模态框 */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+          >
+            <ModalContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CloseButton onClick={closeModal}>×</CloseButton>
+              <ModalImage 
+                src="/images/鸟白岛总览.bmp" 
+                alt="鸟白岛总览"
+                onError={(e) => {
+                  console.error('图片加载失败:', e)
+                }}
+              />
+              <ModalText>只能在航行过程中拍摄</ModalText>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
     </Container>
   )
 }
