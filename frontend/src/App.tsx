@@ -6,6 +6,9 @@ import TrafficPage from './pages/TrafficPage'
 import CheckinPage from './pages/CheckinPage'
 import DivineRealmPage from './pages/DivineRealmPage'
 import OtherPilgrimagePage from './pages/OtherPilgrimagePage'
+import MegijimaPage from './pages/MegijimaPage'
+import OgijimaPage from './pages/OgijimaPage'
+import NaoshimaPage from './pages/NaoshimaPage'
 import MusicPlayer from './components/MusicPlayer'
 import ImageCursor from './components/ImageCursor'
 import './styles/global.css'
@@ -22,6 +25,9 @@ function App() {
             <Route path="/checkin" element={<CheckinPage />} />
             <Route path="/divine-realm" element={<DivineRealmPage />} />
             <Route path="/other-pilgrimage" element={<OtherPilgrimagePage />} />
+            <Route path="/megijima" element={<MegijimaPage />} />
+            <Route path="/ogijima" element={<OgijimaPage />} />
+            <Route path="/naoshima" element={<NaoshimaPage />} />
           </Routes>
           <MusicPlayer />
           {/* 🦋 七影碟图片拖尾特效 - 基于TextCursor逻辑实现 */}

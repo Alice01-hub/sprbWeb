@@ -241,7 +241,8 @@ const CheckinPage: React.FC = () => {
   const handleIslandClick = (island: Island) => {
     setSelectedIsland(island.id)
     console.log('点击了岛屿:', island.name)
-    // 这里可以添加岛屿点击后的逻辑
+    // 跳转到对应的岛屿页面
+    navigate(`/${island.id}`)
   }
 
   const handleBack = () => {
@@ -261,7 +262,7 @@ const CheckinPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>打卡篇</Title>
-          <Subtitle>探索三岛的夏日时光</Subtitle>
+          <Subtitle>唯有那抹炫目，至今无法忘却</Subtitle>
         </motion.div>
       </HeaderSection>
 
