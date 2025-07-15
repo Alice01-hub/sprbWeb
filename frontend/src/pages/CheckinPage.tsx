@@ -48,6 +48,27 @@ const Subtitle = styled.h2`
   text-align: center;
 `
 
+const NoticeBox = styled(motion.div)`
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px 30px;
+  margin: 20px auto 30px auto;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+`
+
+const NoticeText = styled.p`
+  font-size: 16px;
+  color: #5d4037;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+`
+
 const IslandsContainer = styled.div`
   display: flex;
   gap: 30px;
@@ -262,9 +283,28 @@ const CheckinPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>打卡篇</Title>
-          <Subtitle>唯有那抹炫目，至今无法忘却</Subtitle>
+          <Subtitle>唯有那片炫目，至今无法忘却</Subtitle>
         </motion.div>
       </HeaderSection>
+
+      <NoticeBox
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        <NoticeText>
+          <strong style={{ fontSize: '18px', color: '#ff6b35', display: 'block', marginBottom: '8px' }}>
+            小建议
+          </strong>
+          正式打卡前，建议先把打卡点的游戏CG照片洗出来，到地点后一一比对拍照即可。
+          <span style={{ display: 'block', marginTop: '8px' }}>
+            避免手机频繁切换页面影响体验，让手机专注于拍照。
+          </span>
+          <span style={{ display: 'block', marginTop: '8px' }}>
+            游戏CG可在对应的岛屿页面下载。
+          </span>
+        </NoticeText>
+      </NoticeBox>
 
       <IslandsContainer>
         {islands.map((island, index) => (

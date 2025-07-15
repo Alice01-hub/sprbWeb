@@ -72,6 +72,29 @@ const InfoCard = styled(motion.div)`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(20px);
   border: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 107, 53, 0.05) 0%,
+      rgba(135, 206, 235, 0.05) 50%,
+      rgba(152, 228, 214, 0.05) 100%
+    );
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
 `
 
 const SectionTitle = styled.h3`
@@ -83,6 +106,8 @@ const SectionTitle = styled.h3`
   text-align: center;
 `
 
+
+
 const Description = styled.p`
   font-size: 18px;
   color: #444;
@@ -90,6 +115,24 @@ const Description = styled.p`
   margin-bottom: 20px;
   text-align: left;
   text-indent: 2em;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, #ff6b35, #ffa500);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
 `
 
 const MapFrame = styled.div`
@@ -348,6 +391,107 @@ const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   }
 `
 
+// 标签切换组件样式
+const TabContainer = styled.div`
+  display: flex;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  backdrop-filter: blur(10px);
+`
+
+const TabButton = styled(motion.button)<{ active: boolean; tabType: 'intro' | 'guide' }>`
+  flex: 1;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 10px;
+  background: ${props => {
+    if (props.active) {
+      return props.tabType === 'intro' 
+        ? 'linear-gradient(135deg, #ff6b35, #ffa500)'
+        : 'linear-gradient(135deg, #87ceeb, #98e4d6)';
+    }
+    return 'transparent';
+  }};
+  color: ${props => {
+    if (props.active) {
+      return props.tabType === 'intro' ? 'white' : '#2e8b57';
+    }
+    return '#8d6e63';
+  }};
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'KaiTi', 'SimKai', serif;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: ${props => props.active 
+    ? (props.tabType === 'intro' 
+      ? '0 6px 20px rgba(255, 107, 53, 0.3)' 
+      : '0 6px 20px rgba(135, 206, 235, 0.3)')
+    : 'none'};
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.3), 
+      transparent
+    );
+    transition: left 0.8s ease;
+    z-index: 1;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: ${props => 
+      props.tabType === 'intro' 
+        ? 'linear-gradient(135deg, #ff8a50, #ffb347)'
+        : 'linear-gradient(135deg, #98d8eb, #a8e6d2)'};
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+    z-index: -1;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${props => 
+      props.tabType === 'intro' 
+        ? '0 8px 25px rgba(255, 107, 53, 0.4)'
+        : '0 8px 25px rgba(135, 206, 235, 0.4)'};
+    
+    &::before {
+      left: 100%;
+    }
+    
+    &::after {
+      opacity: ${props => props.active ? 0 : 0.6};
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+  }
+`
+
+const ContentSection = styled(motion.div)`
+  width: 100%;
+`
+
 // 图片查看器组件
 interface ImageViewerProps {
   isOpen: boolean;
@@ -470,6 +614,9 @@ const MegijimaPage: React.FC = () => {
     title: ''
   });
   
+  // 信息卡片切换状态
+  const [activeTab, setActiveTab] = useState<'intro' | 'guide'>('intro');
+  
   // 地图缩放比例参数
   // 调整此值来控制地图大小：
   // 0.5 = 50% 大小 (400px 宽)
@@ -485,26 +632,8 @@ const MegijimaPage: React.FC = () => {
   // 打卡地点图片数据
   const checkInLocations = [
     {
-      title: "窄路",
-      description: "岛上狭窄的山间小径，光影变化奇妙",
-      images: [
-        { src: "/images/女木岛/女木岛-窄路-有光.bmp", label: "有光" },
-        { src: "/images/女木岛/女木岛-窄路-无光.bmp", label: "无光" }
-      ]
-    },
-    {
-      title: "山道",
-      description: "蜿蜒的山间道路，不同时分展现不同美景",
-      images: [
-        { src: "/images/女木岛/女木岛-山道.bmp", label: "白天" },
-        { src: "/images/女木岛/女木岛-山道-黄昏.bmp", label: "黄昏" },
-        { src: "/images/女木岛/女木岛-山道-夜晚.bmp", label: "夜晚" },
-        { src: "/images/女木岛/女木岛-山道-深夜.bmp", label: "深夜" }
-      ]
-    },
-    {
       title: "秘密基地山路",
-      description: "通往神秘地点的隐秘山路，四季景色各异",
+      description: "通往秘密基地的山路",
       images: [
         { src: "/images/女木岛/女木岛-秘密基地山路.bmp", label: "白天" },
         { src: "/images/女木岛/女木岛-秘密基地山路-黄昏.bmp", label: "黄昏" },
@@ -513,8 +642,18 @@ const MegijimaPage: React.FC = () => {
       ]
     },
     {
+      title: "山道",
+      description: "小苍捕捉七影碟的地点",
+      images: [
+        { src: "/images/女木岛/女木岛-山道.bmp", label: "白天" },
+        { src: "/images/女木岛/女木岛-山道-黄昏.bmp", label: "黄昏" },
+        { src: "/images/女木岛/女木岛-山道-夜晚.bmp", label: "夜晚" },
+        { src: "/images/女木岛/女木岛-山道-深夜.bmp", label: "深夜" }
+      ]
+    },
+    {
       title: "采石场入口",
-      description: "古老采石场的入口，见证了岛屿的历史变迁",
+      description: "和小欧冒险的重要场所",
       images: [
         { src: "/images/女木岛/女木岛-采石场入口.bmp", label: "白天" },
         { src: "/images/女木岛/女木岛-采石场入口-黄昏.bmp", label: "黄昏" },
@@ -523,10 +662,18 @@ const MegijimaPage: React.FC = () => {
     },
     {
       title: "采石场分岔路",
-      description: "采石场内的重要分岔点，选择不同的道路",
+      description: "采石场内部第一站",
       images: [
         { src: "/images/女木岛/女木岛-采石场-分岔路-有光.bmp", label: "有光" },
         { src: "/images/女木岛/女木岛-采石场-分岔路-无光.bmp", label: "无光" }
+      ]
+    },
+    {
+      title: "窄路",
+      description: "采石场的一条窄路",
+      images: [
+        { src: "/images/女木岛/女木岛-窄路-有光.bmp", label: "有光" },
+        { src: "/images/女木岛/女木岛-窄路-无光.bmp", label: "无光" }
       ]
     }
   ]
@@ -589,13 +736,75 @@ const MegijimaPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>岛屿介绍</SectionTitle>
-          <Description>
-            女木岛是瀬戸内海中的一个小岛，以鬼岛传说而闻名。传说中，这里曾是恶鬼的栖息地，但如今已成为一个宁静美丽的观光胜地。岛上拥有壮观的海滩、神秘的洞穴和独特的艺术装置。
-          </Description>
-          <Description>
-            女木岛的海岸线曲折多变，形成了众多天然的海湾和奇特的岩石景观。岛上植被茂密，春夏季节满目翠绿，秋季则层林尽染，四季景色各有特色。
-          </Description>
+          <TabContainer>
+            <TabButton
+              active={activeTab === 'intro'}
+              tabType="intro"
+              onClick={() => setActiveTab('intro')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              🏝️ 岛屿介绍
+            </TabButton>
+            <TabButton
+              active={activeTab === 'guide'}
+              tabType="guide"
+              onClick={() => setActiveTab('guide')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              🗺️ 巡礼说明
+            </TabButton>
+          </TabContainer>
+
+          <AnimatePresence mode="wait">
+            {activeTab === 'intro' ? (
+              <ContentSection
+                key="intro"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                  <Description>
+                    女木岛是瀬戸内海中的一个小岛，以鬼岛传说而闻名。传说中，这里曾是恶鬼的栖息地，但如今已成为一个宁静美丽的观光胜地。
+                  </Description>
+                  <Description>
+                    女木岛的海岸线曲折多变，形成了众多天然的海湾和奇特的岩石景观。
+                  </Description>
+                </motion.div>
+              </ContentSection>
+            ) : (
+              <ContentSection
+                key="guide"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                  <Description>
+                    女木岛的巡礼场景集中在鬼岛大洞窟及其附近，可在女木港搭乘公交快速到达巡礼地点，步行会在路上耗费过多时间。
+                  </Description>
+                  <Description>
+                    女木岛共有五个巡礼点，分别是，秘密基地山路，山道，采石场入口，采石场分岔路，窄路。
+                  </Description>
+                  <Description>
+                    在下方找到所需图片，一一巡礼即可。
+                  </Description>
+                </motion.div>
+              </ContentSection>
+            )}
+          </AnimatePresence>
         </InfoCard>
 
         <motion.div
