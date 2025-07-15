@@ -164,6 +164,16 @@ const ChapterItem = styled(motion.div)<{ isActive: boolean }>`
     transform: translateX(15px) scale(1.02);
     box-shadow: 0 8px 25px rgba(10, 25, 50, 0.8);
     
+    /* 🌙 参考夜晚山路图片的颜色渐变：从左到右由浅入深 */
+    background: linear-gradient(
+      to right,
+      rgba(70, 130, 180, 0.3) 0%,    /* 浅蓝灰色 */
+      rgba(47, 79, 79, 0.5) 25%,     /* 深蓝灰色 */
+      rgba(25, 25, 112, 0.7) 50%,    /* 午夜蓝 */
+      rgba(13, 15, 25, 0.85) 75%,    /* 深夜蓝 */
+      rgba(8, 8, 16, 0.95) 100%      /* 最深黑夜色 */
+    );
+    
     /* 悬停时图标也变成夜空主题 */
     & > div:first-child {
       background: linear-gradient(45deg, 

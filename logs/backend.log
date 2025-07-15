@@ -1,9 +1,19 @@
-INFO:     Started server process [32765]
+nohup: ignoring input
+INFO:     Started server process [58317]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 未找到中文字体，使用Helvetica
-INFO:     127.0.0.1:55934 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60888 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60888 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60908 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49874 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49874 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58604 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58076 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58076 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43908 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43908 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55280 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55280 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49206 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49206 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55754 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55754 - "GET /api/music/playlist HTTP/1.1" 200 OK

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -150,66 +150,6 @@ const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
   z-index: 10;
 `
 
-const Ship = styled(motion.div)<{ x: number; y: number; rotation: number }>`
-  position: absolute;
-  font-size: 25px;
-  left: ${props => props.x}%;
-  top: ${props => props.y}%;
-  transform: translate(-50%, -50%) rotate(${props => props.rotation}deg);
-  z-index: 20;
-`
-
-const DialogBox = styled(motion.div)`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  z-index: 1000;
-  min-width: 300px;
-`
-
-const DialogOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-`
-
-const DialogTitle = styled.h3`
-  font-size: 24px;
-  color: #5d4037;
-  margin-bottom: 15px;
-`
-
-const DialogText = styled.p`
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 20px;
-`
-
-const DialogButton = styled.button`
-  background: linear-gradient(45deg, #87CEEB, #98E4D6);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  font-size: 16px;
-  color: #2E8B57;
-  cursor: pointer;
-  font-weight: 600;
-  
-  &:hover {
-    background: linear-gradient(45deg, #98E4D6, #87CEEB);
-  }
-`
-
 const ButtonContainer = styled.div`
   display: flex;
   gap: 20px;
@@ -270,112 +210,38 @@ interface Island {
   id: string
 }
 
-interface Position {
-  x: number
-  y: number
-}
-
 const islands: Island[] = [
   {
     id: 'megijima',
     name: '女木岛',
     icon: '🏝️',
     description: '以鬼岛传说而闻名的小岛，拥有美丽的海滩和独特的艺术装置。',
-    position: { x: 75, y: 45 } // 高松港上方一点
+    position: { x: 76, y: 70 }
   },
   {
     id: 'ogijima',
     name: '男木岛',
     icon: '🌊',
     description: '宁静的渔村小岛，保持着传统的日本乡村风貌和温馨的人情味。',
-    position: { x: 70, y: 30 } // 女木岛再上方一点
+    position: { x: 75, y: 45 }
   },
   {
     id: 'naoshima',
     name: '直岛',
     icon: '🎨',
     description: '现代艺术的圣地，汇集了众多知名艺术家的作品和美术馆。',
-    position: { x: 25, y: 20 } // 左上角
+    position: { x: 12, y: 20 }
   }
 ]
-
-const takamatsuPort: Position = { x: 85, y: 70 } // 右下角
 
 const CheckinPage: React.FC = () => {
   const navigate = useNavigate()
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
-  const [shipPosition, setShipPosition] = useState<Position>(takamatsuPort)
-  const [shipRotation, setShipRotation] = useState<number>(0)
-  const [isNavigating, setIsNavigating] = useState<boolean>(false)
-  const [showDialog, setShowDialog] = useState<boolean>(false)
-  const [arrivedIsland, setArrivedIsland] = useState<string>('')
-
-  const calculateRotation = (from: Position, to: Position): number => {
-    const dx = to.x - from.x
-    const dy = to.y - from.y
-    return Math.atan2(dy, dx) * (180 / Math.PI)
-  }
-
-  const animateShip = async (targetIsland: Island) => {
-    setIsNavigating(true)
-    setSelectedIsland(targetIsland.id)
-
-    const route: Position[] = []
-    
-    // 如果目标是男木岛，需要先经停女木岛
-    if (targetIsland.id === 'ogijima') {
-      const megijima = islands.find(island => island.id === 'megijima')!
-      route.push(megijima.position)
-    }
-    
-    route.push(targetIsland.position)
-
-    for (let i = 0; i < route.length; i++) {
-      const destination = route[i]
-      const currentPos = i === 0 ? takamatsuPort : route[i - 1]
-      
-      // 计算旋转角度
-      const rotation = calculateRotation(currentPos, destination)
-      setShipRotation(rotation)
-
-      // 航行动画
-      await new Promise<void>((resolve) => {
-        setShipPosition(destination)
-        // 使用setTimeout模拟动画完成
-        setTimeout(() => {
-          if (i === 0 && targetIsland.id === 'ogijima') {
-            // 在女木岛停靠
-            setTimeout(resolve, 1000) // 停靠1秒
-          } else {
-            resolve()
-          }
-        }, 2000) // 航行2秒
-      })
-    }
-
-    // 到达目的地
-    setIsNavigating(false)
-    setArrivedIsland(targetIsland.name)
-    setShowDialog(true)
-  }
 
   const handleIslandClick = (island: Island) => {
-    if (!isNavigating) {
-      animateShip(island)
-    }
-  }
-
-  const handleDialogClose = () => {
-    setShowDialog(false)
-    // 这里可以跳转到对应的岛屿页面
-    // navigate(`/island/${arrivedIsland}`)
-    
-    // 重置船只位置
-    setTimeout(() => {
-      setShipPosition(takamatsuPort)
-      setSelectedIsland(null)
-      setArrivedIsland('')
-    }, 500)
+    setSelectedIsland(island.id)
+    console.log('点击了岛屿:', island.name)
+    // 这里可以添加岛屿点击后的逻辑
   }
 
   const handleBack = () => {
@@ -426,17 +292,17 @@ const CheckinPage: React.FC = () => {
       >
         <MapFrame>
           <MapContainer>
-            <MapImage src="/images/打卡篇地图.png" alt="瀬戸内海地图" />
+            <MapImage src="/images/打卡篇地图-航线版.png" alt="瀬戸内海地图" />
             <MapOverlay>
               {/* 高松港起点 */}
               <LocationIcon
-                x={takamatsuPort.x}
-                y={takamatsuPort.y}
+                x={76}
+                y={90}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 1, duration: 0.5 }}
               >
-                🚀
+                🚢
               </LocationIcon>
 
               {/* 岛屿位置 */}
@@ -454,28 +320,6 @@ const CheckinPage: React.FC = () => {
                   {island.icon}
                 </LocationIcon>
               ))}
-
-              {/* 小船 */}
-              <Ship
-                x={shipPosition.x}
-                y={shipPosition.y}
-                rotation={shipRotation}
-                initial={{ scale: 0 }}
-                animate={{ 
-                  scale: 1,
-                  x: shipPosition.x,
-                  y: shipPosition.y,
-                  rotate: shipRotation
-                }}
-                transition={{ 
-                  scale: { delay: 1.5, duration: 0.5 },
-                  x: { duration: 2, ease: "easeInOut" },
-                  y: { duration: 2, ease: "easeInOut" },
-                  rotate: { duration: 0.5 }
-                }}
-              >
-                🚢
-              </Ship>
             </MapOverlay>
           </MapContainer>
         </MapFrame>
@@ -504,32 +348,6 @@ const CheckinPage: React.FC = () => {
           其他巡礼
         </OtherPilgrimageButton>
       </ButtonContainer>
-
-      {/* 到达对话框 */}
-      <AnimatePresence>
-        {showDialog && (
-          <>
-            <DialogOverlay
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleDialogClose}
-            />
-            <DialogBox
-              initial={{ opacity: 0, scale: 0.8, y: -50 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -50 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            >
-              <DialogTitle>🎉 航行完成！</DialogTitle>
-              <DialogText>{arrivedIsland}到了，请下船</DialogText>
-              <DialogButton onClick={handleDialogClose}>
-                确认下船
-              </DialogButton>
-            </DialogBox>
-          </>
-        )}
-      </AnimatePresence>
     </Container>
   )
 }
