@@ -1,0 +1,280 @@
+/**
+ * 说明：
+ * 本段代码实现了一个“网格动效 GridMotion”组件。
+ * 该组件基于 React 和 GSAP 动画库实现，支持将任意内容（文本、图片、JSX 元素等）以网格形式动态排列，并带有入场动画、悬停缩放、模糊聚焦等交互特效。
+ * 支持自定义每行/每列的数量、动画缓动（ease）、动画时长（duration）、动画延迟（stagger）、悬停缩放（scaleOnHover）、悬停缩放比例（hoverScale）、模糊聚焦（blurToFocus）、悬停色彩偏移（colorShiftOnHover）等参数。
+ * 适用于内容展示、图片墙、交互式网格等场景。
+ * 
+ * 依赖：gsap（需先安装依赖：npm i gsap）
+ * 
+ * 使用示例：
+ * import GridMotion from './GridMotion';
+ * 
+ * const items = [
+ *   'Item 1',
+ *   <div key='jsx-item-1'>自定义JSX内容</div>,
+ *   'https://images.unsplash.com/photo-xxx',
+ *   // ...更多项
+ * ];
+ * 
+ * <GridMotion
+ *   items={items}
+ *   columns={7}
+ *   ease="power3.out"
+ *   duration={0.6}
+ *   stagger={0.05}
+ *   scaleOnHover={true}
+ *   hoverScale={0.95}
+ *   blurToFocus={true}
+ *   colorShiftOnHover={false}
+ * />
+ * 
+ * 参数说明：
+ * - items：网格内容数组，支持字符串、图片链接、JSX 元素等
+ * - columns：每行显示的格子数，默认7
+ * - ease：动画缓动类型，默认"power3.out"
+ * - duration：动画时长，默认0.6
+ * - stagger：动画延迟，默认0.05
+ * - scaleOnHover：悬停是否缩放，默认true
+ * - hoverScale：悬停缩放比例，默认0.95
+ * - blurToFocus：入场是否模糊聚焦，默认true
+ * - colorShiftOnHover：悬停是否色彩偏移，默认false
+ * 
+ * 样式文件：GridMotion.css（需自行根据设计调整）
+ */
+
+Grid Motion
+Preview
+Code
+CLI
+Contribute
+installation
+npm i gsap
+usage
+import GridMotion from './GridMotion';
+  
+// note: you'll need to make sure the parent container of this component is sized properly
+const items = [
+  'Item 1',
+  <div key='jsx-item-1'>Custom JSX Content</div>,
+  'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'Item 2',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'Item 4',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'Item 5',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'Item 7',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'Item 8',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'Item 10',
+  <div key='jsx-item-3'>Custom JSX Content</div>,
+  'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'Item 11',
+  <div key='jsx-item-2'>Custom JSX Content</div>,
+  'Item 13',
+  <div key='jsx-item-4'>Custom JSX Content</div>,
+  'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'Item 14',
+  // Add more items as needed
+];
+
+<GridMotion items={items} />
+code
+Default
+
+Tailwind
+
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import './GridMotion.css';
+
+const GridMotion = ({ items = [], gradientColor = 'black' }) => {
+  const gridRef = useRef(null);
+  const rowRefs = useRef([]);
+  const mouseXRef = useRef(window.innerWidth / 2);
+
+  const totalItems = 28;
+  const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
+  const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
+
+  useEffect(() => {
+    gsap.ticker.lagSmoothing(0);
+
+    const handleMouseMove = (e) => {
+      mouseXRef.current = e.clientX;
+    };
+
+    const updateMotion = () => {
+      const maxMoveAmount = 300;
+      const baseDuration = 0.8;
+      const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
+
+      rowRefs.current.forEach((row, index) => {
+        if (row) {
+          const direction = index % 2 === 0 ? 1 : -1;
+          const moveAmount = ((mouseXRef.current / window.innerWidth) * maxMoveAmount - maxMoveAmount / 2) * direction;
+
+          gsap.to(row, {
+            x: moveAmount,
+            duration: baseDuration + inertiaFactors[index % inertiaFactors.length],
+            ease: 'power3.out',
+            overwrite: 'auto',
+          });
+        }
+      });
+    };
+
+    const removeAnimationLoop = gsap.ticker.add(updateMotion);
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      removeAnimationLoop();
+    };
+  }, []);
+
+  return (
+    <div className="noscroll loading" ref={gridRef}>
+      <section
+        className="intro"
+        style={{
+          background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
+        }}
+      >
+        <div className="gridMotion-container">
+          {[...Array(4)].map((_, rowIndex) => (
+            <div
+              key={rowIndex}
+              className="row"
+              ref={(el) => (rowRefs.current[rowIndex] = el)}
+            >
+              {[...Array(7)].map((_, itemIndex) => {
+                const content = combinedItems[rowIndex * 7 + itemIndex];
+                return (
+                  <div key={itemIndex} className="row__item">
+                    <div className="row__item-inner" style={{ backgroundColor: '#111' }}>
+                      {typeof content === 'string' && content.startsWith('http') ? (
+                        <div
+                          className="row__item-img"
+                          style={{
+                            backgroundImage: `url(${content})`,
+                          }}
+                        ></div>
+                      ) : (
+                        <div className="row__item-content">{content}</div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="fullview"></div>
+      </section>
+    </div>
+  );
+};
+
+export default GridMotion;
+CSS
+.noscroll {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.intro {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 250px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.gridMotion-container {
+  gap: 1rem;
+  flex: none;
+  position: relative;
+  width: 150vw;
+  height: 150vh;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: 100%;
+  transform: rotate(-15deg);
+  transform-origin: center center;
+  z-index: 2;
+}
+
+.row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(7, 1fr);
+  will-change: transform, filter;
+}
+
+.row__item {
+  position: relative;
+}
+
+.row__item-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.row__item-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: 50% 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.row__item-content {
+  padding: 1rem;
+  text-align: center;
+  z-index: 1;
+}
+
+.fullview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.fullview .row__item-inner {
+  border-radius: 0px;
+}
