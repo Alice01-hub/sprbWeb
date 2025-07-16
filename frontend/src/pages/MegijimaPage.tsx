@@ -726,7 +726,7 @@ const MegijimaPage: React.FC = () => {
             女木岛
             <Icon>👹</Icon>
           </Title>
-          <Subtitle>鬼岛传说的神秘小岛</Subtitle>
+          <Subtitle>神秘的传说鬼岛</Subtitle>
         </motion.div>
       </HeaderSection>
 
@@ -796,10 +796,10 @@ const MegijimaPage: React.FC = () => {
                     女木岛的巡礼场景集中在鬼岛大洞窟及其附近，可在女木港搭乘公交快速到达巡礼地点，步行会在路上耗费过多时间和体力。
                   </Description>
                   <Description>
-                    女木岛共有五个巡礼点，分别是，秘密基地山路，山道，采石场入口，采石场分岔路，窄路。（海边钢琴，海盗船原型）
+                    女木岛共有五个巡礼点，分别是，秘密基地山路，山道，采石场入口，采石场分岔路，窄路。
                   </Description>
                   <Description>
-                    巡礼点cg图可在下方自取。
+                  其他说明：海边钢琴属于海盗船原型，无法还原。
                   </Description>
                 </motion.div>
               </ContentSection>

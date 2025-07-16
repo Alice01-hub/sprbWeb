@@ -91,16 +91,16 @@ const IslandCard = styled(motion.div)<{ selected: boolean }>`
   border: ${props => props.selected ? '3px solid #FFA500' : 'none'};
 `
 
-const IslandIcon = styled.div`
-  font-size: 60px;
+const IslandIcon = styled.div<{ iconSize?: number }>`
+  font-size: ${props => props.iconSize || 60}px;
   margin-bottom: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   
   img {
-    width: 60px;
-    height: 60px;
+    width: ${props => props.iconSize || 60}px;
+    height: ${props => props.iconSize || 60}px;
     object-fit: contain;
   }
 `
@@ -312,6 +312,7 @@ interface Island {
   name: string
   icon: string
   iconType?: 'emoji' | 'image'
+  iconSize?: number // 新增图标大小参数
   description: string
   position: { x: number; y: number }
   id: string
@@ -322,15 +323,16 @@ const islands: Island[] = [
     id: 'megijima',
     name: '女木岛',
     icon: '👹',
-    description: '以鬼岛传说而闻名的小岛，拥有美丽的海滩和独特的艺术装置。',
+    description: '以鬼岛传说而闻名的小岛，欧线的重要巡礼点',
     position: { x: 76, y: 70 }
   },
   {
     id: 'ogijima',
     name: '男木岛',
-    icon: '/images/男木岛/灯塔.png',
+    icon: '/images/男木岛/男木岛-灯塔图标.png',
     iconType: 'image',
-    description: '宁静的渔村小岛，保持着传统的日本乡村风貌和温馨的人情味。',
+    iconSize: 80, // 设置灯塔图标大小为80px
+    description: '宁静的渔村小岛，与主角团相遇的主要地点。',
     position: { x: 75, y: 45 }
   },
   {
@@ -400,7 +402,7 @@ const CheckinPage: React.FC = () => {
             避免手机频繁切换页面影响体验，让手机专注于拍照。
           </span>
           <span style={{ display: 'block', marginTop: '8px' }}>
-            右键下载需要的游戏CG。
+            各岛屿页面可右键下载需要的游戏CG。
           </span>
         </NoticeText>
       </NoticeBox>
@@ -417,7 +419,7 @@ const CheckinPage: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => handleIslandClick(island)}
           >
-            <IslandIcon>
+            <IslandIcon iconSize={island.iconSize}>
               {island.iconType === 'image' ? (
                 <img src={island.icon} alt={island.name} />
               ) : (

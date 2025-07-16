@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import ImageSlider from '../components/ImageSlider'
+
+// 地图图标接口定义
+interface CheckInIcon {
+  x: number
+  y: number
+  emoji?: string
+  icon?: string
+  title: string
+  iconType: 'emoji' | 'image'
+  size: number
+}
 
 const Container = styled.div`
   min-height: 100vh;
@@ -45,6 +57,8 @@ const Title = styled.h1`
 
 const Icon = styled.span`
   font-size: 60px;
+  display: inline-flex;
+  align-items: center;
 `
 
 const Subtitle = styled.h2`
@@ -71,6 +85,8 @@ const InfoCard = styled(motion.div)`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(20px);
   border: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 `
 
 const SectionTitle = styled.h3`
@@ -89,13 +105,86 @@ const Description = styled.p`
   margin-bottom: 20px;
   text-align: left;
   text-indent: 2em;
+  position: relative;
+`
+
+const MapFrame = styled.div`
+  width: fit-content;
+  max-width: 95%;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  margin: 30px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const MapContainer = styled.div`
+  width: fit-content;
+  background: #f0f8ff;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const MapImage = styled.img<{ scale: number }>`
+  width: ${props => props.scale * 800}px;
+  max-width: 100vw;
+  height: auto;
+  border-radius: 20px;
+  display: block;
+`
+
+const MapOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  pointer-events: none;
+`
+
+const LocationIcon = styled(motion.div)<{ x: number; y: number; iconSize: number }>`
+  position: absolute;
+  font-size: ${props => props.iconSize}px;
+  cursor: pointer;
+  left: ${props => props.x}%;
+  top: ${props => props.y}%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: auto;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const ImageGallery = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 20px;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    max-height: 600px;
+  }
+  @media (max-width: 1024px) and (min-width: 769px) {
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 400px;
+  }
 `
 
 const ImageCard = styled(motion.div)`
@@ -104,43 +193,29 @@ const ImageCard = styled(motion.div)`
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
   }
 `
 
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: #666;
-  border-bottom: 2px solid rgba(93, 64, 55, 0.1);
+const LocationTitle = styled.h4`
+  padding: 15px 15px 5px 15px;
+  font-size: 18px;
+  color: #5d4037;
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+  font-family: 'KaiTi', 'SimKai', serif;
 `
 
 const ImageCaption = styled.p`
-  padding: 15px;
+  padding: 5px 15px 15px 15px;
   font-size: 14px;
   color: #666;
   text-align: center;
   margin: 0;
-`
-
-const DevelopmentStatus = styled.div`
-  background: linear-gradient(45deg, #87ceeb, #add8e6);
-  color: white;
-  padding: 20px;
-  border-radius: 15px;
-  font-size: 18px;
-  font-weight: 600;
-  text-align: center;
-  margin: 20px 0;
-  box-shadow: 0 8px 20px rgba(135, 206, 235, 0.3);
+  line-height: 1.4;
 `
 
 const ButtonContainer = styled.div`
@@ -165,7 +240,6 @@ const BackButton = styled(motion.button)`
   gap: 10px;
   font-weight: 600;
   z-index: 100;
-  
   &:hover {
     background: linear-gradient(45deg, #98E4D6, #87CEEB);
     transform: translateY(-3px);
@@ -173,13 +247,416 @@ const BackButton = styled(motion.button)`
   }
 `
 
+// Tab切换组件
+const TabContainer = styled.div`
+  display: flex;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  backdrop-filter: blur(10px);
+`
+
+const TabButton = styled(motion.button)<{ active: boolean; tabType: 'intro' | 'guide' }>`
+  flex: 1;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 10px;
+  background: ${props => {
+    if (props.active) {
+      return props.tabType === 'intro' 
+        ? 'linear-gradient(135deg, #ff6b35, #ffa500)'
+        : 'linear-gradient(135deg, #87ceeb, #98e4d6)';
+    }
+    return 'transparent';
+  }};
+  color: ${props => {
+    if (props.active) {
+      return props.tabType === 'intro' ? 'white' : '#2e8b57';
+    }
+    return '#8d6e63';
+  }};
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'KaiTi', 'SimKai', serif;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: ${props => props.active 
+    ? (props.tabType === 'intro' 
+      ? '0 6px 20px rgba(255, 107, 53, 0.3)' 
+      : '0 6px 20px rgba(135, 206, 235, 0.3)')
+    : 'none'};
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.3), 
+      transparent
+    );
+    transition: left 0.8s ease;
+    z-index: 1;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: ${props => 
+      props.tabType === 'intro' 
+        ? 'linear-gradient(135deg, #ff8a50, #ffb347)'
+        : 'linear-gradient(135deg, #98d8eb, #a8e6d2)'};
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+    z-index: -1;
+  }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${props => 
+      props.tabType === 'intro' 
+        ? '0 8px 25px rgba(255, 107, 53, 0.4)'
+        : '0 8px 25px rgba(135, 206, 235, 0.4)'};
+    &::before {
+      left: 100%;
+    }
+    &::after {
+      opacity: ${props => props.active ? 0 : 0.6};
+    }
+  }
+  &:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+  }
+`
+
+const ContentSection = styled(motion.div)`
+  width: 100%;
+`
+
+// 图片查看器组件
+interface ImageViewerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  images: Array<{ src: string; label: string }>;
+  currentIndex: number;
+  onPrevious: () => void;
+  onNext: () => void;
+  title: string;
+}
+
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+`
+
+const ModalContent = styled(motion.div)`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`
+
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+`
+
+const ModalInfo = styled.div`
+  text-align: center;
+  color: white;
+`
+
+const ModalTitle = styled.h3`
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  color: #fff;
+  font-family: 'KaiTi', 'SimKai', serif;
+`
+
+const ModalLabel = styled.p`
+  font-size: 18px;
+  margin: 0;
+  color: #ccc;
+`
+
+const CloseButton = styled(motion.button)`
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white;
+  font-size: 20px;
+  cursor: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+`
+
+const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
+  position: absolute;
+  top: 50%;
+  ${props => props.direction === 'prev' ? 'left: -60px;' : 'right: -60px;'}
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  color: white;
+  font-size: 24px;
+  cursor: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+  @media (max-width: 768px) {
+    ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
+    top: auto;
+    bottom: 20px;
+  }
+`
+
 const NaoshimaPage: React.FC = () => {
   const navigate = useNavigate()
-
+  // Tab切换
+  const [activeTab, setActiveTab] = useState<'intro' | 'guide'>('intro')
+  // 图片查看器状态
+  const [imageViewer, setImageViewer] = useState({
+    isOpen: false,
+    images: [] as Array<{ src: string; label: string }>,
+    currentIndex: 0,
+    title: ''
+  })
+  // 地图缩放比例
+  const mapScale = 1.0
+  // 直岛10个打卡点（坐标可后续微调）
+  const checkInIcons: CheckInIcon[] = [
+    { x: 10, y: 80, icon: '/images/直岛/直岛-港口-有船.bmp', title: '港口', iconType: 'image', size: 36 },
+    { x: 25, y: 60, icon: '/images/直岛/直岛-小卖部.bmp', title: '小卖部', iconType: 'image', size: 36 },
+    { x: 40, y: 70, icon: '/images/直岛/直岛-食堂.bmp', title: '食堂', iconType: 'image', size: 36 },
+    { x: 60, y: 60, icon: '/images/直岛/直岛-神社.bmp', title: '神社', iconType: 'image', size: 36 },
+    { x: 80, y: 50, icon: '/images/直岛/直岛-惠美须神社鸟居.png', title: '惠美须神社鸟居', iconType: 'image', size: 36 },
+    { x: 70, y: 30, icon: '/images/直岛/直岛-八幡神社石阶.jpg', title: '八幡神社石阶', iconType: 'image', size: 36 },
+    { x: 50, y: 20, icon: '/images/直岛/直岛-蔷薇庄.png', title: '蔷薇庄', iconType: 'image', size: 36 },
+    { x: 30, y: 30, icon: '/images/直岛/直岛-灵弹.bmp', title: '灵弹', iconType: 'image', size: 36 },
+    { x: 20, y: 50, icon: '/images/直岛/直岛-积浦海岸.jpg', title: '积浦海岸', iconType: 'image', size: 36 },
+    { x: 55, y: 85, icon: '/images/直岛/直岛-海水浴场.bmp', title: '海水浴场', iconType: 'image', size: 36 },
+    { x: 45, y: 95, icon: '/images/直岛/直岛-白羽钓点.bmp', title: '白羽钓点', iconType: 'image', size: 36 },
+  ]
+  // 打卡点图片与描述
+  const checkInLocations = [
+    {
+      title: '港口',
+      description: '直岛的主要交通枢纽，旅程的起点。',
+      images: [
+        { src: '/images/直岛/直岛-港口-无船.bmp', label: '白天-无船' },
+        { src: '/images/直岛/直岛-港口-无船-黄昏.bmp', label: '黄昏-无船' },
+        { src: '/images/直岛/直岛-港口-无船-夜晚.bmp', label: '夜晚-无船' },
+        { src: '/images/直岛/直岛-港口-有船.bmp', label: '白天-有船' },
+        { src: '/images/直岛/直岛-港口-有船-黄昏.bmp', label: '黄昏-有船' },
+        { src: '/images/直岛/直岛-港口-有船-夜晚.bmp', label: '夜晚-有船' },
+        { src: '/images/直岛/直岛-港口-下雨.bmp', label: '下雨' },
+      ]
+    },
+    {
+      title: '小卖部',
+      description: '补给和休息的好地方。',
+      images: [
+        { src: '/images/直岛/直岛-小卖部.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-小卖部-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-小卖部-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '神社',
+      description: '岛上的精神寄托。',
+      images: [
+        { src: '/images/直岛/直岛-神社.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-神社-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-神社-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '灵弹',
+      description: '神秘的灵弹场景。',
+      images: [
+        { src: '/images/直岛/直岛-灵弹.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-灵弹-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-灵弹-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '海狸家门前',
+      description: '加藤家门前的公路。',
+      images: [
+        { src: '/images/直岛/直岛-海狸家门前.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-海狸家门前-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-海狸家门前-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '海狸家院子',
+      description: '加藤家院子。',
+      images: [
+        { src: '/images/直岛/直岛-海狸家院子.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-海狸家院子-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-海狸家院子-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '海狸家客厅',
+      description: '加藤家客厅。',
+      images: [
+        { src: '/images/直岛/直岛-海狸家客厅.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-海狸家客厅-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-海狸家客厅-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '海狸家厨房',
+      description: '加藤家厨房。',
+      images: [
+        { src: '/images/直岛/直岛-海狸家厨房.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-海狸家厨房-中午.bmp', label: '中午' },
+        { src: '/images/直岛/直岛-海狸家厨房-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '海狸家卧室',
+      description: '加藤家卧室。',
+      images: [
+        { src: '/images/直岛/直岛-海狸家卧室-无床.bmp', label: '白天-无床' },
+        { src: '/images/直岛/直岛-海狸家卧室-无床-黄昏.bmp', label: '黄昏-无床' },
+        { src: '/images/直岛/直岛-海狸家卧室-无床-开灯-夜晚.bmp', label: '夜晚-无床-开灯' },
+        { src: '/images/直岛/直岛-海狸家卧室-无床-关灯-夜晚.bmp', label: '夜晚-无床-关灯' },
+        { src: '/images/直岛/直岛-海狸家卧室-有床.bmp', label: '白天-有床' },
+        { src: '/images/直岛/直岛-海狸家卧室-有床-黄昏.bmp', label: '黄昏-有床' },
+        { src: '/images/直岛/直岛-海狸家卧室-有床-开灯-夜晚.bmp', label: '夜晚-有床-开灯' },
+        { src: '/images/直岛/直岛-海狸家卧室-有床-关灯-夜晚.bmp', label: '夜晚-有床-关灯' },
+      ]
+    },
+    {
+      title: '食堂',
+      description: '享受地道美食的好去处。',
+      images: [
+        { src: '/images/直岛/直岛-食堂.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-食堂-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-食堂-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '八幡神社石阶',
+      description: '历史悠久的石阶。',
+      images: [
+        { src: '/images/直岛/直岛-八幡神社石阶.jpg', label: '八幡神社石阶' },
+      ]
+    },
+    {
+      title: '积浦海岸',
+      description: '美丽的海岸线风光。',
+      images: [
+        { src: '/images/直岛/直岛-积浦海岸.jpg', label: '积浦海岸' },
+      ]
+    },
+    {
+      title: '白羽钓点',
+      description: '白羽钓鱼的地方',
+      images: [
+        { src: '/images/直岛/直岛-白羽钓点.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-白羽钓点-黄昏.bmp', label: '黄昏' },
+        { src: '/images/直岛/直岛-白羽钓点-夜晚.bmp', label: '夜晚' },
+      ]
+    },
+    {
+      title: '惠美须神社鸟居',
+      description: '独特的鸟居景观。',
+      images: [
+        { src: '/images/直岛/直岛-惠美须神社鸟居.png', label: '惠美须神社鸟居' },
+      ]
+    },
+    {
+      title: '蔷薇庄',
+      description: '充满回忆的住宿地。',
+      images: [
+        { src: '/images/直岛/直岛-蔷薇庄.png', label: '蔷薇庄' },
+      ]
+    },
+    {
+      title: '海水浴场',
+      description: '夏日戏水的好去处。',
+      images: [
+        { src: '/images/直岛/直岛-海水浴场.bmp', label: '白天' },
+        { src: '/images/直岛/直岛-海水浴场-夜晚.bmp', label: '夜晚' },
+        { src: '/images/直岛/直岛-海水浴场-黄昏.bmp', label: '黄昏' },
+      ]
+    },
+    {
+      title: '游戏主界面',
+      description: '游戏主界面。',
+      images: [
+        { src: '/images/直岛/直岛-游戏主界面.png', label: '游戏主界面' },
+      ]
+    },
+  ]
+  // 打开图片查看器
+  const openImageViewer = (images: Array<{ src: string; label: string }>, currentIndex: number, title: string) => {
+    setImageViewer({
+      isOpen: true,
+      images,
+      currentIndex,
+      title
+    })
+  }
+  // 关闭图片查看器
+  const closeImageViewer = () => {
+    setImageViewer(prev => ({ ...prev, isOpen: false }))
+  }
+  // 切换到上一张图片
+  const goToPreviousImage = () => {
+    setImageViewer(prev => ({
+      ...prev,
+      currentIndex: (prev.currentIndex - 1 + prev.images.length) % prev.images.length
+    }))
+  }
+  // 切换到下一张图片
+  const goToNextImage = () => {
+    setImageViewer(prev => ({
+      ...prev,
+      currentIndex: (prev.currentIndex + 1) % prev.images.length
+    }))
+  }
   const handleBack = () => {
     navigate('/checkin')
   }
-
   return (
     <Container>
       <HeaderSection>
@@ -196,74 +673,137 @@ const NaoshimaPage: React.FC = () => {
           <Subtitle>现代艺术的圣地</Subtitle>
         </motion.div>
       </HeaderSection>
-
       <ContentContainer>
         <InfoCard
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <SectionTitle>岛屿介绍</SectionTitle>
-          <Description>
-            直岛是瀬戸内海中最著名的艺术岛屿，被誉为"现代艺术的圣地"。这里汇集了众多世界知名艺术家的作品，包括安藤忠雄、草间弥生、詹姆斯·特瑞尔等大师的杰作。
-          </Description>
-          <Description>
-            岛上的地中美术馆、李禹焕美术馆、黄南瓜等著名艺术装置已成为朝圣之地。艺术与自然的完美融合，让直岛成为了一座独特的"艺术岛"，吸引着来自世界各地的艺术爱好者。
-          </Description>
+          <TabContainer>
+            <TabButton
+              active={activeTab === 'intro'}
+              tabType="intro"
+              onClick={() => setActiveTab('intro')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              🏝️ 岛屿介绍
+            </TabButton>
+            <TabButton
+              active={activeTab === 'guide'}
+              tabType="guide"
+              onClick={() => setActiveTab('guide')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              🗺️ 巡礼说明
+            </TabButton>
+          </TabContainer>
+          <AnimatePresence mode="wait">
+            {activeTab === 'intro' ? (
+              <ContentSection
+                key="intro"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                  <Description>
+                    直岛是瀬户内海中著名的艺术岛屿，拥有丰富的自然与人文景观，是现代艺术与传统生活完美融合的代表。
+                  </Description>
+                  <Description>
+                    岛上有多处特色打卡点，等待你的探索与发现。
+                  </Description>
+                </motion.div>
+              </ContentSection>
+            ) : (
+              <ContentSection
+                key="guide"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                  <Description>
+                    直岛共有10个打卡点，推荐步行巡礼，依次体验港口、小卖部、食堂、神社、惠美须神社鸟居、八幡神社石阶、蔷薇庄、灵弹、积浦海岸、海水浴场等地的独特风光。
+                  </Description>
+                  <Description>
+                    建议合理安排时间，部分景点适合拍照留念，部分景点可体验当地生活。
+                  </Description>
+                </motion.div>
+              </ContentSection>
+            )}
+          </AnimatePresence>
         </InfoCard>
-
-        <InfoCard
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <SectionTitle>艺术景点</SectionTitle>
-          <ImageGallery>
-            <ImageCard
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ImagePlaceholder>
-                地中美术馆
-              </ImagePlaceholder>
-              <ImageCaption>安藤忠雄设计的地下美术馆</ImageCaption>
-            </ImageCard>
-            <ImageCard
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ImagePlaceholder>
-                黄南瓜
-              </ImagePlaceholder>
-              <ImageCaption>草间弥生的经典作品</ImageCaption>
-            </ImageCard>
-            <ImageCard
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ImagePlaceholder>
-                李禹焕美术馆
-              </ImagePlaceholder>
-              <ImageCaption>极简主义艺术的代表</ImageCaption>
-            </ImageCard>
-          </ImageGallery>
-        </InfoCard>
-
+          <MapFrame>
+            <MapContainer>
+              <MapImage scale={mapScale} src="/images/直岛/直岛地图-路线版.png" alt="直岛地图" />
+              {/* <MapOverlay>
+                {checkInIcons.map((icon, index) => (
+                  <LocationIcon
+                    key={icon.title}
+                    x={icon.x}
+                    y={icon.y}
+                    iconSize={icon.size}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
+                    whileHover={{ scale: 1.2 }}
+                    title={icon.title}
+                  >
+                    <img src={icon.icon} alt={icon.title} />
+                  </LocationIcon>
+                ))}
+              </MapOverlay> */}
+            </MapContainer>
+          </MapFrame>
+        </motion.div>
         <InfoCard
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <SectionTitle>开发状态</SectionTitle>
-          <DevelopmentStatus>
-            🚧 页面正在开发中 🚧
-            <br />
-            <br />
-            更多精彩内容即将上线，敬请期待！
-          </DevelopmentStatus>
+          <SectionTitle>打卡地点</SectionTitle>
+          <ImageGallery>
+            {checkInLocations.map((location) => (
+              <ImageCard
+                key={location.title}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => openImageViewer(location.images, 0, location.title)}
+                style={{ cursor: 'pointer' }}
+              >
+                <ImageSlider
+                  images={location.images}
+                  title={location.title}
+                  autoPlay={true}
+                  interval={4000}
+                  onImageClick={(imageIndex) => openImageViewer(location.images, imageIndex, location.title)}
+                />
+                <LocationTitle>{location.title}</LocationTitle>
+                <ImageCaption>{location.description}</ImageCaption>
+              </ImageCard>
+            ))}
+          </ImageGallery>
         </InfoCard>
       </ContentContainer>
-
       <ButtonContainer>
         <BackButton
           onClick={handleBack}
@@ -276,7 +816,113 @@ const NaoshimaPage: React.FC = () => {
           返回打卡篇
         </BackButton>
       </ButtonContainer>
+      {/* 图片查看器模态框 */}
+      <ImageViewer
+        isOpen={imageViewer.isOpen}
+        onClose={closeImageViewer}
+        images={imageViewer.images}
+        currentIndex={imageViewer.currentIndex}
+        onPrevious={goToPreviousImage}
+        onNext={goToNextImage}
+        title={imageViewer.title}
+      />
     </Container>
+  )
+}
+
+// 图片查看器组件
+const ImageViewer: React.FC<ImageViewerProps> = ({
+  isOpen,
+  onClose,
+  images,
+  currentIndex,
+  onPrevious,
+  onNext,
+  title
+}) => {
+  if (!isOpen || images.length === 0) return null
+  return (
+    <AnimatePresence>
+      <ModalOverlay
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
+        <ModalContent
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <CloseButton
+            onClick={onClose}
+            whileHover={{ 
+              scale: 1.05,
+              background: "rgba(255, 255, 255, 0.2)",
+              borderColor: "rgba(255, 255, 255, 0.5)"
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 400,
+              damping: 25,
+              duration: 0.15
+            }}
+          >
+            ✕
+          </CloseButton>
+          {images.length > 1 && (
+            <>
+              <NavigationButton
+                direction="prev"
+                onClick={onPrevious}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.2)",
+                  borderColor: "rgba(255, 255, 255, 0.5)"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
+              >
+                ‹
+              </NavigationButton>
+              <NavigationButton
+                direction="next"
+                onClick={onNext}
+                whileHover={{ 
+                  scale: 1.05,
+                  background: "rgba(255, 255, 255, 0.2)",
+                  borderColor: "rgba(255, 255, 255, 0.5)"
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  duration: 0.15
+                }}
+              >
+                ›
+              </NavigationButton>
+            </>
+          )}
+          <ModalImage
+            src={images[currentIndex]?.src}
+            alt={`${title} - ${images[currentIndex]?.label}`}
+          />
+          <ModalInfo>
+            <ModalTitle>{title}</ModalTitle>
+            <ModalLabel>{images[currentIndex]?.label}</ModalLabel>
+          </ModalInfo>
+        </ModalContent>
+      </ModalOverlay>
+    </AnimatePresence>
   )
 }
 

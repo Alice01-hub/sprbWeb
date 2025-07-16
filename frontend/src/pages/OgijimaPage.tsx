@@ -653,7 +653,7 @@ const OgijimaPage: React.FC = () => {
   // size参数控制图标大小，单位为像素 (建议范围: 16-40)
   const checkInIcons: CheckInIcon[] = [
     { x: 28, y: 78, emoji: '🏊', title: '泳池', iconType: 'emoji', size: 24 },
-    { x: 50, y: 76, icon: '/images/男木岛/男木岛-鸥相遇小道图标.png', title: '鸥相遇小道', iconType: 'image', size: 50 },
+    { x: 51, y: 78, icon: '/images/男木岛/男木岛-鸥相遇小道图标.png', title: '鸥相遇小道', iconType: 'image', size: 50 },
     { x: 23, y: 74, emoji: '🏛️', title: '鸟白岛役场', iconType: 'emoji', size: 24 },
     { x: 28, y: 76, icon: '/images/男木岛/男木岛-秘密基地图标.png', title: '秘密基地', iconType: 'image', size: 35 },
     { x: 60, y: 3, icon: '/images/男木岛/男木岛-灯塔图标.png', title: '灯塔', iconType: 'image', size: 32 },
@@ -668,7 +668,7 @@ const OgijimaPage: React.FC = () => {
   const checkInLocations = [
     {
       title: "泳池",
-      description: "夏日回忆的重要场所",
+      description: "与白羽相遇的地方",
       images: [
         { src: "/images/男木岛/男木岛-泳池.bmp", label: "白天" },
         { src: "/images/男木岛/男木岛-泳池-黄昏.bmp", label: "黄昏" },
@@ -695,7 +695,7 @@ const OgijimaPage: React.FC = () => {
     },
     {
       title: "秘密基地",
-      description: "充满神秘色彩的隐秘场所",
+      description: "与天善打乒乓球的地方",
       images: [
         { src: "/images/男木岛/男木岛-秘密基地.bmp", label: "白天" },
         { src: "/images/男木岛/男木岛-秘密基地-黄昏.bmp", label: "黄昏" },
@@ -703,8 +703,8 @@ const OgijimaPage: React.FC = () => {
       ]
     },
     {
-      title: "灯塔",
-      description: "指引方向的重要地标",
+      title: "紬的灯塔",
+      description: "与小紬相遇的地方",
       images: [
         { src: "/images/男木岛/男木岛-灯塔.bmp", label: "白天" },
         { src: "/images/男木岛/男木岛-灯塔-黄昏.bmp", label: "黄昏" },
@@ -714,7 +714,7 @@ const OgijimaPage: React.FC = () => {
     },
     {
       title: "苍睡觉小道",
-      description: "宁静的休憩之地",
+      description: "与苍相遇的地方",
       images: [
         { src: "/images/男木岛/男木岛-苍睡觉小道.bmp", label: "白天" },
         { src: "/images/男木岛/男木岛-苍睡觉小道-黄昏.bmp", label: "黄昏" },
@@ -723,28 +723,28 @@ const OgijimaPage: React.FC = () => {
     },
     {
       title: "静久神社",
-      description: "岛上的神圣之地",
+      description: "与静久路过的鸟居",
       images: [
         { src: "/images/男木岛/男木岛-静久神社图.jpg", label: "静久神社" }
       ]
     },
     {
       title: "鬼姬神山识之墓",
-      description: "充满传说的古墓",
+      description: "与。。。",
       images: [
         { src: "/images/男木岛/男木岛-鬼姬神山识之墓.png", label: "鬼姬神山识之墓" }
       ]
     },
     {
       title: "放送塔",
-      description: "岛上的通信设施",
+      description: "美希等爸爸妈妈的地点",
       images: [
         { src: "/images/男木岛/男木岛-放送塔.jpg", label: "放送塔" }
       ]
     },
     {
       title: "防波堤",
-      description: "保护港口的重要设施",
+      description: "白羽主视觉",
       images: [
         { src: "/images/男木岛/男木岛-防波堤.png", label: "防波堤" }
       ]
@@ -795,9 +795,9 @@ const OgijimaPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>
-            <Icon><img src="/images/男木岛/灯塔.png" alt="灯塔" /></Icon>
+            <Icon><img src="/images/男木岛/男木岛-灯塔图标.png" alt="灯塔" /></Icon>
             男木岛
-            <Icon><img src="/images/男木岛/灯塔.png" alt="灯塔" /></Icon>
+            <Icon><img src="/images/男木岛/男木岛-灯塔图标.png" alt="灯塔" /></Icon>
           </Title>
           <Subtitle>宁静的猫岛渔村</Subtitle>
         </motion.div>
@@ -845,10 +845,10 @@ const OgijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    男木岛是瀬戸内海中的一个宁静小岛，以其传统的渔村风貌而闻名。这里保持着浓厚的日本乡村气息，居民们世代以渔业为生，岛上的生活节奏缓慢而悠然。
+                    男木岛是瀬戸内海中的一个宁静小岛，以其传统的渔村风貌而闻名。这里的居民世代以渔业为生，岛上的生活节奏缓慢而悠然。
                   </Description>
                   <Description>
-                    男木岛的街道狭窄而蜿蜒，传统的木造房屋错落有致地分布在山坡上。岛上的猫咪特别多，被称为"猫岛"，这些可爱的猫咪已经成为了岛上的特色之一。
+                    男木岛的猫咪特别多，被称为"猫岛"，这些可爱的猫咪是岛上的特色之一。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -866,13 +866,34 @@ const OgijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    男木岛的巡礼场景分布在岛屿的各个角落，从港口到山顶，每个地方都有着独特的故事和回忆。建议携带舒适的步行鞋，因为岛上多为山路和石阶。
+                    男木岛的巡礼路线主要分为南北两个方向，北边最远的位置是灯塔，南边最远的位置是和鸥相遇的缺口栏杆。
                   </Description>
                   <Description>
-                    男木岛共有10个巡礼点，其中9个可拍照，8个可还原。主要包括泳池、灯塔、秘密基地等经典场景，每个地点都承载着夏日的美好回忆。
+                    男木岛共有10个巡礼点，其中9个可拍照，8个可还原，巡礼推荐路线如下：
                   </Description>
                   <Description>
-                    巡礼点CG图可在下方自取，建议按照地图标识的路线进行游览，既能节省体力，又能完整体验岛上的各个精彩场景。
+                    北边：放送塔 → 苍睡觉小道 → 鬼姬神山识之墓 → 灯塔
+                  </Description>
+                  <Description>
+                    中间：放送塔 → 静久神社
+                  </Description>
+                  <Description>
+                    南边：放送塔 → 鸟白岛役场 →  防波堤 → 秘密基地（泳池） → 鸥相遇小道
+                  </Description>
+                  <Description>
+                    其他说明：
+                    <div style={{ textIndent: '2em' }}>
+                        1. 男木岛的巡礼方式为步行，灯塔距离较远，请安排好时间。
+                      </div>
+                      <div style={{ textIndent: '2em' }}>
+                        2. 放送塔上岛即可看见，可以作为男木岛巡礼起点。
+                      </div>
+                      <div style={{ textIndent: '2em' }}>
+                        3. 两个点无法还原，秘密基地属于丰爷简单自建，泳池禁止拍照。
+                      </div>
+                      <div style={{ textIndent: '2em' }}>
+                        4. 有时间可以和丰爷聊天，丰爷人很好，也是SP粉。
+                      </div>
                   </Description>
                 </motion.div>
               </ContentSection>
