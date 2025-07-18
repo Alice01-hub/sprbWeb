@@ -635,45 +635,45 @@ const MegijimaPage: React.FC = () => {
       title: "秘密基地山路",
       description: "通往秘密基地的山路",
       images: [
-        { src: "/images/女木岛/女木岛-秘密基地山路.bmp", label: "白天" },
-        { src: "/images/女木岛/女木岛-秘密基地山路-黄昏.bmp", label: "黄昏" },
-        { src: "/images/女木岛/女木岛-秘密基地山路-夜晚.bmp", label: "夜晚" },
-        { src: "/images/女木岛/女木岛-秘密基地山路-深夜.bmp", label: "深夜" }
+        { src: "images/webps/女木岛/女木岛_女木岛-秘密基地山路.webp", label: "白天" },
+        { src: "images/webps/女木岛/女木岛_女木岛-秘密基地山路-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/女木岛/女木岛_女木岛-秘密基地山路-夜晚.webp", label: "夜晚" },
+        { src: "images/webps/女木岛/女木岛_女木岛-秘密基地山路-深夜.webp", label: "深夜" }
       ]
     },
     {
       title: "山道",
       description: "小苍捕捉七影碟的地点",
       images: [
-        { src: "/images/女木岛/女木岛-山道.bmp", label: "白天" },
-        { src: "/images/女木岛/女木岛-山道-黄昏.bmp", label: "黄昏" },
-        { src: "/images/女木岛/女木岛-山道-夜晚.bmp", label: "夜晚" },
-        { src: "/images/女木岛/女木岛-山道-深夜.bmp", label: "深夜" }
+        { src: "images/webps/女木岛/女木岛_女木岛-山道.webp", label: "白天" },
+        { src: "images/webps/女木岛/女木岛_女木岛-山道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/女木岛/女木岛_女木岛-山道-夜晚.webp", label: "夜晚" },
+        { src: "images/webps/女木岛/女木岛_女木岛-山道-深夜.webp", label: "深夜" }
       ]
     },
     {
       title: "采石场入口",
       description: "和小欧冒险的重要场所",
       images: [
-        { src: "/images/女木岛/女木岛-采石场入口.bmp", label: "白天" },
-        { src: "/images/女木岛/女木岛-采石场入口-黄昏.bmp", label: "黄昏" },
-        { src: "/images/女木岛/女木岛-采石场入口-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/女木岛/女木岛_女木岛-采石场入口.webp", label: "白天" },
+        { src: "images/webps/女木岛/女木岛_女木岛-采石场入口-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/女木岛/女木岛_女木岛-采石场入口-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "采石场分岔路",
       description: "采石场内部第一站",
       images: [
-        { src: "/images/女木岛/女木岛-采石场-分岔路-有光.bmp", label: "有光" },
-        { src: "/images/女木岛/女木岛-采石场-分岔路-无光.bmp", label: "无光" }
+        { src: "images/webps/女木岛/女木岛_女木岛-采石场-分岔路-有光.webp", label: "有光" },
+        { src: "images/webps/女木岛/女木岛_女木岛-采石场-分岔路-无光.webp", label: "无光" }
       ]
     },
     {
       title: "窄路",
       description: "采石场的一条窄路",
       images: [
-        { src: "/images/女木岛/女木岛-窄路-有光.bmp", label: "有光" },
-        { src: "/images/女木岛/女木岛-窄路-无光.bmp", label: "无光" }
+        { src: "images/webps/女木岛/女木岛_女木岛-窄路-有光.webp", label: "有光" },
+        { src: "images/webps/女木岛/女木岛_女木岛-窄路-无光.webp", label: "无光" }
       ]
     }
   ]
@@ -814,7 +814,7 @@ const MegijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="/images/女木岛/女木岛地图-线路版.png" alt="女木岛地图" />
+              <MapImage scale={mapScale} src="images/webps/女木岛/女木岛_女木岛地图-线路版.webp" alt="女木岛地图" />
               <MapOverlay>
                 {/* 景点标记 */}
                 <LocationIcon

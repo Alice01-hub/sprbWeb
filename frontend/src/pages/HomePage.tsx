@@ -312,7 +312,7 @@ const HomePage: React.FC = () => {
               <Title>Summer Pockets巡礼日记</Title>
               <CoverImageContainer>
                 <CoverImage 
-                  src="/images/sprb封面图.png" 
+                  src="images/webps/sprb封面图.webp" 
                   alt="Summer Pockets 封面"
                 />
               </CoverImageContainer>
@@ -339,7 +339,7 @@ const HomePage: React.FC = () => {
           >
             {/* 🔧 根据悬停状态切换图片 */}
             <LockImage
-              src={isLockHovered ? "/images/七影碟-3.png" : "/images/七影碟-4.png"}
+              src={isLockHovered ? "/images/webps/七影碟-3.webp" : "/images/webps/七影碟-4.webp"}
               alt="蝴蝶锁图标"
             />
           </Lock>

@@ -37,8 +37,8 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
   const intervalRef = useRef<number | null>(null)
 
   const butterflyImages = [
-    '/images/七影碟-3.png',  // 翅膀闪动状态1
-    '/images/七影碟-4.png'   // 翅膀闪动状态2（默认显示）
+    "images/webps/七影碟-3.webp",  // 翅膀闪动状态1
+    "images/webps/七影碟-4.webp"   // 翅膀闪动状态2（默认显示）
   ]
 
   useEffect(() => {

@@ -653,14 +653,14 @@ const OgijimaPage: React.FC = () => {
   // size参数控制图标大小，单位为像素 (建议范围: 16-40)
   const checkInIcons: CheckInIcon[] = [
     { x: 28, y: 78, emoji: '🏊', title: '泳池', iconType: 'emoji', size: 24 },
-    { x: 51, y: 78, icon: '/images/男木岛/男木岛-鸥相遇小道图标.png', title: '鸥相遇小道', iconType: 'image', size: 50 },
+    { x: 51, y: 78, icon: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道图标.webp", title: '鸥相遇小道', iconType: 'image', size: 50 },
     { x: 23, y: 74, emoji: '🏛️', title: '鸟白岛役场', iconType: 'emoji', size: 24 },
-    { x: 28, y: 76, icon: '/images/男木岛/男木岛-秘密基地图标.png', title: '秘密基地', iconType: 'image', size: 35 },
-    { x: 60, y: 3, icon: '/images/男木岛/男木岛-灯塔图标.png', title: '灯塔', iconType: 'image', size: 32 },
+    { x: 28, y: 76, icon: "images/webps/男木岛/男木岛_男木岛-秘密基地图标.webp", title: '秘密基地', iconType: 'image', size: 35 },
+    { x: 60, y: 3, icon: "images/webps/男木岛/男木岛_男木岛-灯塔图标.webp", title: '灯塔', iconType: 'image', size: 32 },
     { x: 31, y: 52, emoji: '💤', title: '苍睡觉小道', iconType: 'emoji', size: 40 },
     { x: 33, y: 60, emoji: '⛩️', title: '静久神社', iconType: 'emoji', size: 35 },
-    { x: 54, y: 5, icon: '/images/男木岛/男木岛-鬼姬神山识之墓图标.png', title: '鬼姬神山识之墓', iconType: 'image', size: 45 },
-    { x: 24, y: 65, icon: '/images/男木岛/男木岛-放送塔图标.png', title: '放送塔', iconType: 'image', size: 28 },
+    { x: 54, y: 5, icon: "images/webps/男木岛/男木岛_男木岛-鬼姬神山识之墓图标.webp", title: '鬼姬神山识之墓', iconType: 'image', size: 45 },
+    { x: 24, y: 65, icon: "images/webps/男木岛/男木岛_男木岛-放送塔图标.webp", title: '放送塔', iconType: 'image', size: 28 },
     { x: 16, y: 74, emoji: '🌊', title: '防波堤', iconType: 'emoji', size: 24 }
   ];
 
@@ -670,83 +670,83 @@ const OgijimaPage: React.FC = () => {
       title: "泳池",
       description: "与白羽相遇的地方",
       images: [
-        { src: "/images/男木岛/男木岛-泳池.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-泳池-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-泳池-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛_男木岛-泳池.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-泳池-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-泳池-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "鸥相遇小道",
       description: "与鸥相遇的美丽小径",
       images: [
-        { src: "/images/男木岛/男木岛-鸥相遇小道.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-鸥相遇小道-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-鸥相遇小道-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "鸟白岛役场",
       description: "岛上重要的行政场所",
       images: [
-        { src: "/images/男木岛/男木岛-鸟白岛役场.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-鸟白岛役场-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-鸟白岛役场-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "秘密基地",
       description: "与天善打乒乓球的地方",
       images: [
-        { src: "/images/男木岛/男木岛-秘密基地.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-秘密基地-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-秘密基地-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "紬的灯塔",
       description: "与小紬相遇的地方",
       images: [
-        { src: "/images/男木岛/男木岛-灯塔.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-灯塔-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-灯塔-夜晚-亮灯.bmp", label: "夜晚-亮灯" },
-        { src: "/images/男木岛/男木岛-灯塔-夜晚-熄灯.bmp", label: "夜晚-熄灯" }
+        { src: "images/webps/男木岛/男木岛_男木岛-灯塔.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
+        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
       ]
     },
     {
       title: "苍睡觉小道",
       description: "与苍相遇的地方",
       images: [
-        { src: "/images/男木岛/男木岛-苍睡觉小道.bmp", label: "白天" },
-        { src: "/images/男木岛/男木岛-苍睡觉小道-黄昏.bmp", label: "黄昏" },
-        { src: "/images/男木岛/男木岛-苍睡觉小道-夜晚.bmp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "静久神社",
       description: "与静久路过的鸟居",
       images: [
-        { src: "/images/男木岛/男木岛-静久神社图.jpg", label: "静久神社" }
+        { src: "images/webps/男木岛/男木岛_男木岛-静久神社图.webp", label: "静久神社" }
       ]
     },
     {
       title: "鬼姬神山识之墓",
       description: "与。。。",
       images: [
-        { src: "/images/男木岛/男木岛-鬼姬神山识之墓.png", label: "鬼姬神山识之墓" }
+        { src: "images/webps/男木岛/男木岛_男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
       ]
     },
     {
       title: "放送塔",
       description: "美希等爸爸妈妈的地点",
       images: [
-        { src: "/images/男木岛/男木岛-放送塔.jpg", label: "放送塔" }
+        { src: "images/webps/男木岛/男木岛_男木岛-放送塔.webp", label: "放送塔" }
       ]
     },
     {
       title: "防波堤",
       description: "白羽主视觉",
       images: [
-        { src: "/images/男木岛/男木岛-防波堤.png", label: "防波堤" }
+        { src: "images/webps/男木岛/男木岛_男木岛-防波堤.webp", label: "防波堤" }
       ]
     }
   ]
@@ -795,9 +795,9 @@ const OgijimaPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>
-            <Icon><img src="/images/男木岛/男木岛-灯塔图标.png" alt="灯塔" /></Icon>
+            <Icon><img src="images/webps/男木岛/男木岛_男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
             男木岛
-            <Icon><img src="/images/男木岛/男木岛-灯塔图标.png" alt="灯塔" /></Icon>
+            <Icon><img src="images/webps/男木岛/男木岛_男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
           </Title>
           <Subtitle>宁静的猫岛渔村</Subtitle>
         </motion.div>
@@ -908,7 +908,7 @@ const OgijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="/images/男木岛/男木岛地图-线路版.png" alt="男木岛地图" />
+              <MapImage scale={mapScale} src="images/webps/男木岛/男木岛_男木岛地图-线路版.webp" alt="男木岛地图" />
               <MapOverlay>
                 {/* 打卡点标记 */}
                 {checkInIcons.map((icon, index) => (

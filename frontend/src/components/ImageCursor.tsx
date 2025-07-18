@@ -49,7 +49,7 @@ interface ImageCursorProps {
 }
 
 const ImageCursor = ({
-  imageSrc = "/images/七影碟.png",
+  imageSrc = "images/webps/七影碟.webp",
   delay = 0.01,
   spacing = 80,
   followMouseDirection = true,

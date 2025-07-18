@@ -345,15 +345,15 @@ interface SummaryData {
 
 const summaryData: Record<Exclude<ChapterType, null>, SummaryData> = {
   traffic: {
-    image: '/images/交通篇摘要图.png',
+    image: '/images/webps/交通篇摘要图.webp',
     text: '🚌 国内各地到高松的完整交通攻略'
   },
   checkin: {
-    image: '/images/打卡篇摘要图.png',
+    image: '/images/webps/打卡篇摘要图.webp',
     text: '📍 女木岛、男木岛、直岛圣地巡礼'
   },
   other: {
-    image: '/images/神域摘要图.bmp',
+    image: '/images/webps/神域摘要图.webp',
     text: '记得来神域寄存和领取自己的七影碟哦！🦋'
   }
 }

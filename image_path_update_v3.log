@@ -1,0 +1,171 @@
+2025-07-18 02:23:37,853 - INFO - 找到 25 个代码文件
+2025-07-18 02:23:37,853 - INFO - 处理进度: 1/25 - vite.config.ts
+2025-07-18 02:23:37,854 - INFO - 处理进度: 2/25 - index.html
+2025-07-18 02:23:37,854 - INFO - 更新路径: images/七影碟.png -> images/origin_pictures/直岛/七影碟.png
+2025-07-18 02:23:37,854 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/index.html (1 处替换)
+2025-07-18 02:23:37,854 - INFO - 处理进度: 3/25 - main.tsx
+2025-07-18 02:23:37,854 - INFO - 处理进度: 4/25 - App.tsx
+2025-07-18 02:23:37,854 - INFO - 处理进度: 5/25 - MusicContext.tsx
+2025-07-18 02:23:37,855 - INFO - 处理进度: 6/25 - MapDetailViewer.tsx
+2025-07-18 02:23:37,855 - INFO - 处理进度: 7/25 - CardEditor.tsx
+2025-07-18 02:23:37,855 - INFO - 处理进度: 8/25 - TrafficInfoGrid.tsx
+2025-07-18 02:23:37,856 - INFO - 处理进度: 9/25 - RichTextEditor.tsx
+2025-07-18 02:23:37,856 - INFO - 处理进度: 10/25 - MusicPlayer.tsx
+2025-07-18 02:23:37,856 - INFO - 处理进度: 11/25 - ImageSlider.tsx
+2025-07-18 02:23:37,857 - INFO - 处理进度: 12/25 - ButterflyAnimation.tsx
+2025-07-18 02:23:37,857 - INFO - 更新路径: images/七影碟-3.png -> images/origin_pictures/直岛/七影碟-3.png
+2025-07-18 02:23:37,857 - INFO - 更新路径: images/七影碟-4.png -> images/origin_pictures/直岛/七影碟-4.png
+2025-07-18 02:23:37,857 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/components/ButterflyAnimation.tsx (2 处替换)
+2025-07-18 02:23:37,857 - INFO - 处理进度: 13/25 - ImageCursor.tsx
+2025-07-18 02:23:37,857 - INFO - 更新路径: images/七影碟.png -> images/origin_pictures/直岛/七影碟.png
+2025-07-18 02:23:37,857 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/components/ImageCursor.tsx (1 处替换)
+2025-07-18 02:23:37,857 - INFO - 处理进度: 14/25 - ButterflyCustomCursor.tsx
+2025-07-18 02:23:37,858 - INFO - 更新路径: images/七影碟-3.png -> images/origin_pictures/直岛/七影碟-3.png
+2025-07-18 02:23:37,858 - INFO - 更新路径: images/七影碟-4.png -> images/origin_pictures/直岛/七影碟-4.png
+2025-07-18 02:23:37,858 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/components/ButterflyCustomCursor.tsx (2 处替换)
+2025-07-18 02:23:37,858 - INFO - 处理进度: 15/25 - StarryBackground.tsx
+2025-07-18 02:23:37,859 - INFO - 处理进度: 16/25 - global.css
+2025-07-18 02:23:37,859 - INFO - 处理进度: 17/25 - TrafficPage.tsx
+2025-07-18 02:23:37,860 - INFO - 处理进度: 18/25 - ContentsPage.tsx
+2025-07-18 02:23:37,861 - INFO - 更新路径: images/webps/交通篇摘要图.webp -> images/webps/交通篇摘要图.webp
+2025-07-18 02:23:37,861 - INFO - 更新路径: images/webps/打卡篇摘要图.webp -> images/webps/女木岛/打卡篇摘要图.webp
+2025-07-18 02:23:37,861 - INFO - 更新路径: images/webps/神域摘要图.webp -> images/webps/直岛/神域摘要图.webp
+2025-07-18 02:23:37,862 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/ContentsPage.tsx (3 处替换)
+2025-07-18 02:23:37,862 - INFO - 处理进度: 19/25 - MegijimaPage.tsx
+2025-07-18 02:23:37,862 - INFO - 更新路径: images/origin_pictures/女木岛/女木岛地图-线路版.png -> images/origin_pictures/女木岛/女木岛地图-线路版.png
+2025-07-18 02:23:37,862 - INFO - 更新路径: images/女木岛/女木岛-秘密基地山路.webp -> images/webps/女木岛/女木岛-秘密基地山路.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-秘密基地山路-黄昏.webp -> images/webps/女木岛/女木岛-秘密基地山路-黄昏.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-秘密基地山路-夜晚.webp -> images/webps/女木岛/女木岛-秘密基地山路-夜晚.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-秘密基地山路-深夜.webp -> images/webps/女木岛/女木岛-秘密基地山路-深夜.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-山道.webp -> images/webps/女木岛/女木岛-山道.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-山道-黄昏.webp -> images/webps/女木岛/女木岛-山道-黄昏.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-山道-夜晚.webp -> images/webps/女木岛/女木岛-山道-夜晚.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-山道-深夜.webp -> images/webps/女木岛/女木岛-山道-深夜.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-采石场入口.webp -> images/webps/女木岛/女木岛-采石场入口.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-采石场入口-黄昏.webp -> images/webps/女木岛/女木岛-采石场入口-黄昏.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-采石场入口-夜晚.webp -> images/webps/女木岛/女木岛-采石场入口-夜晚.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-采石场-分岔路-有光.webp -> images/webps/女木岛/女木岛-采石场-分岔路-有光.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-采石场-分岔路-无光.webp -> images/webps/女木岛/女木岛-采石场-分岔路-无光.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-窄路-有光.webp -> images/webps/女木岛/女木岛-窄路-有光.webp
+2025-07-18 02:23:37,863 - INFO - 更新路径: images/女木岛/女木岛-窄路-无光.webp -> images/webps/女木岛/女木岛-窄路-无光.webp
+2025-07-18 02:23:37,864 - INFO - 更新路径: images/origin_pictures/女木岛/女木岛地图-线路版.png -> images/origin_pictures/女木岛/女木岛地图-线路版.png
+2025-07-18 02:23:37,864 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/MegijimaPage.tsx (15 处替换)
+2025-07-18 02:23:37,864 - INFO - 处理进度: 20/25 - OtherPilgrimagePage.tsx
+2025-07-18 02:23:37,865 - INFO - 处理进度: 21/25 - DivineRealmPage.tsx
+2025-07-18 02:23:37,865 - INFO - 处理进度: 22/25 - CheckinPage.tsx
+2025-07-18 02:23:37,865 - INFO - 更新路径: images/webps/女木岛/打卡篇地图-航线版.webp -> images/webps/女木岛/打卡篇地图-航线版.webp
+2025-07-18 02:23:37,865 - INFO - 更新路径: images/webps/男木岛/鸟白岛总览.webp -> images/webps/男木岛/鸟白岛总览.webp
+2025-07-18 02:23:37,866 - INFO - 更新路径: images/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,866 - INFO - 更新路径: images/webps/女木岛/打卡篇地图-航线版.webp -> images/webps/女木岛/打卡篇地图-航线版.webp
+2025-07-18 02:23:37,866 - INFO - 更新路径: images/webps/男木岛/鸟白岛总览.webp -> images/webps/男木岛/鸟白岛总览.webp
+2025-07-18 02:23:37,867 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/CheckinPage.tsx (1 处替换)
+2025-07-18 02:23:37,867 - INFO - 处理进度: 23/25 - HomePage.tsx
+2025-07-18 02:23:37,867 - INFO - 更新路径: images/webps/sprb封面图.webp -> images/webps/sprb封面图.webp
+2025-07-18 02:23:37,867 - INFO - 更新路径: images/webps/sprb封面图.webp -> images/webps/sprb封面图.webp
+2025-07-18 02:23:37,868 - INFO - 更新路径: images/七影碟-3.png -> images/origin_pictures/直岛/七影碟-3.png
+2025-07-18 02:23:37,868 - INFO - 更新路径: images/七影碟-4.png -> images/origin_pictures/直岛/七影碟-4.png
+2025-07-18 02:23:37,868 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/HomePage.tsx (2 处替换)
+2025-07-18 02:23:37,868 - INFO - 处理进度: 24/25 - NaoshimaPage.tsx
+2025-07-18 02:23:37,869 - INFO - 更新路径: images/origin_pictures/直岛/直岛地图-路线版.png -> images/origin_pictures/直岛/直岛地图-路线版.png
+2025-07-18 02:23:37,869 - INFO - 更新路径: images/直岛/直岛地图-小卖部-路线版.png -> images/origin_pictures/直岛/直岛地图-小卖部-路线版.png
+2025-07-18 02:23:37,869 - INFO - 更新路径: images/直岛/直岛地图-水塘海狸家-路线版.png -> images/origin_pictures/直岛/直岛地图-水塘海狸家-路线版.png
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛地图-白羽钓点-路线版.png -> images/origin_pictures/直岛/直岛地图-白羽钓点-路线版.png
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛地图-蔷薇庄-路线版.png -> images/origin_pictures/直岛/直岛地图-蔷薇庄-路线版.png
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-无船.webp -> images/webps/直岛/直岛-港口-无船.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-无船-黄昏.webp -> images/webps/直岛/直岛-港口-无船-黄昏.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-无船-夜晚.webp -> images/webps/直岛/直岛-港口-无船-夜晚.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-有船.webp -> images/webps/直岛/直岛-港口-有船.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-有船-黄昏.webp -> images/webps/直岛/直岛-港口-有船-黄昏.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-有船-夜晚.webp -> images/webps/直岛/直岛-港口-有船-夜晚.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-港口-下雨.webp -> images/webps/直岛/直岛-港口-下雨.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-小卖部.webp -> images/webps/直岛/直岛-小卖部.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-小卖部-黄昏.webp -> images/webps/直岛/直岛-小卖部-黄昏.webp
+2025-07-18 02:23:37,870 - INFO - 更新路径: images/直岛/直岛-小卖部-夜晚.webp -> images/webps/直岛/直岛-小卖部-夜晚.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-神社.webp -> images/webps/直岛/直岛-神社.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-神社-黄昏.webp -> images/webps/直岛/直岛-神社-黄昏.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-神社-夜晚.webp -> images/webps/直岛/直岛-神社-夜晚.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-灵弹.webp -> images/webps/直岛/直岛-灵弹.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-灵弹-黄昏.webp -> images/webps/直岛/直岛-灵弹-黄昏.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-灵弹-夜晚.webp -> images/webps/直岛/直岛-灵弹-夜晚.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家门前.webp -> images/webps/直岛/直岛-海狸家门前.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家门前-黄昏.webp -> images/webps/直岛/直岛-海狸家门前-黄昏.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家门前-夜晚.webp -> images/webps/直岛/直岛-海狸家门前-夜晚.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家院子.webp -> images/webps/直岛/直岛-海狸家院子.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家院子-黄昏.webp -> images/webps/直岛/直岛-海狸家院子-黄昏.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家院子-夜晚.webp -> images/webps/直岛/直岛-海狸家院子-夜晚.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家客厅.webp -> images/webps/直岛/直岛-海狸家客厅.webp
+2025-07-18 02:23:37,871 - INFO - 更新路径: images/直岛/直岛-海狸家客厅-黄昏.webp -> images/webps/直岛/直岛-海狸家客厅-黄昏.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家客厅-夜晚.webp -> images/webps/直岛/直岛-海狸家客厅-夜晚.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家厨房.webp -> images/webps/直岛/直岛-海狸家厨房.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家厨房-中午.webp -> images/webps/直岛/直岛-海狸家厨房-中午.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家厨房-夜晚.webp -> images/webps/直岛/直岛-海狸家厨房-夜晚.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-无床.webp -> images/webps/直岛/直岛-海狸家卧室-无床.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-无床-黄昏.webp -> images/webps/直岛/直岛-海狸家卧室-无床-黄昏.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-无床-开灯-夜晚.webp -> images/webps/直岛/直岛-海狸家卧室-无床-开灯-夜晚.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-无床-关灯-夜晚.webp -> images/webps/直岛/直岛-海狸家卧室-无床-关灯-夜晚.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-有床.webp -> images/webps/直岛/直岛-海狸家卧室-有床.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-有床-黄昏.webp -> images/webps/直岛/直岛-海狸家卧室-有床-黄昏.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-有床-开灯-夜晚.webp -> images/webps/直岛/直岛-海狸家卧室-有床-开灯-夜晚.webp
+2025-07-18 02:23:37,872 - INFO - 更新路径: images/直岛/直岛-海狸家卧室-有床-关灯-夜晚.webp -> images/webps/直岛/直岛-海狸家卧室-有床-关灯-夜晚.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-食堂.webp -> images/webps/直岛/直岛-食堂.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-食堂-黄昏.webp -> images/webps/直岛/直岛-食堂-黄昏.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-食堂-夜晚.webp -> images/webps/直岛/直岛-食堂-夜晚.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-八幡神社石阶.jpg -> images/origin_pictures/直岛/直岛-八幡神社石阶.jpg
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-积浦海岸.jpg -> images/origin_pictures/直岛/直岛-积浦海岸.jpg
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-白羽钓点.webp -> images/webps/直岛/直岛-白羽钓点.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-白羽钓点-黄昏.webp -> images/webps/直岛/直岛-白羽钓点-黄昏.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-白羽钓点-夜晚.webp -> images/webps/直岛/直岛-白羽钓点-夜晚.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-惠美须神社鸟居.png -> images/origin_pictures/直岛/直岛-惠美须神社鸟居.png
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-蔷薇庄.png -> images/origin_pictures/直岛/直岛-蔷薇庄.png
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-海水浴场.webp -> images/webps/直岛/直岛-海水浴场.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-海水浴场-夜晚.webp -> images/webps/直岛/直岛-海水浴场-夜晚.webp
+2025-07-18 02:23:37,873 - INFO - 更新路径: images/直岛/直岛-海水浴场-黄昏.webp -> images/webps/直岛/直岛-海水浴场-黄昏.webp
+2025-07-18 02:23:37,874 - INFO - 更新路径: images/直岛/直岛-游戏主界面.png -> images/origin_pictures/直岛/直岛-游戏主界面.png
+2025-07-18 02:23:37,874 - INFO - 更新路径: images/origin_pictures/直岛/直岛地图-路线版.png -> images/origin_pictures/直岛/直岛地图-路线版.png
+2025-07-18 02:23:37,876 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/NaoshimaPage.tsx (54 处替换)
+2025-07-18 02:23:37,876 - INFO - 处理进度: 25/25 - OgijimaPage.tsx
+2025-07-18 02:23:37,876 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,877 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,877 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛地图-线路版.png -> images/origin_pictures/男木岛/男木岛地图-线路版.png
+2025-07-18 02:23:37,877 - INFO - 更新路径: images/男木岛/男木岛-鸥相遇小道图标.png -> images/origin_pictures/男木岛/男木岛-鸥相遇小道图标.png
+2025-07-18 02:23:37,877 - INFO - 更新路径: images/男木岛/男木岛-秘密基地图标.png -> images/origin_pictures/男木岛/男木岛-秘密基地图标.png
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鬼姬神山识之墓图标.png -> images/origin_pictures/男木岛/男木岛-鬼姬神山识之墓图标.png
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-放送塔图标.png -> images/origin_pictures/男木岛/男木岛-放送塔图标.png
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-泳池.webp -> images/webps/男木岛/男木岛-泳池.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-泳池-黄昏.webp -> images/webps/男木岛/男木岛-泳池-黄昏.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-泳池-夜晚.webp -> images/webps/男木岛/男木岛-泳池-夜晚.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸥相遇小道.webp -> images/webps/男木岛/男木岛-鸥相遇小道.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸥相遇小道-黄昏.webp -> images/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸥相遇小道-夜晚.webp -> images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸟白岛役场.webp -> images/webps/男木岛/男木岛-鸟白岛役场.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸟白岛役场-黄昏.webp -> images/webps/男木岛/男木岛-鸟白岛役场-黄昏.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-鸟白岛役场-夜晚.webp -> images/webps/男木岛/男木岛-鸟白岛役场-夜晚.webp
+2025-07-18 02:23:37,878 - INFO - 更新路径: images/男木岛/男木岛-秘密基地.webp -> images/webps/男木岛/男木岛-秘密基地.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-秘密基地-黄昏.webp -> images/webps/男木岛/男木岛-秘密基地-黄昏.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-秘密基地-夜晚.webp -> images/webps/男木岛/男木岛-秘密基地-夜晚.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-灯塔.webp -> images/webps/男木岛/男木岛-灯塔.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-灯塔-黄昏.webp -> images/webps/男木岛/男木岛-灯塔-黄昏.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-灯塔-夜晚-亮灯.webp -> images/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-灯塔-夜晚-熄灯.webp -> images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-苍睡觉小道.webp -> images/webps/男木岛/男木岛-苍睡觉小道.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-苍睡觉小道-黄昏.webp -> images/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-苍睡觉小道-夜晚.webp -> images/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-静久神社图.webp -> images/webps/男木岛/男木岛-静久神社图.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-鬼姬神山识之墓.webp -> images/webps/男木岛/男木岛-鬼姬神山识之墓.webp
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-放送塔.jpg -> images/origin_pictures/男木岛/男木岛-放送塔.jpg
+2025-07-18 02:23:37,879 - INFO - 更新路径: images/男木岛/男木岛-防波堤.png -> images/origin_pictures/男木岛/男木岛-防波堤.png
+2025-07-18 02:23:37,880 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,880 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:23:37,880 - INFO - 更新路径: images/origin_pictures/男木岛/男木岛地图-线路版.png -> images/origin_pictures/男木岛/男木岛地图-线路版.png
+2025-07-18 02:23:37,880 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/OgijimaPage.tsx (28 处替换)
+2025-07-18 02:23:37,881 - INFO - 
+==================================================
+2025-07-18 02:23:37,881 - INFO - 图片路径更新完成！
+2025-07-18 02:23:37,881 - INFO - ==================================================
+2025-07-18 02:23:37,881 - INFO - 总文件数: 25
+2025-07-18 02:23:37,881 - INFO - 更新文件: 10
+2025-07-18 02:23:37,881 - INFO - 总替换数: 109
+2025-07-18 02:23:37,881 - INFO - 错误文件: 0
+2025-07-18 02:23:37,881 - INFO - ==================================================
+2025-07-18 02:23:37,881 - INFO - 🎉 图片路径更新完成！

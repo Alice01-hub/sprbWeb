@@ -11,8 +11,8 @@ const ButterflyCustomCursor = () => {
 
   // 蝴蝶翅膀的两个状态图片
   const butterflyFrames = [
-    '/images/七影碟-3.png',
-    '/images/七影碟-4.png'
+    "images/webps/七影碟-3.webp",
+    "images/webps/七影碟-4.webp"
   ];
 
   // 预加载图片

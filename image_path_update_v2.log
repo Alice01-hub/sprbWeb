@@ -1,0 +1,48 @@
+2025-07-18 02:11:21,523 - INFO - 找到 25 个代码文件
+2025-07-18 02:11:21,523 - INFO - 处理进度: 1/25 - vite.config.ts
+2025-07-18 02:11:21,524 - INFO - 处理进度: 2/25 - index.html
+2025-07-18 02:11:21,524 - INFO - 处理进度: 3/25 - main.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 4/25 - App.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 5/25 - MusicContext.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 6/25 - MapDetailViewer.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 7/25 - CardEditor.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 8/25 - TrafficInfoGrid.tsx
+2025-07-18 02:11:21,524 - INFO - 处理进度: 9/25 - RichTextEditor.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 10/25 - MusicPlayer.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 11/25 - ImageSlider.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 12/25 - ButterflyAnimation.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 13/25 - ImageCursor.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 14/25 - ButterflyCustomCursor.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 15/25 - StarryBackground.tsx
+2025-07-18 02:11:21,525 - INFO - 处理进度: 16/25 - global.css
+2025-07-18 02:11:21,526 - INFO - 处理进度: 17/25 - TrafficPage.tsx
+2025-07-18 02:11:21,526 - INFO - 处理进度: 18/25 - ContentsPage.tsx
+2025-07-18 02:11:21,526 - INFO - 处理进度: 19/25 - MegijimaPage.tsx
+2025-07-18 02:11:21,527 - INFO - 更新路径: images/女木岛/女木岛地图-线路版.png -> images/origin_pictures/女木岛/女木岛地图-线路版.png
+2025-07-18 02:11:21,527 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/MegijimaPage.tsx (1 处替换)
+2025-07-18 02:11:21,527 - INFO - 处理进度: 20/25 - OtherPilgrimagePage.tsx
+2025-07-18 02:11:21,527 - INFO - 处理进度: 21/25 - DivineRealmPage.tsx
+2025-07-18 02:11:21,527 - INFO - 处理进度: 22/25 - CheckinPage.tsx
+2025-07-18 02:11:21,528 - INFO - 更新路径: images/打卡篇地图-航线版.webp -> images/webps/女木岛/打卡篇地图-航线版.webp
+2025-07-18 02:11:21,528 - INFO - 更新路径: images/鸟白岛总览.webp -> images/webps/男木岛/鸟白岛总览.webp
+2025-07-18 02:11:21,528 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/CheckinPage.tsx (2 处替换)
+2025-07-18 02:11:21,528 - INFO - 处理进度: 23/25 - HomePage.tsx
+2025-07-18 02:11:21,528 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/HomePage.tsx (1 处替换)
+2025-07-18 02:11:21,528 - INFO - 处理进度: 24/25 - NaoshimaPage.tsx
+2025-07-18 02:11:21,529 - INFO - 更新路径: images/直岛/直岛地图-路线版.png -> images/origin_pictures/直岛/直岛地图-路线版.png
+2025-07-18 02:11:21,529 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/NaoshimaPage.tsx (1 处替换)
+2025-07-18 02:11:21,529 - INFO - 处理进度: 25/25 - OgijimaPage.tsx
+2025-07-18 02:11:21,530 - INFO - 更新路径: images/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:11:21,530 - INFO - 更新路径: images/男木岛/男木岛-灯塔图标.png -> images/origin_pictures/男木岛/男木岛-灯塔图标.png
+2025-07-18 02:11:21,530 - INFO - 更新路径: images/男木岛/男木岛地图-线路版.png -> images/origin_pictures/男木岛/男木岛地图-线路版.png
+2025-07-18 02:11:21,530 - INFO - ✅ 更新文件: /home/devbox/project/sprb-web/frontend/src/pages/OgijimaPage.tsx (3 处替换)
+2025-07-18 02:11:21,530 - INFO - 
+==================================================
+2025-07-18 02:11:21,530 - INFO - 图片路径更新完成！
+2025-07-18 02:11:21,530 - INFO - ==================================================
+2025-07-18 02:11:21,530 - INFO - 总文件数: 25
+2025-07-18 02:11:21,530 - INFO - 更新文件: 5
+2025-07-18 02:11:21,530 - INFO - 总替换数: 8
+2025-07-18 02:11:21,530 - INFO - 错误文件: 0
+2025-07-18 02:11:21,530 - INFO - ==================================================
+2025-07-18 02:11:21,530 - INFO - 🎉 图片路径更新完成！
