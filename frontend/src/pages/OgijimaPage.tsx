@@ -627,6 +627,115 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
   );
 };
 
+// Tooltip 组件
+const MapTooltip = styled.div<{ direction: 'top' | 'bottom' }>`
+  position: absolute;
+  left: 50%;
+  ${props => props.direction === 'top' ? 'top: -10px; transform: translate(-50%, -100%);' : 'bottom: -10px; transform: translate(-50%, 100%);'}
+  background: #fff;
+  color: #333;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 16px 10px 12px 10px;
+  min-width: 220px;
+  max-width: 320px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    ${props => props.direction === 'top' ? 'bottom: -10px;' : 'top: -10px;'}
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    ${props => props.direction === 'top' ? 'border-top: 10px solid #fff;' : 'border-bottom: 10px solid #fff;'}
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    ${props => props.direction === 'top' ? 'bottom: -11px;' : 'top: -11px;'}
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    ${props => props.direction === 'top' ? 'border-top: 1px solid #ececec;' : 'border-bottom: 1px solid #ececec;'}
+  }
+`;
+const TooltipImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0 0 8px 0;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+`;
+const TooltipTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #5d4037;
+  margin-bottom: 4px;
+  text-align: center;
+`;
+const TooltipDesc = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+`;
+
+const iconTooltips: Record<string, { image: string; desc: string }> = {
+  '泳池': {
+    image: 'images/webps/男木岛/男木岛-泳池.webp',
+    desc: '与白羽相遇的地方',
+  },
+  '鸥相遇小道': {
+    image: 'images/webps/男木岛/男木岛-鸥相遇小道.webp',
+    desc: '与鸥相遇的美丽小径',
+  },
+  '鸟白岛役场': {
+    image: 'images/webps/男木岛/男木岛-鸟白岛役场.webp',
+    desc: '岛上重要的行政场所',
+  },
+  '秘密基地': {
+    image: 'images/webps/男木岛/男木岛-秘密基地.webp',
+    desc: '与天善打乒乓球的地方',
+  },
+  '灯塔': {
+    image: 'images/webps/男木岛/男木岛-灯塔.webp',
+    desc: '与小紬相遇的地方',
+  },
+  '苍睡觉小道': {
+    image: 'images/webps/男木岛/男木岛-苍睡觉小道.webp',
+    desc: '与苍相遇的地方',
+  },
+  '静久神社': {
+    image: 'images/webps/男木岛/男木岛-静久神社图.webp',
+    desc: '与静久路过的鸟居',
+  },
+  '鬼姬神山识之墓': {
+    image: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp',
+    desc: '与。。。',
+  },
+  '放送塔': {
+    image: 'images/webps/男木岛/男木岛-放送塔.webp',
+    desc: '美希等爸爸妈妈的地点',
+  },
+  '防波堤': {
+    image: 'images/webps/男木岛/男木岛-防波堤.webp',
+    desc: '白羽主视觉',
+  },
+};
+
 const OgijimaPage: React.FC = () => {
   const navigate = useNavigate()
   
@@ -640,6 +749,10 @@ const OgijimaPage: React.FC = () => {
   
   // 信息卡片切换状态
   const [activeTab, setActiveTab] = useState<'intro' | 'guide'>('intro');
+
+  // 地标悬停状态
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  // 移除 tooltipPos 相关
   
   // 地图缩放比例参数
   // 调整此值来控制地图大小：
@@ -653,14 +766,14 @@ const OgijimaPage: React.FC = () => {
   // size参数控制图标大小，单位为像素 (建议范围: 16-40)
   const checkInIcons: CheckInIcon[] = [
     { x: 28, y: 78, emoji: '🏊', title: '泳池', iconType: 'emoji', size: 24 },
-    { x: 51, y: 78, icon: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道图标.webp", title: '鸥相遇小道', iconType: 'image', size: 50 },
+    { x: 51, y: 78, icon: "images/webps/男木岛/男木岛-鸥相遇小道图标.webp", title: '鸥相遇小道', iconType: 'image', size: 50 },
     { x: 23, y: 74, emoji: '🏛️', title: '鸟白岛役场', iconType: 'emoji', size: 24 },
-    { x: 28, y: 76, icon: "images/webps/男木岛/男木岛_男木岛-秘密基地图标.webp", title: '秘密基地', iconType: 'image', size: 35 },
-    { x: 60, y: 3, icon: "images/webps/男木岛/男木岛_男木岛-灯塔图标.webp", title: '灯塔', iconType: 'image', size: 32 },
+    { x: 28, y: 76, icon: "images/webps/男木岛/男木岛-秘密基地图标.webp", title: '秘密基地', iconType: 'image', size: 35 },
+    { x: 60, y: 3, icon: "images/webps/男木岛/男木岛-灯塔图标.webp", title: '灯塔', iconType: 'image', size: 32 },
     { x: 31, y: 52, emoji: '💤', title: '苍睡觉小道', iconType: 'emoji', size: 40 },
     { x: 33, y: 60, emoji: '⛩️', title: '静久神社', iconType: 'emoji', size: 35 },
-    { x: 54, y: 5, icon: "images/webps/男木岛/男木岛_男木岛-鬼姬神山识之墓图标.webp", title: '鬼姬神山识之墓', iconType: 'image', size: 45 },
-    { x: 24, y: 65, icon: "images/webps/男木岛/男木岛_男木岛-放送塔图标.webp", title: '放送塔', iconType: 'image', size: 28 },
+    { x: 54, y: 5, icon: "images/webps/男木岛/男木岛-鬼姬神山识之墓图标.webp", title: '鬼姬神山识之墓', iconType: 'image', size: 45 },
+    { x: 24, y: 65, icon: "images/webps/男木岛/男木岛-放送塔图标.webp", title: '放送塔', iconType: 'image', size: 28 },
     { x: 16, y: 74, emoji: '🌊', title: '防波堤', iconType: 'emoji', size: 24 }
   ];
 
@@ -670,83 +783,83 @@ const OgijimaPage: React.FC = () => {
       title: "泳池",
       description: "与白羽相遇的地方",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-泳池.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-泳池-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-泳池-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-泳池.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-泳池-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-泳池-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "鸥相遇小道",
       description: "与鸥相遇的美丽小径",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "鸟白岛役场",
       description: "岛上重要的行政场所",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-鸟白岛役场-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-鸟白岛役场.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-鸟白岛役场-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-鸟白岛役场-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "秘密基地",
       description: "与天善打乒乓球的地方",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-秘密基地-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-秘密基地.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-秘密基地-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-秘密基地-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "紬的灯塔",
       description: "与小紬相遇的地方",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-灯塔.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
-        { src: "images/webps/男木岛/男木岛_男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
+        { src: "images/webps/男木岛/男木岛-灯塔.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-灯塔-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
+        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
       ]
     },
     {
       title: "苍睡觉小道",
       description: "与苍相遇的地方",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛_男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
       ]
     },
     {
       title: "静久神社",
       description: "与静久路过的鸟居",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-静久神社图.webp", label: "静久神社" }
+        { src: "images/webps/男木岛/男木岛-静久神社图.webp", label: "静久神社" }
       ]
     },
     {
       title: "鬼姬神山识之墓",
       description: "与。。。",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
+        { src: "images/webps/男木岛/男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
       ]
     },
     {
       title: "放送塔",
       description: "美希等爸爸妈妈的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-放送塔.webp", label: "放送塔" }
+        { src: "images/webps/男木岛/男木岛-放送塔.webp", label: "放送塔" }
       ]
     },
     {
       title: "防波堤",
       description: "白羽主视觉",
       images: [
-        { src: "images/webps/男木岛/男木岛_男木岛-防波堤.webp", label: "防波堤" }
+        { src: "images/webps/男木岛/男木岛-防波堤.webp", label: "防波堤" }
       ]
     }
   ]
@@ -795,9 +908,9 @@ const OgijimaPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>
-            <Icon><img src="images/webps/男木岛/男木岛_男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
+            <Icon><img src="images/webps/男木岛/男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
             男木岛
-            <Icon><img src="images/webps/男木岛/男木岛_男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
+            <Icon><img src="images/webps/男木岛/男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
           </Title>
           <Subtitle>宁静的猫岛渔村</Subtitle>
         </motion.div>
@@ -908,7 +1021,7 @@ const OgijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="images/webps/男木岛/男木岛_男木岛地图-线路版.webp" alt="男木岛地图" />
+              <MapImage scale={mapScale} src="images/webps/男木岛/男木岛地图-线路版.webp" alt="男木岛地图" />
               <MapOverlay>
                 {/* 打卡点标记 */}
                 {checkInIcons.map((icon, index) => (
@@ -922,15 +1035,26 @@ const OgijimaPage: React.FC = () => {
                     transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
                     whileHover={{ scale: 1.2 }}
                     title={icon.title}
+                    onMouseEnter={() => setHoveredIcon(icon.title)}
+                    onMouseLeave={() => setHoveredIcon(null)}
                   >
                     {icon.iconType === 'image' ? (
                       <img src={icon.icon} alt={icon.title} />
                     ) : (
                       icon.emoji
                     )}
+                    {/* 悬停Tooltip，渲染在地标内部 */}
+                    {hoveredIcon === icon.title && iconTooltips[icon.title] && (
+                      <MapTooltip direction="top">
+                        <TooltipImage src={iconTooltips[icon.title].image} alt={icon.title} />
+                        <TooltipTitle>{icon.title}</TooltipTitle>
+                        <TooltipDesc>{iconTooltips[icon.title].desc}</TooltipDesc>
+                      </MapTooltip>
+                    )}
                   </LocationIcon>
                 ))}
               </MapOverlay>
+              {/* 移除原有的fixed Tooltip渲染 */}
             </MapContainer>
           </MapFrame>
         </motion.div>

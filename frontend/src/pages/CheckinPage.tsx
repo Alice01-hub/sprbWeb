@@ -329,7 +329,7 @@ const islands: Island[] = [
   {
     id: 'ogijima',
     name: '男木岛',
-    icon: "images/webps/男木岛/男木岛_男木岛-灯塔图标.webp",
+    icon: "images/webps/男木岛/男木岛-灯塔图标.webp",
     iconType: 'image',
     iconSize: 80, // 设置灯塔图标大小为80px
     description: '宁静的渔村小岛，与主角团相遇的主要地点。',

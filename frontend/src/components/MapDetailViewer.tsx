@@ -10,6 +10,7 @@ interface MapDetailViewerProps {
   description: string
   iconEmoji?: string
   iconPosition?: { x: number; y: number }
+  iconPositions?: { x: number; y: number; emoji?: string; icon?: string; size?: number }[] // 新增size属性
   mode: 'desc' | 'full'
 }
 
@@ -87,15 +88,24 @@ const MapImage = styled.img`
   border-radius: 15px;
 `
 
-const MapIcon = styled(motion.div)<{ x: number; y: number }>`
+const MapIcon = styled(motion.div)<{ x: number; y: number; size?: number }>`
   position: absolute;
-  font-size: 30px;
+  font-size: ${props => props.size || 30}px;
   left: ${props => props.x}%;
   top: ${props => props.y}%;
   transform: translate(-50%, -50%);
   z-index: 5;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const MapIconImage = styled.img<{ size?: number }>`
+  width: ${props => props.size || 30}px;
+  height: ${props => props.size || 30}px;
+  object-fit: contain;
 `
 
 const InfoSection = styled.div`
@@ -127,9 +137,15 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
   description,
   iconEmoji = '🤭',
   iconPosition = { x: 50, y: 50 },
+  iconPositions, // 新增
   mode
 }) => {
   if (!isOpen) return null
+
+  // 保证每个icon都带emoji属性，兼容类型
+  const iconsToRender = iconPositions && iconPositions.length > 0
+    ? iconPositions
+    : [{ ...iconPosition, emoji: iconEmoji }]
 
   return (
     <AnimatePresence>
@@ -164,15 +180,23 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
             <>
               <MapContainer>
                 <MapImage src={mapImage} alt={title} />
-                <MapIcon
-                  x={iconPosition.x}
-                  y={iconPosition.y}
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.3, type: 'spring', stiffness: 300, damping: 20 }}
-                >
-                  {iconEmoji}
-                </MapIcon>
+                {iconsToRender.map((pos, idx) => (
+                  <MapIcon
+                    key={idx}
+                    x={pos.x}
+                    y={pos.y}
+                    size={pos.size}
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.3 + idx * 0.1, type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    {pos.icon ? (
+                      <MapIconImage src={pos.icon} alt="icon" size={pos.size} />
+                    ) : (
+                      pos.emoji || iconEmoji
+                    )}
+                  </MapIcon>
+                ))}
               </MapContainer>
               <InfoSection>
                 <Title>{title}</Title>

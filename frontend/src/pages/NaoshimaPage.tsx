@@ -446,6 +446,83 @@ const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   }
 `
 
+// Tooltip 组件
+const MapTooltip = styled.div`
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translate(-50%, -100%);
+  background: #fff;
+  color: #333;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 16px 10px 12px 10px; /* 减小左右padding */
+  min-width: 220px;
+  max-width: 320px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 14px solid #fff;
+  }
+`;
+const TooltipImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+`;
+const TooltipTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #5d4037;
+  margin-bottom: 4px;
+  text-align: center;
+`;
+const TooltipDesc = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+`;
+
+// 地标tooltip内容配置
+const iconTooltips: Record<string, { image: string; desc: string }> = {
+  '小卖部': {
+    image: 'images/webps/直岛/直岛-小卖部.webp',
+    desc: '苍打工的地方',
+  },
+  '水塘海狸家': {
+    image: 'images/webps/直岛/直岛-海狸家院子.webp',
+    desc: '加藤家的住所',
+  },
+  '白羽钓点': {
+    image: 'images/webps/直岛/直岛-白羽钓鱼.webp',
+    desc: '白羽钓鱼的地方',
+  },
+  '蔷薇庄': {
+    image: 'images/webps/直岛/直岛-蔷薇庄.webp',
+    desc: '静久的饭店',
+  },
+  '神社': {
+    image: 'images/webps/直岛/直岛-神社.webp',
+    desc: '岛上的精神寄托。',
+  },
+}
+
 const NaoshimaPage: React.FC = () => {
   const navigate = useNavigate()
   // Tab切换
@@ -457,6 +534,14 @@ const NaoshimaPage: React.FC = () => {
     currentIndex: 0,
     title: ''
   })
+  // tooltip悬停状态
+  const [hoveredIcon, setHoveredIcon] = useState<null | {
+    x: number;
+    y: number;
+    title: string;
+    image: string;
+    desc: string;
+  }>(null)
   
   // 地图详情查看器状态
   const [mapDetailViewer, setMapDetailViewer] = useState({
@@ -464,7 +549,7 @@ const NaoshimaPage: React.FC = () => {
     mapImage: '',
     title: '',
     description: '',
-    iconPosition: { x: 50, y: 50 },
+    iconPositions: [] as { x: number; y: number; emoji?: string }[],
   })
   // 地图缩放比例
   const mapScale = 1.5
@@ -480,24 +565,40 @@ const NaoshimaPage: React.FC = () => {
   // 地图详情数据
   const mapDetails = {
     '小卖部': {
-      mapImage: "images/webps/直岛/直岛_直岛地图-小卖部-路线版.webp",
+      mapImage: "images/webps/直岛/直岛地图-小卖部-路线版.webp",
       description: '苍打工的零食店，已歇业。',
-      iconPosition: { x: 50, y: 50 }
+      iconPositions: [
+        { x: 24, y: 0, emoji: '🍧', size: 30 },
+        { x: 28, y: 69, emoji: '🚲', size: 30 },
+      ]
     },
     '水塘海狸家': {
-      mapImage: "images/webps/直岛/直岛_直岛地图-水塘海狸家-路线版.webp",
+      mapImage: "images/webps/直岛/直岛地图-水塘海狸家-路线版.webp",
       description: '加藤家的住所，温馨的家庭环境。',
-      iconPosition: { x: 50, y: 50 }
+      iconPositions: [
+        { x: 10, y: 70, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
+        { x: 75, y: 9, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 200 },
+        { x: 75, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 200 },
+      ]
     },
     '白羽钓点': {
-      mapImage: "images/webps/直岛/直岛_直岛地图-白羽钓点-路线版.webp",
+      mapImage: "images/webps/直岛/直岛地图-白羽钓点-路线版.webp",
       description: '白羽钓鱼的地方，风景优美。',
-      iconPosition: { x: 50, y: 50 }
+      iconPositions: [
+        { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 200 },
+        { x: 85, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 200 },
+        { x: 57, y: 1, icon: 'images/webps/直岛/直岛-通往白羽钓点.webp', size: 200 },
+      ]
     },
     '蔷薇庄': {
-      mapImage: "images/webps/直岛/直岛_直岛地图-蔷薇庄-路线版.webp",
+      mapImage: "images/webps/直岛/直岛地图-蔷薇庄-路线版.webp",
       description: '充满回忆的住宿地，温馨舒适。',
-      iconPosition: { x: 50, y: 50 }
+      iconPositions: [
+        { x: 92, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
+        { x: 71, y: 52, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
+        { x: 85, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
+        { x: 20, y: 18, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 200 },
+      ]
     }
   }
   // 打卡点图片与描述
@@ -506,152 +607,153 @@ const NaoshimaPage: React.FC = () => {
       title: '港口',
       description: '直岛的主要交通枢纽，旅程的起点。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-港口-无船.webp", label: '白天-无船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-无船-黄昏.webp", label: '黄昏-无船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-无船-夜晚.webp", label: '夜晚-无船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-有船.webp", label: '白天-有船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-有船-黄昏.webp", label: '黄昏-有船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-有船-夜晚.webp", label: '夜晚-有船' },
-        { src: "images/webps/直岛/直岛_直岛-港口-下雨.webp", label: '下雨' },
+        { src: "images/webps/直岛/直岛-港口-无船.webp", label: '白天-无船' },
+        { src: "images/webps/直岛/直岛-港口-无船-黄昏.webp", label: '黄昏-无船' },
+        { src: "images/webps/直岛/直岛-港口-无船-夜晚.webp", label: '夜晚-无船' },
+        { src: "images/webps/直岛/直岛-港口-有船.webp", label: '白天-有船' },
+        { src: "images/webps/直岛/直岛-港口-有船-黄昏.webp", label: '黄昏-有船' },
+        { src: "images/webps/直岛/直岛-港口-有船-夜晚.webp", label: '夜晚-有船' },
+        { src: "images/webps/直岛/直岛-港口-下雨.webp", label: '下雨' },
       ]
     },
     {
       title: '小卖部',
       description: '补给和休息的好地方。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-小卖部.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-小卖部-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-小卖部-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-小卖部.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-小卖部-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-小卖部-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '神社',
       description: '岛上的精神寄托。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-神社.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-神社-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-神社-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-神社.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-神社-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-神社-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '灵弹',
       description: '神秘的灵弹场景。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-灵弹.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-灵弹-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-灵弹-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-灵弹.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-灵弹-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-灵弹-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '海狸家门前',
       description: '加藤家门前的公路。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海狸家门前.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家门前-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家门前-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-海狸家门前.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-海狸家门前-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-海狸家门前-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '海狸家院子',
       description: '加藤家院子。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海狸家院子.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家院子-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家院子-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-海狸家院子.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-海狸家院子-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-海狸家院子-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '海狸家客厅',
       description: '加藤家客厅。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海狸家客厅.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家客厅-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家客厅-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-海狸家客厅.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-海狸家客厅-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-海狸家客厅-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '海狸家厨房',
       description: '加藤家厨房。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海狸家厨房.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家厨房-中午.webp", label: '中午' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家厨房-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-海狸家厨房.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-海狸家厨房-中午.webp", label: '中午' },
+        { src: "images/webps/直岛/直岛-海狸家厨房-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '海狸家卧室',
       description: '加藤家卧室。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-无床.webp", label: '白天-无床' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-无床-黄昏.webp", label: '黄昏-无床' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-无床-开灯-夜晚.webp", label: '夜晚-无床-开灯' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-无床-关灯-夜晚.webp", label: '夜晚-无床-关灯' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-有床.webp", label: '白天-有床' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-有床-黄昏.webp", label: '黄昏-有床' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-有床-开灯-夜晚.webp", label: '夜晚-有床-开灯' },
-        { src: "images/webps/直岛/直岛_直岛-海狸家卧室-有床-关灯-夜晚.webp", label: '夜晚-有床-关灯' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-无床.webp", label: '白天-无床' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-无床-黄昏.webp", label: '黄昏-无床' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-无床-开灯-夜晚.webp", label: '夜晚-无床-开灯' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-无床-关灯-夜晚.webp", label: '夜晚-无床-关灯' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-有床.webp", label: '白天-有床' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-有床-黄昏.webp", label: '黄昏-有床' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-有床-开灯-夜晚.webp", label: '夜晚-有床-开灯' },
+        { src: "images/webps/直岛/直岛-海狸家卧室-有床-关灯-夜晚.webp", label: '夜晚-有床-关灯' },
       ]
     },
     {
       title: '食堂',
       description: '享受地道美食的好去处。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-食堂.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-食堂-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-食堂-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-食堂.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-食堂-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-食堂-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '八幡神社石阶',
       description: '历史悠久的石阶。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-八幡神社石阶.webp", label: '八幡神社石阶' },
+        { src: "images/webps/直岛/直岛-八幡神社石阶.webp", label: '八幡神社石阶' },
       ]
     },
     {
       title: '积浦海岸',
       description: '美丽的海岸线风光。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-积浦海岸.webp", label: '积浦海岸' },
+        { src: "images/webps/直岛/直岛-积浦海岸.webp", label: '积浦海岸' },
       ]
     },
     {
       title: '白羽钓点',
       description: '白羽钓鱼的地方',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-白羽钓点.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-白羽钓点-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛_直岛-白羽钓点-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-白羽钓鱼.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-白羽钓点.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-白羽钓点-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-白羽钓点-夜晚.webp", label: '夜晚' },
       ]
     },
     {
       title: '惠美须神社鸟居',
       description: '独特的鸟居景观。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-惠美须神社鸟居.webp", label: '惠美须神社鸟居' },
+        { src: "images/webps/直岛/直岛-惠美须神社鸟居.webp", label: '惠美须神社鸟居' },
       ]
     },
     {
       title: '蔷薇庄',
       description: '充满回忆的住宿地。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-蔷薇庄.webp", label: '蔷薇庄' },
+        { src: "images/webps/直岛/直岛-蔷薇庄.webp", label: '蔷薇庄' },
       ]
     },
     {
       title: '海水浴场',
       description: '夏日戏水的好去处。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-海水浴场.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛_直岛-海水浴场-夜晚.webp", label: '夜晚' },
-        { src: "images/webps/直岛/直岛_直岛-海水浴场-黄昏.webp", label: '黄昏' },
+        { src: "images/webps/直岛/直岛-海水浴场.webp", label: '白天' },
+        { src: "images/webps/直岛/直岛-海水浴场-夜晚.webp", label: '夜晚' },
+        { src: "images/webps/直岛/直岛-海水浴场-黄昏.webp", label: '黄昏' },
       ]
     },
     {
       title: '游戏主界面',
       description: '游戏主界面。',
       images: [
-        { src: "images/webps/直岛/直岛_直岛-游戏主界面.webp", label: '游戏主界面' },
+        { src: "images/webps/直岛/直岛-游戏主界面.webp", label: '游戏主界面' },
       ]
     },
   ]
@@ -684,13 +786,13 @@ const NaoshimaPage: React.FC = () => {
   }
   
   // 打开地图详情查看器
-  const openMapDetailViewer = (title: string, mapImage: string, description: string, iconPosition: { x: number; y: number }) => {
+  const openMapDetailViewer = (title: string, mapImage: string, description: string, iconPositions: { x: number; y: number; emoji?: string }[]) => {
     setMapDetailViewer({
       isOpen: true,
       mapImage,
       title,
       description,
-      iconPosition,
+      iconPositions,
     })
   }
   
@@ -779,10 +881,26 @@ const NaoshimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    直岛共有10个打卡点，推荐步行巡礼，依次体验港口、小卖部、食堂、神社、惠美须神社鸟居、八幡神社石阶、蔷薇庄、灵弹、积浦海岸、海水浴场等地的独特风光。
+                    直岛的主要交通方式为自行车，上岛后可以在Summer Pocket租车店租一辆胡子🐱自行车。
                   </Description>
                   <Description>
-                    建议合理安排时间，部分景点适合拍照留念，部分景点可体验当地生活。
+                    直岛巡礼路线主要分为4个区域，点击地图上的🗺️图标可查看详情。<br />
+                  </Description>
+                  <Description>
+                    直岛共有15个打卡点，具体如下：<br />
+                    &emsp;&emsp;港口往北：苍打工的小卖部 → 鸣濑神社<br />
+                    &emsp;&emsp;正东方：小水塘 → 海狸家 → 八幡神社<br />
+                    &emsp;&emsp;八幡神社继续往南：羽未日出点 → 白羽钓鱼点<br />
+                    &emsp;&emsp;羽未日出点继续往南：<br />
+                    &emsp;&emsp;惠美须神社鸟居 → 往东，蔷薇庄，海水浴场；<br />
+                    &emsp;&emsp;惠美须神社鸟居 → 往西，游戏主界面拍摄点；
+                  </Description>
+                  <Description>
+                    其他说明：<br />
+                    &emsp;&emsp;1. 小卖部已停业，只能在门口拍照；<br />
+                    &emsp;&emsp;2. 鸣濑神社可能lim无法进入；<br />
+                    &emsp;&emsp;3. 海狸家客厅和卧室需要预定才可拍照；<br />
+                    &emsp;&emsp;4. 白羽钓鱼点涨潮时无法到达；<br />
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -796,7 +914,7 @@ const NaoshimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="images/webps/直岛/直岛_直岛地图-路线版.webp" alt="直岛地图" />
+              <MapImage scale={mapScale} src="images/webps/直岛/直岛地图-路线版.webp" alt="直岛地图" />
               <MapOverlay>
                 {checkInIcons.map((icon, index) => (
                   <LocationIcon
@@ -812,14 +930,35 @@ const NaoshimaPage: React.FC = () => {
                     onClick={() => {
                       const detail = mapDetails[icon.title as keyof typeof mapDetails]
                       if (detail) {
-                        openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPosition)
+                        openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPositions)
                       }
                     }}
+                    onMouseEnter={() => {
+                      const tip = iconTooltips[icon.title];
+                      if (tip) {
+                        setHoveredIcon({
+                          x: icon.x,
+                          y: icon.y,
+                          title: icon.title,
+                          image: tip.image,
+                          desc: tip.desc,
+                        });
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredIcon(null)}
                   >
                     {icon.iconType === 'emoji' ? (
                       <span style={{ fontSize: `${icon.size}px` }}>{icon.emoji}</span>
                     ) : (
                       <img src={icon.icon} alt={icon.title} />
+                    )}
+                    {/* Tooltip渲染 */}
+                    {hoveredIcon && hoveredIcon.title === icon.title && (
+                      <MapTooltip>
+                        <TooltipImage src={hoveredIcon.image} alt={hoveredIcon.title} />
+                        <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                        <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                      </MapTooltip>
                     )}
                   </LocationIcon>
                 ))}
@@ -888,7 +1027,7 @@ const NaoshimaPage: React.FC = () => {
         mapImage={mapDetailViewer.mapImage}
         title={mapDetailViewer.title}
         description={mapDetailViewer.description}
-        iconPosition={mapDetailViewer.iconPosition}
+        iconPositions={mapDetailViewer.iconPositions}
         mode="full"
       />
     </Container>
