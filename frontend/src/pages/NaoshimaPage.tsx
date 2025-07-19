@@ -610,6 +610,7 @@ const NaoshimaPage: React.FC = () => {
     '鸣濑神社': {
       mapImage: "images/webps/直岛/直岛-神社.webp",
       description: '白羽出嫁的地点。',
+      iconPositions: []
     }
   }
   // 打卡点图片与描述
@@ -942,7 +943,7 @@ const NaoshimaPage: React.FC = () => {
                       // 所有图标都显示地图详情
                       const detail = mapDetails[icon.title as keyof typeof mapDetails]
                       if (detail) {
-                        openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPositions)
+                        openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPositions || [])
                       }
                     }}
                     onMouseEnter={() => {

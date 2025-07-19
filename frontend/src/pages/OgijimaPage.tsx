@@ -861,6 +861,7 @@ const OgijimaPage: React.FC = () => {
     '鸥相遇小道': {
       mapImage: "images/webps/男木岛/男木岛-鸥相遇小道.webp",
       description: '出发吧~再一次，向着那有海盗船的地方',
+      iconPositions: []
     }
   }
 
