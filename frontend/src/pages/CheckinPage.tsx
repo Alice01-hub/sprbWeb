@@ -69,6 +69,104 @@ const NoticeText = styled.p`
   font-weight: 500;
 `
 
+const QRCodeSection = styled(motion.div)`
+  text-align: center;
+  margin: 20px auto;
+  max-width: 800px;
+  width: 90%;
+`
+
+const QRCodeButton = styled(motion.button)`
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 15px;
+  padding: 15px 25px;
+  font-size: 18px;
+  color: #5d4037;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  font-weight: 600;
+  font-family: 'KaiTi', 'SimKai', serif;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+`
+
+const QRCodeModal = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+`
+
+const QRCodeContent = styled(motion.div)`
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+`
+
+const QRCodeImage = styled.img`
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 20px;
+`
+
+const QRCodeTitle = styled.h3`
+  font-size: 20px;
+  color: #5d4037;
+  margin-bottom: 10px;
+  font-family: 'KaiTi', 'SimKai', serif;
+  font-weight: 700;
+`
+
+const QRCodeDescription = styled.p`
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+`
+
+const CloseQRButton = styled(motion.button)`
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: white;
+    transform: scale(1.05);
+  }
+`
+
 const IslandsContainer = styled.div`
   display: flex;
   gap: 30px;
@@ -348,6 +446,7 @@ const CheckinPage: React.FC = () => {
   const navigate = useNavigate()
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
 
   // 鸟白岛坐标 (页面中心位置)
   const torishimaPosition = { x: 50, y: 50 }
@@ -373,6 +472,14 @@ const CheckinPage: React.FC = () => {
 
   const handleOtherPilgrimage = () => {
     navigate('/other-pilgrimage')
+  }
+
+  const handleQRCodeClick = () => {
+    setIsQRModalOpen(true)
+  }
+
+  const closeQRModal = () => {
+    setIsQRModalOpen(false)
   }
 
   return (
@@ -432,6 +539,20 @@ const CheckinPage: React.FC = () => {
           </IslandCard>
         ))}
       </IslandsContainer>
+
+      <QRCodeSection
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        <QRCodeButton
+          onClick={handleQRCodeClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          📱 打卡地点合集
+        </QRCodeButton>
+      </QRCodeSection>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -542,6 +663,45 @@ const CheckinPage: React.FC = () => {
               <ModalText>只能在航行过程中拍摄</ModalText>
             </ModalContent>
           </ModalOverlay>
+        )}
+      </AnimatePresence>
+
+      {/* 二维码模态框 */}
+      <AnimatePresence>
+        {isQRModalOpen && (
+          <QRCodeModal
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeQRModal}
+          >
+            <QRCodeContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CloseQRButton
+                onClick={closeQRModal}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                ×
+              </CloseQRButton>
+              <QRCodeImage 
+                src="images/webps/打卡地点合集.webp" 
+                alt="打卡地点合集二维码"
+                onError={(e) => {
+                  console.error('二维码图片加载失败:', e)
+                }}
+              />
+              <QRCodeTitle>打卡地点合集</QRCodeTitle>
+              <QRCodeDescription>
+                扫描二维码获取完整的打卡地点图片合集
+              </QRCodeDescription>
+            </QRCodeContent>
+          </QRCodeModal>
         )}
       </AnimatePresence>
     </Container>

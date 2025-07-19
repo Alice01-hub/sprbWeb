@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
+import MapDetailViewer from '../components/MapDetailViewer'
 
 // 地图图标接口定义
 interface CheckInIcon {
@@ -14,6 +15,7 @@ interface CheckInIcon {
   iconType: 'emoji' | 'image'
   size: number
 }
+
 
 const Container = styled.div`
   min-height: 100vh;
@@ -210,13 +212,128 @@ const LocationIcon = styled(motion.div)<{ x: number; y: number; iconSize: number
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  img {
-    width: ${props => props.iconSize}px;
-    height: ${props => props.iconSize}px;
-    object-fit: contain;
-  }
 `
+
+// Tooltip 组件 - 智能定位版本
+const MapTooltip = styled.div<{ position: 'top' | 'bottom' | 'left' | 'right' }>`
+  position: absolute;
+  background: #fff;
+  color: #333;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 16px 10px 12px 10px;
+  min-width: 220px;
+  max-width: 320px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  
+  ${props => {
+    switch (props.position) {
+      case 'top':
+        return `
+          left: 50%;
+          top: -10px;
+          transform: translate(-50%, -100%);
+  &::after {
+    content: '';
+    position: absolute;
+            left: 50%;
+            bottom: -14px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 14px solid #fff;
+          }
+        `;
+      case 'bottom':
+        return `
+          left: 50%;
+          bottom: -10px;
+          transform: translate(-50%, 100%);
+          &::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -14px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-bottom: 14px solid #fff;
+          }
+        `;
+      case 'left':
+        return `
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          &::after {
+            content: '';
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            border-left: 14px solid #fff;
+          }
+        `;
+      case 'right':
+        return `
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          &::after {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            border-right: 14px solid #fff;
+          }
+        `;
+      default:
+        return '';
+    }
+  }}
+`;
+
+const TooltipImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+`;
+
+const TooltipTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #5d4037;
+  margin-bottom: 4px;
+  text-align: center;
+`;
+
+const TooltipDesc = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+`;
+
 
 const ImageGallery = styled.div`
   display: grid;
@@ -344,6 +461,11 @@ const ModalContent = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
 `
 
 const ModalImage = styled.img`
@@ -356,57 +478,59 @@ const ModalImage = styled.img`
 
 const ModalInfo = styled.div`
   text-align: center;
-  color: white;
+  color: #333;
 `
 
 const ModalTitle = styled.h3`
   font-size: 24px;
   margin: 0 0 10px 0;
-  color: #fff;
+  color: #5d4037;
   font-family: 'KaiTi', 'SimKai', serif;
+  font-weight: 700;
 `
 
 const ModalLabel = styled.p`
   font-size: 18px;
   margin: 0;
-  color: #ccc;
+  color: #666;
+  font-weight: 500;
 `
 
 const CloseButton = styled(motion.button)`
   position: absolute;
-  top: -50px;
+  top: -60px;
   right: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   color: white;
   font-size: 20px;
-  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
+  transition: all 0.3s ease;
 `
 
 const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   position: absolute;
   top: 50%;
-  ${props => props.direction === 'prev' ? 'left: -60px;' : 'right: -60px;'}
+  ${props => props.direction === 'prev' ? 'left: -70px;' : 'right: -70px;'}
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   width: 50px;
   height: 50px;
   color: white;
   font-size: 24px;
-  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
+  transition: all 0.3s ease;
   
   @media (max-width: 768px) {
     ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
@@ -627,114 +751,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
   );
 };
 
-// Tooltip 组件
-const MapTooltip = styled.div<{ direction: 'top' | 'bottom' }>`
-  position: absolute;
-  left: 50%;
-  ${props => props.direction === 'top' ? 'top: -10px; transform: translate(-50%, -100%);' : 'bottom: -10px; transform: translate(-50%, 100%);'}
-  background: #fff;
-  color: #333;
-  border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-  padding: 16px 10px 12px 10px;
-  min-width: 220px;
-  max-width: 320px;
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none;
-  opacity: 0.98;
-  &::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    ${props => props.direction === 'top' ? 'bottom: -10px;' : 'top: -10px;'}
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    ${props => props.direction === 'top' ? 'border-top: 10px solid #fff;' : 'border-bottom: 10px solid #fff;'}
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  }
-  &::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    ${props => props.direction === 'top' ? 'bottom: -11px;' : 'top: -11px;'}
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 11px solid transparent;
-    border-right: 11px solid transparent;
-    ${props => props.direction === 'top' ? 'border-top: 1px solid #ececec;' : 'border-bottom: 1px solid #ececec;'}
-  }
-`;
-const TooltipImage = styled.img`
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 10px;
-  margin: 0 0 8px 0;
-  display: block;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-`;
-const TooltipTitle = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  color: #5d4037;
-  margin-bottom: 4px;
-  text-align: center;
-`;
-const TooltipDesc = styled.div`
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-`;
 
-const iconTooltips: Record<string, { image: string; desc: string }> = {
-  '泳池': {
-    image: 'images/webps/男木岛/男木岛-泳池.webp',
-    desc: '与白羽相遇的地方',
-  },
-  '鸥相遇小道': {
-    image: 'images/webps/男木岛/男木岛-鸥相遇小道.webp',
-    desc: '与鸥相遇的美丽小径',
-  },
-  '鸟白岛役场': {
-    image: 'images/webps/男木岛/男木岛-鸟白岛役场.webp',
-    desc: '岛上重要的行政场所',
-  },
-  '秘密基地': {
-    image: 'images/webps/男木岛/男木岛-秘密基地.webp',
-    desc: '与天善打乒乓球的地方',
-  },
-  '灯塔': {
-    image: 'images/webps/男木岛/男木岛-灯塔.webp',
-    desc: '与小紬相遇的地方',
-  },
-  '苍睡觉小道': {
-    image: 'images/webps/男木岛/男木岛-苍睡觉小道.webp',
-    desc: '与苍相遇的地方',
-  },
-  '静久神社': {
-    image: 'images/webps/男木岛/男木岛-静久神社图.webp',
-    desc: '与静久路过的鸟居',
-  },
-  '鬼姬神山识之墓': {
-    image: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp',
-    desc: '与。。。',
-  },
-  '放送塔': {
-    image: 'images/webps/男木岛/男木岛-放送塔.webp',
-    desc: '美希等爸爸妈妈的地点',
-  },
-  '防波堤': {
-    image: 'images/webps/男木岛/男木岛-防波堤.webp',
-    desc: '白羽主视觉',
-  },
-};
 
 const OgijimaPage: React.FC = () => {
   const navigate = useNavigate()
@@ -749,52 +766,144 @@ const OgijimaPage: React.FC = () => {
   
   // 信息卡片切换状态
   const [activeTab, setActiveTab] = useState<'intro' | 'guide'>('intro');
-
-  // 地标悬停状态
-  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  // 移除 tooltipPos 相关
   
+  // tooltip悬停状态
+  const [hoveredIcon, setHoveredIcon] = useState<null | {
+    x: number;
+    y: number;
+    title: string;
+    image: string;
+    desc: string;
+  }>(null);
+  
+  // 地图详情查看器状态
+  const [mapDetailViewer, setMapDetailViewer] = useState({
+    isOpen: false,
+    mapImage: '',
+    title: '',
+    description: '',
+    iconPositions: [] as { x: number; y: number; emoji?: string }[],
+  })
+
   // 地图缩放比例参数
-  // 调整此值来控制地图大小：
-  // 0.5 = 50% 大小 (400px 宽)
-  // 1.0 = 100% 大小 (800px 宽)  
-  // 1.5 = 150% 大小 (1200px 宽)
   const mapScale = 1.0
 
-  // 地图图标坐标参数 (0-100的百分比)
-  // 可以手动调节这些数值来移动图标位置
-  // size参数控制图标大小，单位为像素 (建议范围: 16-40)
+  // 地标大小调整参数
+  const iconSize = 30
+
+  // 地标大小配置 - 可以为不同地标设置不同大小
+  // 修改这些值来调整各个地标的大小
+  const iconSizeConfig: Record<string, number> = {
+    '紬的灯塔': 30,
+    '苍睡觉的小道': 30,
+    '白羽主视角': 30,
+    '鸥相遇小道': 50,
+  }
+
+  // 地图地标数据
   const checkInIcons: CheckInIcon[] = [
-    { x: 28, y: 78, emoji: '🏊', title: '泳池', iconType: 'emoji', size: 24 },
-    { x: 51, y: 78, icon: "images/webps/男木岛/男木岛-鸥相遇小道图标.webp", title: '鸥相遇小道', iconType: 'image', size: 50 },
-    { x: 23, y: 74, emoji: '🏛️', title: '鸟白岛役场', iconType: 'emoji', size: 24 },
-    { x: 28, y: 76, icon: "images/webps/男木岛/男木岛-秘密基地图标.webp", title: '秘密基地', iconType: 'image', size: 35 },
-    { x: 60, y: 3, icon: "images/webps/男木岛/男木岛-灯塔图标.webp", title: '灯塔', iconType: 'image', size: 32 },
-    { x: 31, y: 52, emoji: '💤', title: '苍睡觉小道', iconType: 'emoji', size: 40 },
-    { x: 33, y: 60, emoji: '⛩️', title: '静久神社', iconType: 'emoji', size: 35 },
-    { x: 54, y: 5, icon: "images/webps/男木岛/男木岛-鬼姬神山识之墓图标.webp", title: '鬼姬神山识之墓', iconType: 'image', size: 45 },
-    { x: 24, y: 65, icon: "images/webps/男木岛/男木岛-放送塔图标.webp", title: '放送塔', iconType: 'image', size: 28 },
-    { x: 16, y: 74, emoji: '🌊', title: '防波堤', iconType: 'emoji', size: 24 }
-  ];
+    { x: 61, y: 2, emoji: '🗺️', title: '紬的灯塔', iconType: 'emoji', size: iconSizeConfig['紬的灯塔'] || iconSize },
+    { x: 28, y: 53, emoji: '🗺️', title: '苍睡觉的小道', iconType: 'emoji', size: iconSizeConfig['苍睡觉的小道'] || iconSize },
+    { x: 23, y: 74, emoji: '🗺️', title: '白羽主视角', iconType: 'emoji', size: iconSizeConfig['白羽主视角'] || iconSize },
+    { x: 49, y: 78, icon: 'images/webps/男木岛/男木岛-鸥相遇小道图标.webp', title: '鸥相遇小道', iconType: 'image', size: iconSizeConfig['鸥相遇小道'] || iconSize },
+  ]
+
+  // 地标tooltip内容配置
+  const iconTooltips: Record<string, { image: string; desc: string }> = {
+    '紬的灯塔': {
+      image: 'images/webps/男木岛/男木岛-灯塔.webp',
+      desc: '与小紬相遇的地点',
+    },
+    '苍睡觉的小道': {
+      image: 'images/webps/男木岛/男木岛-苍睡觉小道.webp',
+      desc: '与苍相遇的地点',
+    },
+    '白羽主视角': {
+      image: 'images/webps/男木岛/男木岛-防波堤.webp',
+      desc: '第一次见白羽的地点',
+    },
+    '鸥相遇小道': {
+      image: 'images/webps/男木岛/男木岛-鸥相遇小道.webp',
+      desc: '与鸥相遇的地点',
+    },
+  }
+
+  // 地图详情数据
+  const mapDetails = {
+    '紬的灯塔': {
+      mapImage: "images/webps/男木岛/男木岛-灯塔地图-线路版.webp",
+      description: '我正在找东西，找自己想要做的事情',
+      iconPositions: [
+        { x: 23, y: 38, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
+        { x: 74, y: 35, icon: 'images/webps/男木岛/男木岛-紬的灯塔.webp', size: 200 },
+      ]
+    },
+    '苍睡觉的小道': {
+      mapImage: "images/webps/男木岛/男木岛-苍睡觉小道地图-线路版.webp",
+      description: '总之，就算我在睡觉也不必管啦',
+      iconPositions: [
+        { x: 37, y: 76, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 200 },
+        { x: 65, y: 22, icon: 'images/webps/男木岛/男木岛-苍睡觉小道.webp', size: 200 },
+        { x: 76, y: 66, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
+      ]
+    },
+    '白羽主视角': {
+      mapImage: "images/webps/男木岛/男木岛-鸟白岛役场地图-线路版.webp",
+      description: '不用在意我就好',
+      iconPositions: [
+        { x: 33, y: 2, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
+        { x: 4, y: 53, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 200 },
+        { x: 42, y: 64, icon: 'images/webps/男木岛/男木岛-鸟白岛役场.webp', size: 150 },
+        { x: 65, y: 70, icon: 'images/webps/男木岛/男木岛-秘密基地.webp', size: 100 },
+        { x: 65, y: 76, icon: 'images/webps/男木岛/男木岛-泳池.webp', size: 100 },
+      ]
+    },
+    '鸥相遇小道': {
+      mapImage: "images/webps/男木岛/男木岛-鸥相遇小道.webp",
+      description: '出发吧~再一次，向着那有海盗船的地方',
+    }
+  }
 
   // 打卡地点图片数据
   const checkInLocations = [
     {
-      title: "泳池",
-      description: "与白羽相遇的地方",
+      title: "放送塔",
+      description: "美希等爸爸妈妈的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-泳池.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-泳池-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-泳池-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-放送塔.webp", label: "放送塔" }
       ]
     },
     {
-      title: "鸥相遇小道",
-      description: "与鸥相遇的美丽小径",
+      title: "苍睡觉的小道",
+      description: "与苍相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
+      ]
+    },
+    {
+      title: "鬼姬神山识之墓",
+      description: "与小识。。。",
+      images: [
+        { src: "images/webps/男木岛/男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
+      ]
+    },
+    {
+      title: "紬的灯塔",
+      description: "与小紬相遇的地点",
+      images: [
+        { src: "images/webps/男木岛/男木岛-灯塔.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-灯塔-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
+        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
+      ]
+    },
+    {
+      title: "静久神社",
+      description: "与静久路过的鸟居",
+      images: [
+        { src: "images/webps/男木岛/男木岛-静久神社.webp", label: "静久神社" }
       ]
     },
     {
@@ -807,8 +916,15 @@ const OgijimaPage: React.FC = () => {
       ]
     },
     {
+      title: "防波堤",
+      description: "白羽主视觉",
+      images: [
+        { src: "images/webps/男木岛/男木岛-防波堤.webp", label: "防波堤" }
+      ]
+    },
+    {
       title: "秘密基地",
-      description: "与天善打乒乓球的地方",
+      description: "与天善打乒乓球的地点",
       images: [
         { src: "images/webps/男木岛/男木岛-秘密基地.webp", label: "白天" },
         { src: "images/webps/男木岛/男木岛-秘密基地-黄昏.webp", label: "黄昏" },
@@ -816,52 +932,23 @@ const OgijimaPage: React.FC = () => {
       ]
     },
     {
-      title: "紬的灯塔",
-      description: "与小紬相遇的地方",
+      title: "泳池",
+      description: "与白羽相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-灯塔.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-灯塔-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
-        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
+        { src: "images/webps/男木岛/男木岛-泳池.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-泳池-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-泳池-夜晚.webp", label: "夜晚" }
       ]
     },
     {
-      title: "苍睡觉小道",
-      description: "与苍相遇的地方",
+      title: "缺口栏杆",
+      description: "与鸥相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道.webp", label: "白天" },
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
+        { src: "images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
       ]
     },
-    {
-      title: "静久神社",
-      description: "与静久路过的鸟居",
-      images: [
-        { src: "images/webps/男木岛/男木岛-静久神社图.webp", label: "静久神社" }
-      ]
-    },
-    {
-      title: "鬼姬神山识之墓",
-      description: "与。。。",
-      images: [
-        { src: "images/webps/男木岛/男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
-      ]
-    },
-    {
-      title: "放送塔",
-      description: "美希等爸爸妈妈的地点",
-      images: [
-        { src: "images/webps/男木岛/男木岛-放送塔.webp", label: "放送塔" }
-      ]
-    },
-    {
-      title: "防波堤",
-      description: "白羽主视觉",
-      images: [
-        { src: "images/webps/男木岛/男木岛-防波堤.webp", label: "防波堤" }
-      ]
-    }
   ]
 
   const handleBack = () => {
@@ -897,6 +984,43 @@ const OgijimaPage: React.FC = () => {
       ...prev,
       currentIndex: (prev.currentIndex + 1) % prev.images.length
     }));
+  };
+
+  // 打开地图详情查看器
+  const openMapDetailViewer = (title: string, mapImage: string, description: string, iconPositions: { x: number; y: number; emoji?: string }[]) => {
+    setMapDetailViewer({
+      isOpen: true,
+      mapImage,
+      title,
+      description,
+      iconPositions,
+    })
+  }
+  
+  // 关闭地图详情查看器
+  const closeMapDetailViewer = () => {
+    setMapDetailViewer(prev => ({ ...prev, isOpen: false }))
+  }
+
+  // 计算tooltip最佳显示位置
+  const getTooltipPosition = (x: number, y: number): 'top' | 'bottom' | 'left' | 'right' => {
+    // 根据地图边缘位置智能选择显示方向
+    if (y < 20) {
+      // 靠近顶部，显示在下方
+      return 'bottom';
+    } else if (y > 80) {
+      // 靠近底部，显示在上方
+      return 'top';
+    } else if (x < 20) {
+      // 靠近左侧，显示在右侧
+      return 'right';
+    } else if (x > 80) {
+      // 靠近右侧，显示在左侧
+      return 'left';
+    } else {
+      // 默认显示在上方
+      return 'top';
+    }
   };
 
   return (
@@ -961,7 +1085,7 @@ const OgijimaPage: React.FC = () => {
                     男木岛是瀬戸内海中的一个宁静小岛，以其传统的渔村风貌而闻名。这里的居民世代以渔业为生，岛上的生活节奏缓慢而悠然。
                   </Description>
                   <Description>
-                    男木岛的猫咪特别多，被称为"猫岛"，这些可爱的猫咪是岛上的特色之一。
+                    男木岛的猫咪特别多，被称为"猫岛"，巡礼之余可以去撸一下猫猫。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -979,19 +1103,16 @@ const OgijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    男木岛的巡礼路线主要分为南北两个方向，北边最远的位置是灯塔，南边最远的位置是和鸥相遇的缺口栏杆。
+                    男木岛的巡礼路线主要分为南北两个方向，北边最远的位置是灯塔，南边最远的位置是和鸥相遇的海岸小路。
                   </Description>
                   <Description>
-                    男木岛共有10个巡礼点，其中9个可拍照，8个可还原，巡礼推荐路线如下：
+                    男木岛共有10个巡礼点，其中，9个可拍照，8个可还原，巡礼推荐路线如下，点击🗺️可查看详情：
                   </Description>
                   <Description>
-                    北边：放送塔 → 苍睡觉小道 → 鬼姬神山识之墓 → 灯塔
+                    北边：放送塔 → 静久神社 → 苍睡觉的小道 → 鬼姬神山识之墓 → 小紬的灯塔
                   </Description>
                   <Description>
-                    中间：放送塔 → 静久神社
-                  </Description>
-                  <Description>
-                    南边：放送塔 → 鸟白岛役场 →  防波堤 → 秘密基地（泳池） → 鸥相遇小道
+                    南边：放送塔 → 鸟白岛役场 →  防波堤 → 秘密基地（泳池） → 鸥相遇的小路
                   </Description>
                   <Description>
                     其他说明：
@@ -999,10 +1120,10 @@ const OgijimaPage: React.FC = () => {
                         1. 男木岛的巡礼方式为步行，灯塔距离较远，请安排好时间。
                       </div>
                       <div style={{ textIndent: '2em' }}>
-                        2. 放送塔上岛即可看见，可以作为男木岛巡礼起点。
+                        2. 放送塔上岛即可看见，适合作为男木岛巡礼的起点。
                       </div>
                       <div style={{ textIndent: '2em' }}>
-                        3. 两个点无法还原，秘密基地属于丰爷简单自建，泳池禁止拍照。
+                        3. 两个点无法还原，秘密基地由丰爷自建，泳池禁止拍照。
                       </div>
                       <div style={{ textIndent: '2em' }}>
                         4. 有时间可以和丰爷聊天，丰爷人很好，也是SP粉。
@@ -1023,38 +1144,62 @@ const OgijimaPage: React.FC = () => {
             <MapContainer>
               <MapImage scale={mapScale} src="images/webps/男木岛/男木岛地图-线路版.webp" alt="男木岛地图" />
               <MapOverlay>
-                {/* 打卡点标记 */}
                 {checkInIcons.map((icon, index) => (
-                  <LocationIcon
+                <LocationIcon
                     key={icon.title}
                     x={icon.x}
                     y={icon.y}
                     iconSize={icon.size}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
                     transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
-                    whileHover={{ scale: 1.2 }}
+                  whileHover={{ scale: 1.2 }}
                     title={icon.title}
-                    onMouseEnter={() => setHoveredIcon(icon.title)}
+                                      onClick={() => {
+                      const detail = mapDetails[icon.title as keyof typeof mapDetails]
+                      if (detail) {
+                        openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPositions || [])
+                      }
+                    }}
+                    onMouseEnter={() => {
+                      const tip = iconTooltips[icon.title];
+                      if (tip) {
+                        setHoveredIcon({
+                          x: icon.x,
+                          y: icon.y,
+                          title: icon.title,
+                          image: tip.image,
+                          desc: tip.desc,
+                        });
+                      }
+                    }}
                     onMouseLeave={() => setHoveredIcon(null)}
                   >
-                    {icon.iconType === 'image' ? (
-                      <img src={icon.icon} alt={icon.title} />
+                    {icon.iconType === 'emoji' ? (
+                      <span style={{ fontSize: `${icon.size}px` }}>{icon.emoji}</span>
                     ) : (
-                      icon.emoji
+                      <img 
+                        src={icon.icon} 
+                        alt={icon.title}
+                        style={{ 
+                          width: `${icon.size}px`, 
+                          height: `${icon.size}px`,
+                          borderRadius: '50%',
+                          objectFit: 'cover'
+                        }} 
+                      />
                     )}
-                    {/* 悬停Tooltip，渲染在地标内部 */}
-                    {hoveredIcon === icon.title && iconTooltips[icon.title] && (
-                      <MapTooltip direction="top">
-                        <TooltipImage src={iconTooltips[icon.title].image} alt={icon.title} />
-                        <TooltipTitle>{icon.title}</TooltipTitle>
-                        <TooltipDesc>{iconTooltips[icon.title].desc}</TooltipDesc>
-                      </MapTooltip>
-                    )}
-                  </LocationIcon>
+                  {/* Tooltip渲染 */}
+                    {hoveredIcon && hoveredIcon.title === icon.title && (
+                      <MapTooltip position={getTooltipPosition(icon.x, icon.y)}>
+                      <TooltipImage src={hoveredIcon.image} alt={hoveredIcon.title} />
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
+                  )}
+                </LocationIcon>
                 ))}
               </MapOverlay>
-              {/* 移除原有的fixed Tooltip渲染 */}
             </MapContainer>
           </MapFrame>
         </motion.div>
@@ -1114,6 +1259,18 @@ const OgijimaPage: React.FC = () => {
         onNext={goToNextImage}
         title={imageViewer.title}
       />
+      
+      {/* 地图详情查看器模态框 */}
+      <MapDetailViewer
+        isOpen={mapDetailViewer.isOpen}
+        onClose={closeMapDetailViewer}
+        mapImage={mapDetailViewer.mapImage}
+        title={mapDetailViewer.title}
+        description={mapDetailViewer.description}
+        iconPositions={mapDetailViewer.iconPositions}
+        mode="full"
+      />
+
     </Container>
   )
 }

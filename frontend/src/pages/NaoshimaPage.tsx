@@ -376,6 +376,11 @@ const ModalContent = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
 `
 
 const ModalImage = styled.img`
@@ -388,57 +393,59 @@ const ModalImage = styled.img`
 
 const ModalInfo = styled.div`
   text-align: center;
-  color: white;
+  color: #333;
 `
 
 const ModalTitle = styled.h3`
   font-size: 24px;
   margin: 0 0 10px 0;
-  color: #fff;
+  color: #5d4037;
   font-family: 'KaiTi', 'SimKai', serif;
+  font-weight: 700;
 `
 
 const ModalLabel = styled.p`
   font-size: 18px;
   margin: 0;
-  color: #ccc;
+  color: #666;
+  font-weight: 500;
 `
 
 const CloseButton = styled(motion.button)`
   position: absolute;
-  top: -50px;
+  top: -60px;
   right: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   color: white;
   font-size: 20px;
-  cursor: none !important;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none;
+  transition: all 0.3s ease;
 `
 
 const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   position: absolute;
   top: 50%;
-  ${props => props.direction === 'prev' ? 'left: -60px;' : 'right: -60px;'}
+  ${props => props.direction === 'prev' ? 'left: -70px;' : 'right: -70px;'}
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   width: 50px;
   height: 50px;
   color: white;
   font-size: 24px;
-  cursor: none !important;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none;
+  transition: all 0.3s ease;
   @media (max-width: 768px) {
     ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
     top: auto;
@@ -503,9 +510,9 @@ const TooltipDesc = styled.div`
 const iconTooltips: Record<string, { image: string; desc: string }> = {
   '小卖部': {
     image: 'images/webps/直岛/直岛-小卖部.webp',
-    desc: '苍打工的地方',
+    desc: '苍打工的地点',
   },
-  '水塘海狸家': {
+  '海狸家': {
     image: 'images/webps/直岛/直岛-海狸家院子.webp',
     desc: '加藤家的住所',
   },
@@ -517,9 +524,9 @@ const iconTooltips: Record<string, { image: string; desc: string }> = {
     image: 'images/webps/直岛/直岛-蔷薇庄.webp',
     desc: '静久的饭店',
   },
-  '神社': {
+  '鸣濑神社': {
     image: 'images/webps/直岛/直岛-神社.webp',
-    desc: '岛上的精神寄托。',
+    desc: '白羽家的神社',
   },
 }
 
@@ -556,10 +563,10 @@ const NaoshimaPage: React.FC = () => {
   // 四个角落的地图标志
   const checkInIcons: CheckInIcon[] = [
     { x: 18, y: 54, emoji: '🗺️', title: '小卖部', iconType: 'emoji', size: 30 },
-    { x: 58, y: 50, emoji: '🗺️', title: '水塘海狸家', iconType: 'emoji', size: 30 },
+    { x: 58, y: 50, emoji: '🗺️', title: '海狸家', iconType: 'emoji', size: 30 },
     { x: 75, y: 64, emoji: '🗺️', title: '白羽钓点', iconType: 'emoji', size: 30 },
     { x: 67, y: 88, emoji: '🗺️', title: '蔷薇庄', iconType: 'emoji', size: 30 },
-    { x: 21, y: 32, emoji: '⛩️', title: '神社', iconType: 'emoji', size: 25 },
+    { x: 21, y: 32, emoji: '⛩️', title: '鸣濑神社', iconType: 'emoji', size: 25 },
   ]
   
   // 地图详情数据
@@ -572,22 +579,22 @@ const NaoshimaPage: React.FC = () => {
         { x: 28, y: 69, emoji: '🚲', size: 30 },
       ]
     },
-    '水塘海狸家': {
+    '海狸家': {
       mapImage: "images/webps/直岛/直岛地图-水塘海狸家-路线版.webp",
-      description: '加藤家的住所，温馨的家庭环境。',
+      description: '加藤家的住所，休憩之地。',
       iconPositions: [
-        { x: 10, y: 70, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
+        { x: 9, y: 68, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
         { x: 75, y: 9, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 200 },
         { x: 75, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 200 },
       ]
     },
     '白羽钓点': {
       mapImage: "images/webps/直岛/直岛地图-白羽钓点-路线版.webp",
-      description: '白羽钓鱼的地方，风景优美。',
+      description: '白羽钓鱼的地方，海风徐徐。',
       iconPositions: [
         { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 200 },
-        { x: 85, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 200 },
-        { x: 57, y: 1, icon: 'images/webps/直岛/直岛-通往白羽钓点.webp', size: 200 },
+        { x: 82, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 200 },
+        { x: 57, y: 0, icon: 'images/webps/直岛/直岛-白羽钓点.webp', size: 200 },
       ]
     },
     '蔷薇庄': {
@@ -595,10 +602,14 @@ const NaoshimaPage: React.FC = () => {
       description: '充满回忆的住宿地，温馨舒适。',
       iconPositions: [
         { x: 92, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
-        { x: 71, y: 52, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
+        { x: 71, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
         { x: 85, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
         { x: 20, y: 18, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 200 },
       ]
+    },
+    '鸣濑神社': {
+      mapImage: "images/webps/直岛/直岛-神社.webp",
+      description: '白羽出嫁的地点。',
     }
   }
   // 打卡点图片与描述
@@ -618,7 +629,7 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '小卖部',
-      description: '补给和休息的好地方。',
+      description: '苍打工的零食店。',
       images: [
         { src: "images/webps/直岛/直岛-小卖部.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-小卖部-黄昏.webp", label: '黄昏' },
@@ -626,8 +637,8 @@ const NaoshimaPage: React.FC = () => {
       ]
     },
     {
-      title: '神社',
-      description: '岛上的精神寄托。',
+      title: '鸣濑神社',
+      description: '白羽出嫁的地点。',
       images: [
         { src: "images/webps/直岛/直岛-神社.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-神社-黄昏.webp", label: '黄昏' },
@@ -636,7 +647,7 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '灵弹',
-      description: '神秘的灵弹场景。',
+      description: '灵弹~灵弹~。',
       images: [
         { src: "images/webps/直岛/直岛-灵弹.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-灵弹-黄昏.webp", label: '黄昏' },
@@ -645,7 +656,7 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '海狸家门前',
-      description: '加藤家门前的公路。',
+      description: '加藤家门口。',
       images: [
         { src: "images/webps/直岛/直岛-海狸家门前.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-海狸家门前-黄昏.webp", label: '黄昏' },
@@ -695,7 +706,7 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '食堂',
-      description: '享受地道美食的好去处。',
+      description: '白羽家的食堂。',
       images: [
         { src: "images/webps/直岛/直岛-食堂.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-食堂-黄昏.webp", label: '黄昏' },
@@ -704,20 +715,20 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '八幡神社石阶',
-      description: '历史悠久的石阶。',
+      description: '美希穿和服。',
       images: [
         { src: "images/webps/直岛/直岛-八幡神社石阶.webp", label: '八幡神社石阶' },
       ]
     },
     {
       title: '积浦海岸',
-      description: '美丽的海岸线风光。',
+      description: '羽未的日出打卡点',
       images: [
         { src: "images/webps/直岛/直岛-积浦海岸.webp", label: '积浦海岸' },
       ]
     },
     {
-      title: '白羽钓点',
+      title: '白羽钓鱼点',
       description: '白羽钓鱼的地方',
       images: [
         { src: "images/webps/直岛/直岛-白羽钓鱼.webp", label: '白天' },
@@ -735,14 +746,14 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '蔷薇庄',
-      description: '充满回忆的住宿地。',
+      description: '静久加饭的地方。',
       images: [
         { src: "images/webps/直岛/直岛-蔷薇庄.webp", label: '蔷薇庄' },
       ]
     },
     {
       title: '海水浴场',
-      description: '夏日戏水的好去处。',
+      description: '良一脱衣服的地方。',
       images: [
         { src: "images/webps/直岛/直岛-海水浴场.webp", label: '白天' },
         { src: "images/webps/直岛/直岛-海水浴场-夜晚.webp", label: '夜晚' },
@@ -751,7 +762,7 @@ const NaoshimaPage: React.FC = () => {
     },
     {
       title: '游戏主界面',
-      description: '游戏主界面。',
+      description: '全部女主的合照',
       images: [
         { src: "images/webps/直岛/直岛-游戏主界面.webp", label: '游戏主界面' },
       ]
@@ -863,7 +874,7 @@ const NaoshimaPage: React.FC = () => {
                     直岛是瀬户内海中著名的艺术岛屿，拥有丰富的自然与人文景观，是现代艺术与传统生活完美融合的代表。
                   </Description>
                   <Description>
-                    岛上有多处特色打卡点，等待你的探索与发现。
+                    岛上分多个区，可以体验不同的艺术氛围。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -881,26 +892,26 @@ const NaoshimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    直岛的主要交通方式为自行车，上岛后可以在Summer Pocket租车店租一辆胡子🐱自行车。
+                    直岛的主要巡礼方式为自行车，上岛后可以在Summer Pocket租车店租一辆胡子🐱自行车。
                   </Description>
                   <Description>
-                    直岛巡礼路线主要分为4个区域，点击地图上的🗺️图标可查看详情。<br />
+                    直岛巡礼主要分为4个区域，点击地图上的🗺️图标可查看详情。<br />
                   </Description>
                   <Description>
                     直岛共有15个打卡点，具体如下：<br />
-                    &emsp;&emsp;港口往北：苍打工的小卖部 → 鸣濑神社<br />
-                    &emsp;&emsp;正东方：小水塘 → 海狸家 → 八幡神社<br />
-                    &emsp;&emsp;八幡神社继续往南：羽未日出点 → 白羽钓鱼点<br />
-                    &emsp;&emsp;羽未日出点继续往南：<br />
-                    &emsp;&emsp;惠美须神社鸟居 → 往东，蔷薇庄，海水浴场；<br />
-                    &emsp;&emsp;惠美须神社鸟居 → 往西，游戏主界面拍摄点；
+                    <div style={{ textIndent: '2em' }}>港口往北：苍打工的小卖部 → 鸣濑神社</div>
+                    <div style={{ textIndent: '2em' }}>正东方：小水塘 → 海狸家 → 八幡神社</div>
+                    <div style={{ textIndent: '2em' }}>八幡神社往南：羽未日出点 → 白羽钓鱼点</div>
+                    <div style={{ textIndent: '2em' }}>羽未日出点往南：</div>
+                    <div style={{ textIndent: '4em' }}>惠美须神社鸟居 → 往东，蔷薇庄，海水浴场</div>
+                    <div style={{ textIndent: '4em' }}>惠美须神社鸟居 → 往西，游戏主界面拍摄点</div>
                   </Description>
                   <Description>
                     其他说明：<br />
-                    &emsp;&emsp;1. 小卖部已停业，只能在门口拍照；<br />
-                    &emsp;&emsp;2. 鸣濑神社可能lim无法进入；<br />
-                    &emsp;&emsp;3. 海狸家客厅和卧室需要预定才可拍照；<br />
-                    &emsp;&emsp;4. 白羽钓鱼点涨潮时无法到达；<br />
+                    <div style={{ textIndent: '2em' }}>1. 小卖部已停业，只能在门口拍照；</div>
+                    <div style={{ textIndent: '2em' }}>2. 鸣濑神社可能无法进入；</div>
+                    <div style={{ textIndent: '2em' }}>3. 海狸家客厅和卧室需要预定石井商店民宿才可拍照；</div>
+                    <div style={{ textIndent: '2em' }}>4. 白羽钓鱼点涨潮时无法到达；</div>
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -928,6 +939,7 @@ const NaoshimaPage: React.FC = () => {
                     whileHover={{ scale: 1.2 }}
                     title={icon.title}
                     onClick={() => {
+                      // 所有图标都显示地图详情
                       const detail = mapDetails[icon.title as keyof typeof mapDetails]
                       if (detail) {
                         openMapDetailViewer(icon.title, detail.mapImage, detail.description, detail.iconPositions)

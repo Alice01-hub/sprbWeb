@@ -145,7 +145,7 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
   // 保证每个icon都带emoji属性，兼容类型
   const iconsToRender = iconPositions && iconPositions.length > 0
     ? iconPositions
-    : [{ ...iconPosition, emoji: iconEmoji }]
+    : []
 
   return (
     <AnimatePresence>

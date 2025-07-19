@@ -180,9 +180,9 @@ const MapOverlay = styled.div`
   pointer-events: none;
 `
 
-const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
+const LocationIcon = styled(motion.div)<{ x: number; y: number; iconSize: number }>`
   position: absolute;
-  font-size: 24px;
+  font-size: ${props => props.iconSize}px;
   cursor: pointer;
   left: ${props => props.x}%;
   top: ${props => props.y}%;
@@ -190,7 +190,84 @@ const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
   z-index: 10;
   pointer-events: auto;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
+
+
+
+// Tooltip 组件
+const MapTooltip = styled.div`
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translate(-50%, -100%);
+  background: #fff;
+  color: #333;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 16px 10px 12px 10px; /* 减小左右padding */
+  min-width: 220px;
+  max-width: 320px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 14px solid #fff;
+  }
+`
+
+const TooltipImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+`
+
+const TooltipTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #5d4037;
+  margin-bottom: 4px;
+  text-align: center;
+`
+
+const TooltipDesc = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+`
+
+// 地标tooltip内容配置
+const iconTooltips: Record<string, { image: string; desc: string }> = {
+  'mountainUP': {
+    image: 'images/webps/女木岛/女木岛-秘密基地山路.webp',
+    desc: '通往秘密基地的山路',
+  },
+  'mountainDOWN': {
+    image: 'images/webps/女木岛/女木岛-山道.webp',
+    desc: '和苍引导七影碟的山道',
+  },
+  'cave': {
+    image: 'images/webps/女木岛/女木岛-采石场入口.webp',
+    desc: '与鸥冒险的采石场入口',
+  },
+}
 
 const ImageGallery = styled.div`
   display: grid;
@@ -320,50 +397,56 @@ const ModalContent = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 `
 
 const ModalImage = styled.img`
   max-width: 100%;
-  max-height: 80vh;
+  max-height: 70vh;
   object-fit: contain;
   border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 `
 
 const ModalInfo = styled.div`
   text-align: center;
-  color: white;
+  color: #333;
 `
 
 const ModalTitle = styled.h3`
   font-size: 24px;
   margin: 0 0 10px 0;
-  color: #fff;
+  color: #5d4037;
   font-family: 'KaiTi', 'SimKai', serif;
+  font-weight: 700;
 `
 
 const ModalLabel = styled.p`
   font-size: 18px;
   margin: 0;
-  color: #ccc;
+  color: #666;
+  font-weight: 500;
 `
 
 const CloseButton = styled(motion.button)`
   position: absolute;
-  top: -50px;
+  top: -60px;
   right: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   color: white;
   font-size: 20px;
-  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
+  transition: all 0.3s ease;
 `
 
 const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
@@ -617,17 +700,38 @@ const MegijimaPage: React.FC = () => {
   // 信息卡片切换状态
   const [activeTab, setActiveTab] = useState<'intro' | 'guide'>('intro');
   
-  // 地图缩放比例参数
-  // 调整此值来控制地图大小：
-  // 0.5 = 50% 大小 (400px 宽)
-  // 1.0 = 100% 大小 (800px 宽)  
-  // 1.5 = 150% 大小 (1200px 宽)
-  const mapScale = 0.6
-
-  // 地图图标坐标参数 (0-100的百分比)
-  // 可以手动调节这些数值来移动图标位置
-  const pinIcon = { x: 67, y: 35 }      // 📍 景点标记
-  const busIcon = { x: 73, y: 66 }      // 🚌 公交/渡轮站
+  // tooltip悬停状态
+  const [hoveredIcon, setHoveredIcon] = useState<null | {
+    x: number;
+    y: number;
+    title: string;
+    image: string;
+    desc: string;
+  }>(null);
+  
+  // 地图配置参数 - 集中管理
+  const mapConfig = {
+    // 地图缩放比例参数
+    scale: 0.6,
+    
+    // 地图图标坐标参数 (0-100的百分比)
+    // 可以手动调节这些数值来移动图标位置
+    icons: {
+      cave: { x: 66, y: 38 },      // 山洞地标
+      bus: { x: 73, y: 66 },       // 公交/渡轮站
+      mountainUP: { x: 65, y: 33 }, 
+      mountainDOWN: { x: 70, y: 43 }
+    },
+    
+    // 图标大小参数 (像素)
+    // 可以手动调节这些数值来改变图标大小
+    sizes: {
+      cave: 30,      // 山洞地标大小
+      mountainUP: 35,
+      bus: 35,        // 公交站大小
+      mountainDOWN: 35
+    }
+  }
 
   // 打卡地点图片数据
   const checkInLocations = [
@@ -643,7 +747,7 @@ const MegijimaPage: React.FC = () => {
     },
     {
       title: "山道",
-      description: "小苍捕捉七影碟的地点",
+      description: "苍捕捉七影碟的地点",
       images: [
         { src: "images/webps/女木岛/女木岛-山道.webp", label: "白天" },
         { src: "images/webps/女木岛/女木岛-山道-黄昏.webp", label: "黄昏" },
@@ -653,7 +757,7 @@ const MegijimaPage: React.FC = () => {
     },
     {
       title: "采石场入口",
-      description: "和小欧冒险的重要场所",
+      description: "欧线的重要场所",
       images: [
         { src: "images/webps/女木岛/女木岛-采石场入口.webp", label: "白天" },
         { src: "images/webps/女木岛/女木岛-采石场入口-黄昏.webp", label: "黄昏" },
@@ -711,6 +815,37 @@ const MegijimaPage: React.FC = () => {
       ...prev,
       currentIndex: (prev.currentIndex + 1) % prev.images.length
     }));
+  };
+
+  // 处理地标点击事件
+  const handleIconClick = (iconType: string) => {
+    let locationTitle = '';
+    let locationImages: Array<{ src: string; label: string }> = [];
+    
+    switch (iconType) {
+      case 'cave':
+        locationTitle = '采石场入口';
+        locationImages = [
+          { src: "images/webps/女木岛/女木岛-采石场入口.webp", label: "与鸥冒险的采石场入口" }
+        ];
+        break;
+      case 'mountainUP':
+        locationTitle = '秘密基地山路';
+        locationImages = [
+          { src: "images/webps/女木岛/女木岛-秘密基地山路.webp", label: "通往秘密基地的山路" }
+        ];
+        break;
+      case 'mountainDOWN':
+        locationTitle = '山道';
+        locationImages = [
+          { src: "images/webps/女木岛/女木岛-山道.webp", label: "苍引导七影碟的山道" }
+        ];
+        break;
+    }
+    
+    if (locationTitle && locationImages.length > 0) {
+      openImageViewer(locationImages, 0, locationTitle);
+    }
   };
 
   return (
@@ -772,7 +907,7 @@ const MegijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    女木岛是瀬戸内海中的一个小岛，以鬼岛传说而闻名。传说中，这里曾是恶鬼的栖息地，但如今已成为一个宁静美丽的观光胜地。
+                    女木岛是瀬戸内海中的一个小岛。传说中，这里曾是恶鬼的栖息地，但如今已成为一个宁静美丽的观光胜地。
                   </Description>
                   <Description>
                     女木岛的海岸线曲折多变，形成了众多天然的海湾和奇特的岩石景观。
@@ -799,7 +934,7 @@ const MegijimaPage: React.FC = () => {
                     女木岛共有五个巡礼点，分别是，秘密基地山路，山道，采石场入口，采石场分岔路，窄路。
                   </Description>
                   <Description>
-                  其他说明：海边钢琴属于海盗船原型，无法还原。
+                  其他说明：海边钢琴属于海盗船原型。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -814,25 +949,59 @@ const MegijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="images/webps/女木岛/女木岛地图-线路版.webp" alt="女木岛地图" />
+              <MapImage scale={mapConfig.scale} src="images/webps/女木岛/女木岛地图-线路版.webp" alt="女木岛地图" />
               <MapOverlay>
-                {/* 景点标记 */}
+                {/* 山洞地标 */}
                 <LocationIcon
-                  x={pinIcon.x}
-                  y={pinIcon.y}
+                  x={mapConfig.icons.cave.x}
+                  y={mapConfig.icons.cave.y}
+                  iconSize={mapConfig.sizes.cave}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1, duration: 0.5 }}
                   whileHover={{ scale: 1.2 }}
-                  title="景点标记"
+                  title="山洞"
+                  onMouseEnter={() => {
+                    const tip = iconTooltips['cave'];
+                    if (tip) {
+                      setHoveredIcon({
+                        x: mapConfig.icons.cave.x,
+                        y: mapConfig.icons.cave.y,
+                        title: '山洞',
+                        image: tip.image,
+                        desc: tip.desc,
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                  onClick={() => handleIconClick('cave')}
+                  style={{ zIndex: 15 }}
                 >
-                  📍
+                  <img 
+                    src="images/webps/女木岛/女木岛-山洞.webp" 
+                    alt="山洞"
+                    style={{ 
+                      width: `${mapConfig.sizes.cave}px`, 
+                      height: `${mapConfig.sizes.cave}px`,
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }} 
+                  />
+                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === '山洞' && (
+                    <MapTooltip>
+                      <TooltipImage src={hoveredIcon.image} alt={hoveredIcon.title} />
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
+                  )}
                 </LocationIcon>
 
                 {/* 公交/渡轮站 */}
                 <LocationIcon
-                  x={busIcon.x}
-                  y={busIcon.y}
+                  x={mapConfig.icons.bus.x}
+                  y={mapConfig.icons.bus.y}
+                  iconSize={mapConfig.sizes.bus}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1.2, duration: 0.5 }}
@@ -841,6 +1010,100 @@ const MegijimaPage: React.FC = () => {
                 >
                   🚌
                 </LocationIcon>
+
+                {/* 山路地标(上) */}
+                <LocationIcon
+                  x={mapConfig.icons.mountainUP.x}
+                  y={mapConfig.icons.mountainUP.y}
+                  iconSize={mapConfig.sizes.mountainUP}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1.4, duration: 0.5 }}
+                  whileHover={{ scale: 1.2 }}
+                  title="秘密基地山路"
+                  onMouseEnter={() => {
+                    const tip = iconTooltips['mountainUP'];
+                    if (tip) {
+                      setHoveredIcon({
+                        x: mapConfig.icons.mountainUP.x,
+                        y: mapConfig.icons.mountainUP.y,
+                        title: '秘密基地山路',
+                        image: tip.image,
+                        desc: tip.desc,
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                  onClick={() => handleIconClick('mountainUP')}
+                  style={{ zIndex: 10 }}
+                >
+                  <img 
+                    src="images/webps/女木岛/女木岛-山路地标.webp" 
+                    alt="秘密基地山路"
+                    style={{ 
+                      width: `${mapConfig.sizes.mountainUP}px`, 
+                      height: `${mapConfig.sizes.mountainUP}px`,
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }} 
+                  />
+                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === '秘密基地山路' && (
+                    <MapTooltip>
+                      <TooltipImage src={hoveredIcon.image} alt={hoveredIcon.title} />
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
+                  )}
+                </LocationIcon>
+
+                {/* 山路地标(下) */}
+                <LocationIcon
+                  x={mapConfig.icons.mountainDOWN.x}
+                  y={mapConfig.icons.mountainDOWN.y}
+                  iconSize={mapConfig.sizes.mountainDOWN}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1.6, duration: 0.5 }}
+                  whileHover={{ scale: 1.2 }}
+                  title="山道"
+                  onMouseEnter={() => {
+                    const tip = iconTooltips['mountainDOWN'];
+                    if (tip) {
+                      setHoveredIcon({
+                        x: mapConfig.icons.mountainDOWN.x,
+                        y: mapConfig.icons.mountainDOWN.y,
+                        title: '山道',
+                        image: tip.image,
+                        desc: tip.desc,
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                  onClick={() => handleIconClick('mountainDOWN')}
+                  style={{ zIndex: 20 }}
+                >
+                  <img 
+                    src="images/webps/女木岛/女木岛-山路地标.webp" 
+                    alt="山道"
+                    style={{ 
+                      width: `${mapConfig.sizes.mountainDOWN}px`, 
+                      height: `${mapConfig.sizes.mountainDOWN}px`,
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }} 
+                  />
+                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === '山道' && (
+                    <MapTooltip>
+                      <TooltipImage src={hoveredIcon.image} alt={hoveredIcon.title} />
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
+                  )}
+                </LocationIcon>
+                
+
               </MapOverlay>
             </MapContainer>
           </MapFrame>
