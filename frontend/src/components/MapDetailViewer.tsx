@@ -46,28 +46,7 @@ const ModalContent = styled(motion.div)<{ small?: boolean }>`
   justify-content: center;
 `
 
-const CloseButton = styled(motion.button)`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.1);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: #333;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: all 0.3s ease;
-  &:hover {
-    background: rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
-  }
-`
+
 
 const MapContainer = styled.div`
   position: relative;
@@ -163,14 +142,7 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
           onClick={e => e.stopPropagation()}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
-          <CloseButton
-            onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          >
-            ✕
-          </CloseButton>
+
           {mode === 'desc' ? (
             <>
               <Title>{title}</Title>

@@ -11,6 +11,8 @@ interface ImageSliderProps {
   autoPlay?: boolean
   interval?: number
   onImageClick?: (imageIndex: number) => void // 新增：点击图片的回调
+  isPlaying?: boolean // 新增：外部控制播放状态
+  onPlayPauseChange?: (isPlaying: boolean) => void // 新增：播放状态变化回调
 }
 
 const SliderContainer = styled.div`
@@ -66,29 +68,7 @@ const ImageLabel = styled(motion.div)`
   z-index: 10;
 `
 
-const ControlsContainer = styled.div`
-  position: absolute;
-  bottom: 10px;
-  right: 15px;
-  display: flex;
-  gap: 8px;
-  z-index: 10;
-`
 
-const ControlButton = styled(motion.button)<{ active?: boolean }>`
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)'};
-  color: ${props => props.active ? '#333' : '#666'};
-  font-size: 12px;
-  cursor: none !important; /* 🦋 使用蝴蝶鼠标 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
-`
 
 const DotsContainer = styled.div`
   position: absolute;
@@ -115,10 +95,15 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
   title, 
   autoPlay = true, 
   interval = 3000,
-  onImageClick // 新增：点击回调
+  onImageClick, // 新增：点击回调
+  isPlaying: externalIsPlaying, // 新增：外部播放状态
+  onPlayPauseChange // 新增：播放状态变化回调
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(autoPlay)
+  const [internalIsPlaying, setInternalIsPlaying] = useState(autoPlay)
+  
+  // 使用外部播放状态或内部播放状态
+  const isPlaying = externalIsPlaying !== undefined ? externalIsPlaying : internalIsPlaying
 
   // 自动播放逻辑
   useEffect(() => {
@@ -140,7 +125,12 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
   }
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
+    const newIsPlaying = !isPlaying
+    if (onPlayPauseChange) {
+      onPlayPauseChange(newIsPlaying)
+    } else {
+      setInternalIsPlaying(newIsPlaying)
+    }
   }
 
   // 新增：处理图片点击
@@ -209,67 +199,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
           {images[currentIndex].label}
         </ImageLabel>
 
-        {/* 控制按钮 */}
-        <ControlsContainer>
-          {images.length > 1 && (
-            <>
-              <ControlButton
-                onClick={handlePrevious}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.9)",
-                  color: "#333"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-              >
-                ‹
-              </ControlButton>
-              
-              <ControlButton
-                onClick={handlePlayPause}
-                active={isPlaying}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.9)",
-                  color: "#333"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-              >
-                {isPlaying ? '⏸' : '▶'}
-              </ControlButton>
-              
-              <ControlButton
-                onClick={handleNext}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.9)",
-                  color: "#333"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-              >
-                ›
-              </ControlButton>
-            </>
-          )}
-        </ControlsContainer>
+
 
         {/* 指示器 */}
         {images.length > 1 && (

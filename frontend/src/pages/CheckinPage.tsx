@@ -107,7 +107,7 @@ const QRCodeModal = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1050;
   padding: 20px;
 `
 
@@ -144,28 +144,28 @@ const QRCodeDescription = styled.p`
   margin: 0;
 `
 
-const CloseQRButton = styled(motion.button)`
-  position: absolute;
-  top: -50px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: #333;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const QRCodeLink = styled.a`
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: linear-gradient(45deg, #87CEEB, #98E4D6);
+  color: #2E8B57;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.3);
   
   &:hover {
-    background: white;
-    transform: scale(1.05);
+    background: linear-gradient(45deg, #98E4D6, #87CEEB);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
+    color: #2E8B57;
   }
 `
+
+
 
 const IslandsContainer = styled.div`
   display: flex;
@@ -285,6 +285,88 @@ const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
     height: 30px;
     object-fit: contain;
   }
+`
+
+// Tooltip 组件
+const MapTooltip = styled.div`
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translate(-50%, -100%);
+  background: #fff;
+  color: #333;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 12px 16px;
+  min-width: 180px;
+  max-width: 280px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 14px solid #fff;
+  }
+`
+
+// 鸟白岛专用的小型Tooltip
+const TorishimaTooltip = styled.div`
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translate(-50%, -100%);
+  background: #fff;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px 12px;
+  min-width: 80px;
+  max-width: 120px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.98;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #fff;
+  }
+`
+
+
+
+const TooltipTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #5d4037;
+  margin-bottom: 4px;
+  text-align: center;
+`
+
+const TooltipDesc = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
 `
 
 const ButtonContainer = styled.div`
@@ -447,6 +529,13 @@ const CheckinPage: React.FC = () => {
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  // tooltip悬停状态
+  const [hoveredIcon, setHoveredIcon] = useState<null | {
+    x: number;
+    y: number;
+    title: string;
+    desc: string;
+  }>(null)
 
   // 鸟白岛坐标 (页面中心位置)
   const torishimaPosition = { x: 50, y: 50 }
@@ -570,8 +659,25 @@ const CheckinPage: React.FC = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 1, duration: 0.5 }}
+                whileHover={{ scale: 1.2 }}
+                onMouseEnter={() => {
+                  setHoveredIcon({
+                    x: 76,
+                    y: 90,
+                    title: '高松港',
+                    desc: '前往各岛屿的起点港口',
+                  });
+                }}
+                onMouseLeave={() => setHoveredIcon(null)}
               >
                 🚢
+                                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === '高松港' && (
+                    <MapTooltip>
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
+                  )}
               </LocationIcon>
 
               {/* 鸟白岛图标 */}
@@ -584,8 +690,23 @@ const CheckinPage: React.FC = () => {
                 whileHover={{ scale: 1.2 }}
                 onClick={handleTorishimaClick}
                 title="鸟白岛"
+                onMouseEnter={() => {
+                  setHoveredIcon({
+                    x: 91,
+                    y: 60,
+                    title: '鸟白岛',
+                    desc: '只能在航行过程中拍摄的神秘岛屿',
+                  });
+                }}
+                onMouseLeave={() => setHoveredIcon(null)}
               >
                 ❗❗❗
+                                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === '鸟白岛' && (
+                    <TorishimaTooltip>
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                    </TorishimaTooltip>
+                  )}
               </LocationIcon>
 
               {/* 岛屿位置 */}
@@ -599,11 +720,27 @@ const CheckinPage: React.FC = () => {
                   transition={{ delay: 1.2 + index * 0.2, duration: 0.5 }}
                   whileHover={{ scale: 1.2 }}
                   onClick={() => handleIslandClick(island)}
+                  onMouseEnter={() => {
+                    setHoveredIcon({
+                      x: island.position.x,
+                      y: island.position.y,
+                      title: island.name,
+                      desc: island.description,
+                    });
+                  }}
+                  onMouseLeave={() => setHoveredIcon(null)}
                 >
                   {island.iconType === 'image' ? (
                     <img src={island.icon} alt={island.name} />
                   ) : (
                     island.icon
+                  )}
+                  {/* Tooltip渲染 */}
+                  {hoveredIcon && hoveredIcon.title === island.name && (
+                    <MapTooltip>
+                      <TooltipTitle>{hoveredIcon.title}</TooltipTitle>
+                      <TooltipDesc>{hoveredIcon.desc}</TooltipDesc>
+                    </MapTooltip>
                   )}
                 </LocationIcon>
               ))}
@@ -652,7 +789,6 @@ const CheckinPage: React.FC = () => {
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <CloseButton onClick={closeModal}>×</CloseButton>
               <ModalImage 
                 src="images/webps/鸟白岛总览.webp" 
                 alt="鸟白岛总览"
@@ -682,13 +818,6 @@ const CheckinPage: React.FC = () => {
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <CloseQRButton
-                onClick={closeQRModal}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                ×
-              </CloseQRButton>
               <QRCodeImage 
                 src="images/webps/打卡地点合集.webp" 
                 alt="打卡地点合集二维码"
@@ -700,6 +829,13 @@ const CheckinPage: React.FC = () => {
               <QRCodeDescription>
                 扫描二维码获取完整的打卡地点图片合集
               </QRCodeDescription>
+              <QRCodeLink 
+                href="https://pan.baidu.com/s/1BdmKigMJMb4y1q6RNLO2oA?pwd=sprb" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                📥 直接下载打卡地点合集
+              </QRCodeLink>
             </QRCodeContent>
           </QRCodeModal>
         )}

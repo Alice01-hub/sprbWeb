@@ -248,6 +248,28 @@ const BackButton = styled(motion.button)`
   }
 `
 
+const PlayPauseButton = styled(motion.button)`
+  background: linear-gradient(45deg, #87CEEB, #98E4D6);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #2E8B57;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  z-index: 100;
+  
+  &:hover {
+    background: linear-gradient(45deg, #98E4D6, #87CEEB);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(135, 206, 235, 0.5);
+  }
+`
+
 // Tab切换组件
 const TabContainer = styled.div`
   display: flex;
@@ -411,23 +433,7 @@ const ModalLabel = styled.p`
   font-weight: 500;
 `
 
-const CloseButton = styled(motion.button)`
-  position: absolute;
-  top: -60px;
-  right: 0;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-`
+
 
 const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   position: absolute;
@@ -445,7 +451,7 @@ const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
   @media (max-width: 768px) {
     ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
     top: auto;
@@ -558,6 +564,10 @@ const NaoshimaPage: React.FC = () => {
     description: '',
     iconPositions: [] as { x: number; y: number; emoji?: string }[],
   })
+  
+  // 统一的轮播播放状态
+  const [isPlaying, setIsPlaying] = useState(true);
+  
   // 地图缩放比例
   const mapScale = 1.5
   // 四个角落的地图标志
@@ -577,15 +587,17 @@ const NaoshimaPage: React.FC = () => {
       iconPositions: [
         { x: 24, y: 0, emoji: '🍧', size: 30 },
         { x: 28, y: 69, emoji: '🚲', size: 30 },
+        { x: 10, y: 0, icon: 'images/webps/直岛/直岛-小卖部.webp', size: 200 },
+        { x: 20, y: 50, icon: 'images/webps/直岛/直岛-sprb租车店.webp', size: 200 },
       ]
     },
     '海狸家': {
       mapImage: "images/webps/直岛/直岛地图-水塘海狸家-路线版.webp",
       description: '加藤家的住所，休憩之地。',
       iconPositions: [
-        { x: 9, y: 68, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
-        { x: 75, y: 9, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 200 },
-        { x: 75, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 200 },
+        { x: 11, y: 72, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
+        { x: 80, y: 3, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 150 },
+        { x: 74, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 200 },
       ]
     },
     '白羽钓点': {
@@ -604,7 +616,7 @@ const NaoshimaPage: React.FC = () => {
         { x: 92, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
         { x: 71, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
         { x: 85, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
-        { x: 20, y: 18, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 200 },
+        { x: 12, y: -2, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 400 },
       ]
     },
     '鸣濑神社': {
@@ -1001,6 +1013,7 @@ const NaoshimaPage: React.FC = () => {
                   title={location.title}
                   autoPlay={true}
                   interval={4000}
+                  isPlaying={isPlaying}
                   onImageClick={(imageIndex) => openImageViewer(location.images, imageIndex, location.title)}
                 />
                 <LocationTitle>{location.title}</LocationTitle>
@@ -1011,6 +1024,17 @@ const NaoshimaPage: React.FC = () => {
         </InfoCard>
       </ContentContainer>
       <ButtonContainer>
+        <PlayPauseButton
+          onClick={() => setIsPlaying(!isPlaying)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          {isPlaying ? '⏸ 停止轮播' : '▶ 开始轮播'}
+        </PlayPauseButton>
+        
         <BackButton
           onClick={handleBack}
           whileHover={{ scale: 1.05 }}
@@ -1072,23 +1096,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
           exit={{ scale: 0.8, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <CloseButton
-            onClick={onClose}
-            whileHover={{ 
-              scale: 1.05,
-              background: "rgba(255, 255, 255, 0.2)",
-              borderColor: "rgba(255, 255, 255, 0.5)"
-            }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 400,
-              damping: 25,
-              duration: 0.15
-            }}
-          >
-            ✕
-          </CloseButton>
+
           {images.length > 1 && (
             <>
               <NavigationButton
@@ -1106,6 +1114,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
                   damping: 25,
                   duration: 0.15
                 }}
+                style={{ transformOrigin: 'center' }}
               >
                 ‹
               </NavigationButton>
@@ -1124,6 +1133,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
                   damping: 25,
                   duration: 0.15
                 }}
+                style={{ transformOrigin: 'center' }}
               >
                 ›
               </NavigationButton>
