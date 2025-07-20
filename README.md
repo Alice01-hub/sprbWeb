@@ -3,7 +3,7 @@
 > 重回那个夏天，探索三岛的美好时光
 
 <div align="center">
-  <img src="public/images/webps/sprb封面图.webp" alt="Summer Pockets" width="400">
+  <img src="frontend/public/images/webps/sprb封面图.webp" alt="Summer Pockets" width="400">
 </div>
 
 ## 🌅 项目介绍
