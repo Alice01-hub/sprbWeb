@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -16,6 +17,7 @@ import io
 import sqlite3
 from datetime import datetime
 import tempfile
+from api import auth
 
 app = FastAPI(title="Summer Pockets API", version="1.0.0")
 
@@ -730,6 +732,5 @@ async def download_checklist():
         print(f"下载失败: {str(e)}")
         raise HTTPException(status_code=500, detail=f"下载失败: {str(e)}")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 

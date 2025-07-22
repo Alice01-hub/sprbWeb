@@ -385,7 +385,7 @@ const ContentsPage: React.FC = () => {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <LeftPage>
-          <DiaryTitle>夏日口袋目录</DiaryTitle>
+          <DiaryTitle>目录</DiaryTitle>
           <DiarySubtitle>Summer Pockets 圣地巡礼日记</DiarySubtitle>
           
           <ChapterList>

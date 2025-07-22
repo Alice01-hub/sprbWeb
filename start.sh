@@ -217,6 +217,12 @@ main() {
     print_message "📋 步骤 1: 清理端口占用"
     kill_port_processes $FRONTEND_PORT
     kill_port_processes $BACKEND_PORT
+    sleep 2
+    # 再次确认端口已释放
+    if lsof -ti:$FRONTEND_PORT || lsof -ti:$BACKEND_PORT; then
+        print_error "端口仍被占用，无法启动服务，请手动处理！"
+        exit 1
+    fi
     
     # 2. 激活虚拟环境
     print_message "📋 步骤 2: 激活虚拟环境"

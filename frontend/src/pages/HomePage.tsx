@@ -161,7 +161,7 @@ const CoverImage = styled.img`
     0 0 20px rgba(255, 215, 0, 0.3),
     inset 0 2px 10px rgba(255, 255, 255, 0.2);
   border: 2px solid #FFD700;
-  
+  cursor: pointer; /* 新增：可点击 */
   &::after {
     content: '';
     position: absolute;
@@ -176,6 +176,51 @@ const CoverImage = styled.img`
     );
     border-radius: 15px;
     pointer-events: none;
+  }
+`
+
+// 新增：大图预览模态框
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ModalImage = styled.img`
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 18px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+  border: 3px solid #FFD700;
+  background: #fff;
+`
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(0,0,0,0.8);
   }
 `
 
@@ -246,6 +291,7 @@ const HomePage: React.FC = () => {
     duration: number;
     delay: number;
   }>>([])
+  const [isModalOpen, setIsModalOpen] = useState(false) // 新增：大图预览状态
 
   useEffect(() => {
     // 生成随机星星
@@ -314,6 +360,7 @@ const HomePage: React.FC = () => {
                 <CoverImage 
                   src="images/webps/sprb封面图.webp" 
                   alt="Summer Pockets 封面"
+                  onClick={() => setIsModalOpen(true)} // 新增：点击弹出大图
                 />
               </CoverImageContainer>
             </DiaryFront>
@@ -345,6 +392,25 @@ const HomePage: React.FC = () => {
           </Lock>
         </DiaryBook>
       </DiaryBookContainer>
+
+      {/* 新增：大图预览模态框 */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsModalOpen(false)}
+          >
+            <CloseButton onClick={e => { e.stopPropagation(); setIsModalOpen(false); }} title="关闭">×</CloseButton>
+            <ModalImage 
+              src="images/webps/sprb封面图.webp" 
+              alt="Summer Pockets 封面大图"
+              onClick={e => e.stopPropagation()} // 阻止冒泡，点击图片不关闭
+            />
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isOpening && (

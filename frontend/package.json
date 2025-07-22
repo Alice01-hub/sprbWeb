@@ -13,10 +13,12 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "^5.1.26",
+    "axios": "^1.10.0",
     "framer-motion": "^10.16.4",
     "quill": "^2.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.15.0",
     "styled-components": "^6.0.7"

@@ -66,7 +66,7 @@
   - 🔄 **返回机制** - 提供"返回高松港"按钮，小船自动返回起点
   - 🚫 **状态管理** - 航行中禁用岛屿点击，确保操作的一致性
   - 📱 **二维码合集** - 打卡地点合集二维码系统，提供完整的打卡地点图片合集 ✨
-- 🦋 **神域** - 神秘的特殊区域，正在开发中，即将提供七影碟寄存等独特功能
+- 🦋 **神域** - 神秘的特殊区域，基于Summer Pockets游戏设定，提供七影蝶管理系统和小游戏体验
 - 🎵 **音乐播放器** - 简洁的圆形按钮播放器，支持菜单式播放控制
 - 🎨 **3D动画** - 流畅的页面过渡和交互效果
 - 🦋 **七影碟拖尾特效** - 基于TextCursor逻辑的鼠标拖尾效果，七影碟图片跟随鼠标移动，支持随机浮动和旋转动画
@@ -297,7 +297,96 @@ python update_image_paths_v2.py
 - **💾 空间大幅节省**: 文件大小从756MB压缩至30MB，节省96%空间
 - **⚡ 加载性能提升**: 页面加载速度提升90%以上
 
+## 用户认证系统
+
+### 依赖环境
+- passlib[bcrypt]（密码加密）
+- python-jose（JWT Token）
+- email-validator（邮箱验证）
+
+### API接口
+- `POST /api/auth/register` 用户注册（用户名、密码、邮箱）
+- `POST /api/auth/login` 用户登录（JWT Token认证）
+- `POST /api/auth/reset-password` 密码重置
+- 权限系统支持普通用户/管理员（is_admin字段）
+
+### 使用说明
+1. 注册：
+   ```json
+   POST /api/auth/register
+   {
+     "username": "testuser",
+     "password": "yourpassword",
+     "email": "test@example.com"
+   }
+   ```
+2. 登录：
+   ```json
+   POST /api/auth/login
+   {
+     "username": "testuser",
+     "password": "yourpassword"
+   }
+   ```
+   返回：
+   ```json
+   {
+     "access_token": "...",
+     "token_type": "bearer"
+   }
+   ```
+3. 密码重置：
+   ```json
+   POST /api/auth/reset-password
+   {
+     "username": "testuser",
+     "new_password": "newpass"
+   }
+   ```
+4. 管理员权限：
+   - 用户表is_admin字段为True即为管理员
+   - 可通过依赖`require_admin`进行接口权限控制
+
+## 数据库设计与初始化
+
+### 依赖环境
+- 已在 `sprb-web` conda 虚拟环境下安装：
+  - sqlalchemy
+  - alembic
+  - fastapi
+  - uvicorn
+  - pydantic
+
+### 数据库结构
+- 用户表（users）
+- 七影蝶表（butterflies）
+- 游戏记录表（game_records）
+- 用户会话表（user_sessions）
+
+### 初始化步骤
+1. 激活虚拟环境：
+   ```bash
+   conda activate sprb-web
+   ```
+2. 一键初始化数据库（自动创建表结构）：
+   ```bash
+   python backend/init_db.py
+   ```
+3. 数据库文件默认生成在 `backend/data/shenyu.db`
+
+### 相关文件
+- `backend/api/models.py`：ORM模型定义
+- `backend/api/database.py`：数据库连接与初始化
+- `backend/init_db.py`：初始化脚本
+
 ## 📝 版本历史
+
+### v2.1 (2025年1月) - 神域开发规划
+- 📋 **神域开发方案** - 完整的功能规划和技术架构设计
+- 🎮 **小游戏系统** - 夜晚森林和神域双场景游戏体验
+- 🦋 **七影蝶管理** - 记忆内容上传、观看和权限控制系统
+- 💪 **体力系统** - 游戏化体力消耗和睡眠恢复机制
+- 🎨 **夜晚主题** - 神秘深邃的视觉设计和BGM系统
 
 ### v2.0 (2025年7月20日) - 重大更新
 - ✨ **打卡篇主要功能完整实现**
@@ -345,9 +434,16 @@ python update_image_paths_v2.py
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
+## 📚 开发文档
+
+### 神域开发相关文档
+- [神域开发方案](./神域开发方案.md) - 完整的功能规划和技术选型
+- [神域开发实施计划](./神域开发实施计划.md) - 详细的开发时间安排和任务分解
+- [神域技术架构文档](./神域技术架构文档.md) - 系统架构和技术实现细节
+
 ---
 
 <div align="center">
   <p>🌅 重回那个夏天，探索三岛的美好时光 🌅</p>
-  <p><em>Summer Pockets 巡礼网站 v2.0</em></p>
+  <p><em>Summer Pockets 巡礼网站 v2.1</em></p>
 </div> 
