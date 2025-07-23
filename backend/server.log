@@ -1,35 +1,17 @@
 nohup: ignoring input
 INFO:     Will watch for changes in these directories: ['/home/devbox/project/sprb-web/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [29017] using StatReload
-INFO:     Started server process [29019]
+INFO:     Started reloader process [63038] using StatReload
+INFO:     Started server process [63040]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 未找到中文字体，使用Helvetica
-INFO:     127.0.0.1:36630 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:36640 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34072 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34074 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58930 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58934 - "GET /api/music/playlist HTTP/1.1" 200 OK
-2025-07-22 15:27:56,745 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-07-22 15:27:56,749 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.is_admin AS users_is_admin, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
-FROM users 
-WHERE users.username = ?
- LIMIT ? OFFSET ?
-2025-07-22 15:27:56,749 INFO sqlalchemy.engine.Engine [generated in 0.00025s] ('123456', 1, 0)
-(trapped) error reading bcrypt version
-Traceback (most recent call last):
-  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
-    version = _bcrypt.__about__.__version__
-AttributeError: module 'bcrypt' has no attribute '__about__'
-INFO:     127.0.0.1:49434 - "POST /api/auth/login HTTP/1.1" 200 OK
-2025-07-22 15:27:57,062 INFO sqlalchemy.engine.Engine ROLLBACK
-2025-07-22 15:27:57,132 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-07-22 15:27:57,133 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.is_admin AS users_is_admin, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
-FROM users 
-WHERE users.username = ?
- LIMIT ? OFFSET ?
-2025-07-22 15:27:57,133 INFO sqlalchemy.engine.Engine [cached since 0.3836s ago] ('123456', 1, 0)
-INFO:     127.0.0.1:49444 - "GET /api/auth/me HTTP/1.1" 200 OK
-2025-07-22 15:27:57,134 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:43722 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52510 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52518 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51416 - "GET / HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63040]
+INFO:     Stopping reloader process [63038]

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import TrafficInfoGrid from '../components/TrafficInfoGrid'
+import axios from 'axios'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -348,76 +349,6 @@ interface TrafficCard {
   updated_at: string
 }
 
-// 硬编码的交通卡片数据
-const trafficCardsData: TrafficCard[] = [
-  {
-    id: 1,
-    title: '机票购买指南',
-    icon: '💳',
-    content: '推荐购票平台：\n• 春秋航空官网/APP - 官方直销，价格透明\n• 携程/去哪儿 - 比价便捷，促销活动多\n• 飞猪 - 阿里系平台，信用保障\n\n购票注意事项：\n• 建议提前1-2个月预订，价格更优惠\n• 注意行李额度，春秋航空需单独购买\n• 确认护照有效期至少6个月以上',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 1,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  },
-  {
-    id: 2,
-    title: '行李托运与安检',
-    icon: '🧳',
-    content: '行李规格：\n• 手提行李：20cm×30cm×40cm，重量≤7kg\n• 托运行李：需单独购买，规格详见官网\n• 禁止携带：液体>100ml、充电宝>20000mAh\n\n安检须知：\n• 提前2小时到达机场办理手续\n• 电子设备需单独过检\n• 液体化妆品需装入透明袋',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 2,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  },
-  {
-    id: 3,
-    title: '登机流程',
-    icon: '🛫',
-    content: '值机流程：\n• 在线值机：起飞前24小时开放\n• 机场值机：柜台或自助值机设备\n• 选择座位：在线值机可免费选择\n\n登机须知：\n• 提前30分钟到达登机口\n• 准备好护照和登机牌\n• 注意登机口变更广播',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 3,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  },
-  {
-    id: 4,
-    title: '到达日本入境',
-    icon: '🏛️',
-    content: '入境流程：\n• 填写入境记录卡（飞机上发放）\n• 护照检查 → 行李提取 → 海关申报\n• 准备好返程机票和住宿证明\n\n注意事项：\n• 入境记录卡需如实填写\n• 携带现金需申报（超过100万日元）\n• 保持手机联系方式畅通',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 4,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  },
-  {
-    id: 5,
-    title: '交通卡购买',
-    icon: '💳',
-    content: '推荐交通卡：\n• ICOCA卡 - 关西地区通用\n• SUICA卡 - 全国通用\n• 购买地点：机场、车站自助售票机\n\n使用方法：\n• 首次购买包含500日元押金\n• 可在便利店、餐厅使用\n• 余额不足时可随时充值',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 5,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  },
-  {
-    id: 6,
-    title: '机场内换乘指引',
-    icon: '🚌',
-    content: '交通方式选择：\n• 电车：关西机场线 → 大阪/神户方向\n• 大巴：利木津巴士 → 各主要城市\n• 出租车：价格较高，适合多人出行\n\n换乘指引：\n• 跟随"电车"标识前往车站\n• 购票后通过检票口\n• 确认列车方向和终点站',
-    category: 'international',
-    subcategory: 'guangzhou',
-    order_index: 6,
-    created_at: '2025-01-01',
-    updated_at: '2025-01-01'
-  }
-]
-
 // 巡礼清单数据
 const checklistData = [
   {
@@ -513,6 +444,14 @@ const TrafficPage: React.FC = () => {
   const [activeDomesticTab, setActiveDomesticTab] = useState<'kansai-takamatsu' | 'other'>('kansai-takamatsu')
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [isDownloading, setIsDownloading] = useState(false)
+  // 交通卡片数据
+  const [trafficCardsData, setTrafficCardsData] = useState<TrafficCard[]>([])
+  useEffect(() => {
+    fetch('/trafficdata/InDeparture/traffic_cards.json')
+      .then(res => res.json())
+      .then(data => setTrafficCardsData(data))
+      .catch(() => setTrafficCardsData([]))
+  }, [])
 
   const handleBack = () => {
     navigate('/contents')
@@ -576,11 +515,9 @@ const TrafficPage: React.FC = () => {
 
 
   const renderInternationalContent = () => {
-    // 过滤出国际出行的卡片
-    const internationalCards = trafficCardsData.filter(card => 
-      card.category === 'international' && 
-      (activeSubTab === 'guangzhou' ? card.subcategory === 'guangzhou' : card.subcategory !== 'guangzhou')
-    ).sort((a, b) => a.order_index - b.order_index)
+    const internationalCards = activeSubTab === 'guangzhou'
+      ? trafficCardsData.filter(card => card.category === 'international' && card.subcategory === 'guangzhou')
+      : []
 
     return (
       <AnimatePresence mode="wait">
@@ -640,6 +577,7 @@ const TrafficPage: React.FC = () => {
   }
 
   const renderDomesticContent = () => {
+    const domesticCards = trafficCardsData.filter(card => card.category === 'domestic' && card.subcategory === 'kansai-takamatsu')
     return (
       <AnimatePresence mode="wait">
         <motion.div
@@ -664,117 +602,27 @@ const TrafficPage: React.FC = () => {
               <ComingSoonBadge>即将开放</ComingSoonBadge>
             </SubNavItem>
           </SubNavigation>
-          
           <Content>
             {activeDomesticTab === 'kansai-takamatsu' && (
               <ContentGrid>
-                <ContentCard
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <CardTitle>
-                    <span>🗺️</span>
-                    路线概览
-                  </CardTitle>
-                  <CardContent>
-                    <p><strong>总行程时间：</strong>约3.5-4小时</p>
-                    <p><strong>换乘次数：</strong>2-3次</p>
-                    <p><strong>总费用：</strong>约3,000-4,000日元</p>
-                    <p><strong>首末班车：</strong></p>
-                    <ul>
-                      <li>首班：06:00左右</li>
-                      <li>末班：23:00左右</li>
-                    </ul>
-                    <p><strong>推荐路线：</strong></p>
-                    <p>关西机场 → 天王寺 → 冈山 → 高松</p>
-                  </CardContent>
-                </ContentCard>
-
-                <ContentCard
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <CardTitle>
-                    <span>🚉</span>
-                    详细换乘流程
-                  </CardTitle>
-                  <CardContent>
-                    <p><strong>第一段：关西机场 → 天王寺</strong></p>
-                    <ul>
-                      <li>乘坐：关西机场线快速</li>
-                      <li>时间：约45分钟</li>
-                      <li>站台：1号站台</li>
-                    </ul>
-                    <p><strong>第二段：天王寺 → 冈山</strong></p>
-                    <ul>
-                      <li>乘坐：JR东海道本线</li>
-                      <li>时间：约1.5小时</li>
-                      <li>换乘：跟随"冈山"标识</li>
-                    </ul>
-                    <p><strong>第三段：冈山 → 高松</strong></p>
-                    <ul>
-                      <li>乘坐：JR濑户大桥线</li>
-                      <li>时间：约1小时</li>
-                      <li>终点：高松站</li>
-                    </ul>
-                  </CardContent>
-                </ContentCard>
-
-                <ContentCard
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <CardTitle>
-                    <span>🎫</span>
-                    购票实操
-                  </CardTitle>
-                  <CardContent>
-                    <p><strong>自动售票机使用：</strong></p>
-                    <ul>
-                      <li>选择语言：点击右上角"English"</li>
-                      <li>选择目的地：输入"Takamatsu"</li>
-                      <li>选择车票类型：普通车/指定席</li>
-                      <li>支付：现金/IC卡/信用卡</li>
-                    </ul>
-                    <p><strong>人工窗口购票：</strong></p>
-                    <ul>
-                      <li>出示目的地日文：高松（たかまつ）</li>
-                      <li>说明人数和时间</li>
-                      <li>确认价格后付款</li>
-                    </ul>
-                  </CardContent>
-                </ContentCard>
-
-                <ContentCard
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <CardTitle>
-                    <span>📱</span>
-                    实用工具
-                  </CardTitle>
-                  <CardContent>
-                    <p><strong>推荐APP：</strong></p>
-                    <ul>
-                      <li>Google Maps - 路线规划</li>
-                      <li>Yahoo!乗換案内 - 日本专业换乘</li>
-                      <li>JR West - 官方时刻表</li>
-                    </ul>
-                    <p><strong>实用网站：</strong></p>
-                    <ul>
-                      <li>Hyperdia - 在线时刻表查询</li>
-                      <li>JR West官网 - 票价查询</li>
-                      <li>关西机场官网 - 交通信息</li>
-                    </ul>
-                  </CardContent>
-                </ContentCard>
+                {domesticCards.sort((a, b) => a.order_index - b.order_index).map(card => (
+                  <ContentCard
+                    key={card.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * card.order_index }}
+                  >
+                    <CardTitle>
+                      <span>{card.icon}</span>
+                      {card.title}
+                    </CardTitle>
+                    <CardContent>
+                      {card.content.split('\n').map((line, idx) => <div key={idx}>{line}</div>)}
+                    </CardContent>
+                  </ContentCard>
+                ))}
               </ContentGrid>
             )}
-            
             {activeDomesticTab === 'other' && (
               <ContentSection>
                 <SectionTitle>其他路线攻略</SectionTitle>
@@ -782,8 +630,7 @@ const TrafficPage: React.FC = () => {
                   <div style={{ fontSize: '48px', marginBottom: '20px' }}>🚧</div>
                   <h3 style={{ color: '#FF6B35', marginBottom: '15px' }}>内容准备中</h3>
                   <p style={{ color: '#666', fontSize: '18px' }}>
-                    我们正在整理更多交通方式，包括：
-                    <br />
+                    我们正在整理更多交通方式，包括：<br />
                     大巴路线、轮船路线、租车自驾等
                   </p>
                 </div>

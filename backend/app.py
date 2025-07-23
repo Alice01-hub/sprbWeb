@@ -18,6 +18,7 @@ import sqlite3
 from datetime import datetime
 import tempfile
 from api import auth
+from api import butterfly
 
 app = FastAPI(title="Summer Pockets API", version="1.0.0")
 
@@ -733,4 +734,5 @@ async def download_checklist():
         raise HTTPException(status_code=500, detail=f"下载失败: {str(e)}")
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(butterfly.router, prefix="/api/butterfly", tags=["butterfly"])
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 

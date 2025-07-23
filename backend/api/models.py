@@ -11,11 +11,10 @@ class MemoryTypeEnum(enum.Enum):
     video = 'video'
 
 class ActionTypeEnum(enum.Enum):
-    view_memory = 'view_memory'
-    interact = 'interact'
-    sleep = 'sleep'
+    view = 'view'
+    like = 'like'
     upload = 'upload'
-    create = 'create'
+    sleep = 'sleep'
 
 class User(Base):
     __tablename__ = 'users'
@@ -30,10 +29,10 @@ class User(Base):
     total_sleep_time = Column(Integer, default=0)
     level = Column(Integer, default=1)
     experience = Column(Integer, default=0)
-    is_admin = Column(Boolean, default=False)  # 是否为管理员
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
     butterflies = relationship('Butterfly', back_populates='user')
+    user_butterflies = relationship('UserButterfly', back_populates='user')
     sessions = relationship('UserSession', back_populates='user')
     game_records = relationship('GameRecord', back_populates='user')
 
@@ -57,6 +56,20 @@ class Butterfly(Base):
     updated_at = Column(TIMESTAMP)
     user = relationship('User', back_populates='butterflies')
     game_records = relationship('GameRecord', back_populates='butterfly')
+
+class UserButterfly(Base):
+    """用户自定义七影蝶表"""
+    __tablename__ = 'user_butterflies'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    label = Column(String(200), nullable=False)  # 悬停时显示的标题
+    hover_img = Column(String(500))  # 悬停时显示的图片路径
+    modal_img = Column(String(500))  # 点击弹窗时显示的图片路径
+    link = Column(String(500))  # 点击时跳转的链接
+    is_active = Column(Boolean, default=True)  # 是否激活
+    created_at = Column(TIMESTAMP)
+    updated_at = Column(TIMESTAMP)
+    user = relationship('User', back_populates='user_butterflies')
 
 class GameRecord(Base):
     __tablename__ = 'game_records'

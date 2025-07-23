@@ -118,10 +118,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 # 权限系统（普通用户/管理员）
-def require_admin(user: User = Depends(get_current_user)):
-    if getattr(user, 'is_admin', False):
-        return user
-    raise HTTPException(status_code=403, detail="无管理员权限")
 
 # 密码重置（伪实现，实际应结合邮箱验证码等）
 class PasswordReset(BaseModel):

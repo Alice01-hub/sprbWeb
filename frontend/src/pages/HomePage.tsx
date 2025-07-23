@@ -386,7 +386,7 @@ const HomePage: React.FC = () => {
           >
             {/* 🔧 根据悬停状态切换图片 */}
             <LockImage
-              src={isLockHovered ? "/images/webps/七影碟-3.webp" : "/images/webps/七影碟-4.webp"}
+              src={isLockHovered ? "/images/webps/七影蝶-3.webp" : "/images/webps/七影蝶-4.webp"}
               alt="蝴蝶锁图标"
             />
           </Lock>
