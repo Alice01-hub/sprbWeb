@@ -1,18 +1,12 @@
+nohup: ignoring input
 
 > sprb-web@1.0.0 dev
-> vite
+> vite --host 0.0.0.0 --port 3000
 
-Port 3000 is in use, trying another one...
-Port 3001 is in use, trying another one...
-Port 3002 is in use, trying another one...
-Port 3003 is in use, trying another one...
-10:44:48 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:48:16 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:51:17 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:55:00 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:55:07 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:55:14 AM [vite] hmr update /src/pages/TrafficPage.tsx
-10:59:18 AM [vite] hmr update /src/pages/TrafficPage.tsx
-11:01:14 AM [vite] hmr update /src/pages/TrafficPage.tsx
-(node:38741) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+  VITE v4.5.14  ready in 233 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://10.107.183.40:3000/
+(node:9664) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)

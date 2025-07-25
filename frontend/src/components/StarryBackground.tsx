@@ -1,138 +1,75 @@
-import React, { useState, useEffect } from 'react'
-import styled, { keyframes } from 'styled-components'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import styled from 'styled-components'
 
-interface StarryBackgroundProps {
-  isVisible: boolean
-}
+// 星点组件（用motion.div实现动画）
+const Star = motion<{x: number, y: number, size: number, opacity: number}>(styled.div`
+  position: absolute;
+  left: ${props => props.x}vw;
+  top: ${props => props.y}vh;
+  width: ${props => props.size}px;
+  height: ${props => props.size}px;
+  background: rgba(255,255,255,${props => props.opacity});
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(0.5px);
+`)
 
-interface Star {
-  id: number
+interface StarData {
   x: number
   y: number
   size: number
-  animationDelay: number
-  animationDuration: number
+  opacity: number
+  float: number
+  duration: number
 }
 
-// 星星闪烁动画
-const starTwinkle = keyframes`
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-`
+interface StarryBackgroundProps {
+  isVisible?: boolean
+}
 
-// 星星漂浮动画
-const starFloat = keyframes`
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
-`
-
-const StarryContainer = styled.div<{ isVisible: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(10, 25, 50, 0.95) 0%,      /* 深蓝黑色 */
-    rgba(15, 35, 65, 0.9) 20%,      /* 深蓝色 */
-    rgba(20, 45, 80, 0.85) 40%,     /* 中深蓝色 */
-    rgba(25, 55, 95, 0.8) 60%,      /* 中蓝色 */
-    rgba(30, 65, 110, 0.75) 80%,    /* 浅蓝色 */
-    rgba(35, 75, 125, 0.7) 100%     /* 最浅蓝色 */
-  );
-  border-radius: 15px;
-  opacity: ${props => props.isVisible ? 1 : 0};
-  transition: opacity 0.4s ease;
-  overflow: hidden;
-  z-index: 1;
-`
-
-const Star = styled.div<{ 
-  x: number; 
-  y: number; 
-  size: number; 
-  animationDelay: number; 
-  animationDuration: number;
-}>`
-  position: absolute;
-  left: ${props => props.x}%;
-  top: ${props => props.y}%;
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
-  border-radius: 50%;
-  animation: 
-    ${starTwinkle} ${props => props.animationDuration}s infinite ease-in-out,
-    ${starFloat} ${props => props.animationDuration * 1.5}s infinite ease-in-out;
-  animation-delay: ${props => props.animationDelay}s;
-  z-index: 2;
-  
-  /* 添加光晕效果 */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: ${props => props.size * 2}px;
-    height: ${props => props.size * 2}px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ${starTwinkle} ${props => props.animationDuration * 0.8}s infinite ease-in-out;
-    animation-delay: ${props => props.animationDelay * 0.5}s;
-  }
-`
-
-const StarryBackground: React.FC<StarryBackgroundProps> = ({ isVisible }) => {
-  const [stars, setStars] = useState<Star[]>([])
-
-  useEffect(() => {
-    // 生成随机星星
-    const generateStars = () => {
-      const newStars: Star[] = []
-      const starCount = 25 // 星星数量
-
-      for (let i = 0; i < starCount; i++) {
-        newStars.push({
-          id: i,
-          x: Math.random() * 100, // 0-100% 的位置
-          y: Math.random() * 100,
-          size: Math.random() * 3 + 1, // 1-4px 的大小
-          animationDelay: Math.random() * 3, // 0-3s 的延迟
-          animationDuration: Math.random() * 2 + 2, // 2-4s 的持续时间
-        })
-      }
-      setStars(newStars)
+const StarryBackground: React.FC<StarryBackgroundProps> = ({ isVisible = true }) => {
+  // 随机生成星点数组（增加动画参数）
+  const [stars] = useState<StarData[]>(() => {
+    const arr = []
+    for (let i = 0; i < 80; i++) {
+      arr.push({
+        x: Math.random() * 100, // vw
+        y: Math.random() * 100, // vh
+        size: Math.random() * 1.8 + 0.7, // 0.7~2.5px
+        opacity: Math.random() * 0.5 + 0.5, // 0.5~1
+        float: Math.random() * 6 + 2, // 浮动幅度2~8px
+        duration: Math.random() * 3 + 2 // 动画时长2~5s
+      })
     }
+    return arr
+  })
 
-    generateStars()
-  }, [])
+  if (!isVisible) return null
 
   return (
-    <StarryContainer isVisible={isVisible}>
-      {stars.map((star) => (
+    <>
+      {stars.map((star, idx) => (
         <Star
-          key={star.id}
+          key={idx}
           x={star.x}
           y={star.y}
           size={star.size}
-          animationDelay={star.animationDelay}
-          animationDuration={star.animationDuration}
+          opacity={star.opacity}
+          animate={{
+            y: [0, -star.float, 0, star.float, 0],
+          }}
+          transition={{
+            duration: star.duration,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+            delay: Math.random() * 3
+          }}
         />
       ))}
-    </StarryContainer>
+    </>
   )
 }
 
-export default StarryBackground 
+export default StarryBackground

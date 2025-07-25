@@ -3,17 +3,9 @@ nohup: ignoring input
 > sprb-web@1.0.0 dev
 > vite
 
+Port 3000 is in use, trying another one...
 
-  VITE v4.5.14  ready in 224 ms
+  VITE v4.5.14  ready in 211 ms
 
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://10.107.179.30:3000/
-(node:49249) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-9:02:38 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-9:04:56 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-9:05:38 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-9:06:45 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-9:07:14 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-9:10:32 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
-11:50:02 AM [vite] hmr update /src/pages/DivineRealmPage.tsx
+  ➜  Local:   http://localhost:3001/
+  ➜  Network: http://10.107.183.40:3001/

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, Float, Text, Enum, Fore
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import enum
+import datetime
 
 Base = declarative_base()
 
@@ -35,6 +36,7 @@ class User(Base):
     user_butterflies = relationship('UserButterfly', back_populates='user')
     sessions = relationship('UserSession', back_populates='user')
     game_records = relationship('GameRecord', back_populates='user')
+    image_processing_tasks = relationship('ImageProcessingTask', back_populates='user')
 
 class Butterfly(Base):
     __tablename__ = 'butterflies'
@@ -94,4 +96,29 @@ class UserSession(Base):
     expires_at = Column(TIMESTAMP, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(TIMESTAMP)
-    user = relationship('User', back_populates='sessions') 
+    user = relationship('User', back_populates='sessions')
+
+class ProcessingStatusEnum(enum.Enum):
+    """图片处理任务状态枚举"""
+    processing = 'processing'
+    done = 'done'
+    failed = 'failed'
+
+class ImageProcessingTask(Base):
+    """图片处理任务数据模型"""
+    __tablename__ = 'image_processing_tasks'
+    
+    id = Column(String(36), primary_key=True)  # UUID作为主键
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    original_filename = Column(String(255), nullable=False)  # 原始文件名
+    status = Column(Enum(ProcessingStatusEnum), default=ProcessingStatusEnum.processing)  # 处理状态
+    result_url = Column(String(500))  # 处理结果URL
+    error_message = Column(Text)  # 错误信息（如果处理失败）
+    file_size = Column(Integer)  # 原始文件大小
+    processed_size = Column(Integer)  # 处理后文件大小
+    image_type = Column(String(50))  # 图片类型 (hover, modal, avatar等)
+    upload_type = Column(String(50))  # 上传类型 (butterfly, avatar等)
+    created_at = Column(TIMESTAMP, default=datetime.datetime.utcnow)  # 创建时间
+    
+    # 关联到用户
+    user = relationship('User', back_populates='image_processing_tasks')

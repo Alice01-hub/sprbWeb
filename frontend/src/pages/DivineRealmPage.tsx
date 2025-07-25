@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
 import axios from 'axios'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
-// 修正默认头像路径为public下相对路径
-const defaultAvatar = '/images/webps/七影蝶.webp'
-const divineSummaryImg = '/images/webps/神域摘要图.webp'
-const butterflyImg = '/images/webps/七影蝶-4.webp'
+import AuthModal from '../components/AuthModal'
+import ButterflyManagementModal from '../components/ButterflyManagementModal'
+import UserProfile from '../components/UserProfile'
+import ButterflyDisplay from '../components/ButterflyDisplay'
+import StarryBackground from '../components/StarryBackground'
+import { 
+  generateNonOverlappingPositions, 
+  selectRandomButterflies, 
+  getContainerDimensions,
+  ButterflyData,
+  Position,
+  Size
+} from '../utils/butterflyPositioning'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -23,18 +31,7 @@ const Container = styled.div`
   overflow-x: hidden;
 `
 
-// 星点组件（用motion.div实现动画）
-const Star = motion<{x: number, y: number, size: number, opacity: number}>(styled.div`
-  position: absolute;
-  left: ${props => props.x}vw;
-  top: ${props => props.y}vh;
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
-  background: rgba(255,255,255,${props => props.opacity});
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(0.5px);
-`)
+
 
 const BackButton = styled(motion.button)`
   position: fixed;
@@ -69,199 +66,31 @@ const Title = styled.h1`
   font-family: '华文行楷', 'STXingkai', 'KaiTi', 'SimKai', cursive;
   text-shadow: 3px 3px 12px rgba(0,0,0,0.45);
   text-align: center;
-  /* 移除::before蝴蝶 */
 `
 
-const ContentCard = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 60px 40px;
-  box-shadow: 0 15px 40px rgba(255, 165, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border: 3px solid rgba(255, 165, 0, 0.2);
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-`
+interface UserButterfly {
+  id: number
+  user_id: number
+  label: string
+  hoverImg?: string
+  modalImg?: string
+  link?: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
 
-const ComingSoonIcon = styled.div`
-  font-size: 120px;
-  margin-bottom: 30px;
-  opacity: 0.8;
-`
-
-const ComingSoonTitle = styled.h2`
-  font-size: 36px;
-  color: #FF6B35;
-  margin-bottom: 20px;
-  font-weight: 700;
-`
-
-const ComingSoonText = styled.p`
-  font-size: 20px;
-  color: #666;
-  line-height: 1.8;
-  margin-bottom: 30px;
-`
-
-const FeatureList = styled.div`
-  background: rgba(255, 179, 71, 0.1);
-  border-radius: 15px;
-  padding: 30px;
-  margin-top: 30px;
-  text-align: left;
-`
-
-const FeatureListTitle = styled.h3`
-  font-size: 24px;
-  color: #FF6B35;
-  margin-bottom: 20px;
-  text-align: center;
-`
-
-const FeatureItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: #555;
-`
-
-const FeatureIcon = styled.div`
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(45deg, #FF6B35, #FFB347);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-`
-
-const FloatingElement = styled(motion.div)`
-  position: absolute;
-  font-size: 60px;
-  opacity: 0.1;
-  pointer-events: none;
-`
-
-const FormCard = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 20px;
-  padding: 40px 30px;
-  box-shadow: 0 8px 32px rgba(135, 206, 235, 0.18);
-  max-width: 400px;
-  margin: 0 auto 40px auto;
-  text-align: left;
-  border: 2px solid #FFB347;
-`
-
-const FormTitle = styled.h3`
-  font-size: 26px;
-  color: #FF6B35;
-  margin-bottom: 20px;
-  text-align: center;
-`
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-`
-
-const Input = styled.input`
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1.5px solid #FFB347;
-  font-size: 16px;
-  outline: none;
-  transition: border 0.2s;
-  &:focus {
-    border: 1.5px solid #FF6B35;
-  }
-`
-
-const SubmitButton = styled.button`
-  background: linear-gradient(45deg, #FFB347, #FF6B35);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 0;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 16px rgba(255, 179, 71, 0.18);
-  transition: background 0.2s, transform 0.1s;
-  &:hover {
-    background: linear-gradient(45deg, #FF6B35, #FFB347);
-    transform: translateY(-2px);
-  }
-`
-
-const Message = styled.div`
-  text-align: center;
-  font-size: 16px;
-  color: #2E8B57;
-  margin-top: 10px;
-  min-height: 24px;
-`
-
-const Tip = styled.div`
-  font-size: 13px;
-  color: #FF6B35;
-  margin-top: 2px;
-  min-height: 18px;
-  text-align: left;
-  transition: opacity 0.2s;
-`
-
-const CodeRow = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-`
-const CodeInput = styled(Input)`
-  flex: 1;
-`
-const CodeButton = styled.button`
-  background: linear-gradient(45deg, #87CEEB, #98E4D6);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-`
-const PasswordRow = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`
-const EyeIcon = styled.span`
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #FFB347;
-  font-size: 18px;
-`
+interface ButterflyDisplayData extends ButterflyData {
+  position: Position
+  size: Size
+}
 
 const DivineRealmPage: React.FC = () => {
   const navigate = useNavigate()
+  const imageContainerRef = useRef<HTMLDivElement>(null)
   
   // 夜晚图片数组
-  const nightImages = [
+  const nightImages = useMemo(() => [
     '/images/webps/男木岛/男木岛-鸟白岛役场-夜晚.webp',
     '/images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp',
     '/images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp',
@@ -283,128 +112,24 @@ const DivineRealmPage: React.FC = () => {
     '/images/webps/女木岛/女木岛-秘密基地山路-夜晚.webp',
     '/images/webps/女木岛/女木岛-采石场入口-夜晚.webp',
     '/images/webps/女木岛/女木岛-山道-夜晚.webp'
-  ]
-  
-  // tab状态：'register'或'login'
-  const [tab, setTab] = useState<'register' | 'login'>('register')
-  // 注册表单状态
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [focusField, setFocusField] = useState<string | null>(null)
-  const [showPassword, setShowPassword] = useState(false)
-  // 新增头像相关状态
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  ], [])
+
+  // 核心状态
   const [token, setToken] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
-  // 控制登录注册弹窗显示
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [userButterfly, setUserButterfly] = useState<UserButterfly | null>(null)
   const [showAuth, setShowAuth] = useState(false)
-  // 当前显示的夜晚图片
+  const [showUserButterflyModal, setShowUserButterflyModal] = useState(false)
+  const [showButterflyModal, setShowButterflyModal] = useState<ButterflyDisplayData | null>(null)
+  
+  // 夜晚场景和蝴蝶显示状态
   const [currentNightImage, setCurrentNightImage] = useState(() => {
     return nightImages[Math.floor(Math.random() * nightImages.length)]
   })
-  // 蝴蝶数量
-  const BUTTERFLY_COUNT = 5;
-  // 蝴蝶尺寸（像素）
-  const butterflySizes = [
-    { w: 64, h: 64 },
-    { w: 56, h: 56 },
-    { w: 48, h: 48 },
-    { w: 54, h: 54 },
-    { w: 52, h: 52 },
-  ];
-  // 用户七影蝶相关状态
-  const [userButterfly, setUserButterfly] = useState<any>(null)
-  // 动态蝴蝶数量
-  const totalButterflyCount = userButterfly ? BUTTERFLY_COUNT + 1 : BUTTERFLY_COUNT;
-  // 蝴蝶位置状态
-  const [butterflyPositions, setButterflyPositions] = useState(
-    Array.from({ length: totalButterflyCount }, (_, i) => ({
-      left: 0.1 + 0.15 * i,
-      top: 0.1 + 0.15 * i,
-    }))
-  );
-  // 当前展示的蝴蝶索引（刷新时随机选80%）
-  const [activeButterflies, setActiveButterflies] = useState<number[]>(Array.from({ length: totalButterflyCount }, (_, i) => i));
-  // 控制蝴蝶弹窗显示（0:不显示，1~5:第几只）
-  const [showButterflyModal, setShowButterflyModal] = useState<0|1|2|3|4|5>(0)
-  // 悬停弹窗状态，存储当前悬停的蝴蝶编号（1~5，0为无）
-  const [hoverButterfly, setHoverButterfly] = useState<0|1|2|3|4|5>(0);
-  // 图片最大宽高
-  const mainImgMaxW = 0.9, mainImgMaxH = 0.6; // vw/vh百分比
-
-  // 集中管理七影蝶配置
-  const butterflyConfig = [
-    {
-      label: 'anitabi巡礼网站',
-      modalImg: null,
-      hoverImg: null,
-      link: 'https://anitabi.cn/map',
-    },
-    {
-      label: '空门苍睡觉的小道',
-      modalImg: '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
-      hoverImg: '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
-      link: null,
-    },
-    {
-      label: '小紬的灯塔',
-      modalImg: '/images/webps/男木岛/男木岛-紬的灯塔.webp',
-      hoverImg: '/images/webps/男木岛/男木岛-紬的灯塔.webp',
-      link: null,
-    },
-    {
-      label: '齐须千人的小红书巡礼笔记',
-      modalImg: null,
-      hoverImg: null,
-      link: 'https://www.xiaohongshu.com/discovery/item/67cb0ff80000000009015f05?source=webshare&xhsshare=pc_web&xsec_token=ABsqu3D76eAwSeSBQFe7MfGSblyZpnXnAJZN6ccVffjpg=&xsec_source=pc_share',
-    },
-    {
-      label: '空白的b站巡礼网站视频介绍',
-      modalImg: null,
-      hoverImg: null,
-      link: 'https://www.bilibili.com/video/BV16pgBz7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=88afb36e81beb22aa12c2c69722c5c7f',
-    },
-  ];
-
-  // 用户七影蝶相关状态
-  const [showUserButterflyModal, setShowUserButterflyModal] = useState(false)
-  const [userButterflyForm, setUserButterflyForm] = useState({
-    label: '',
-    image: '', // 只用一个字段
-    link: ''
-  })
-  const [uploadingButterflyImage, setUploadingButterflyImage] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'processing' | 'done'>('idle')
-  const [uploadingImageType, setUploadingImageType] = useState<'hover' | 'modal'>('hover')
-  const [isEditingButterfly, setIsEditingButterfly] = useState(false)
-  const [hoverUserButterfly, setHoverUserButterfly] = useState(false)
-
-  // 蝴蝶动画帧图片
-  const butterflyFrames = [
-    '/images/webps/七影蝶-3.webp',
-    '/images/webps/七影蝶-4.webp',
-  ];
-  // 蝴蝶动画帧索引（每只独立）
-  const [butterflyFramesState, setButterflyFramesState] = useState<number[]>(Array(totalButterflyCount).fill(0));
-  // 蝴蝶加速状态（每只独立）
-  const [butterflyFastArr, setButterflyFastArr] = useState<boolean[]>(Array(totalButterflyCount).fill(false));
-  // 定时器管理
-  useEffect(() => {
-    const timers: number[] = [];
-    for (let i = 0; i < totalButterflyCount; i++) {
-      const interval = butterflyFastArr[i] ? 120 : 320;
-      timers[i] = window.setInterval(() => {
-        setButterflyFramesState(prev => {
-          const arr = [...prev];
-          arr[i] = (arr[i] + 1) % butterflyFrames.length;
-          return arr;
-        });
-      }, interval);
-    }
-    return () => { timers.forEach(t => window.clearInterval(t)); };
-  }, [butterflyFastArr, totalButterflyCount]);
+  
+  // 新的七影蝶显示系统状态
+  const [displayButterflies, setDisplayButterflies] = useState<ButterflyDisplayData[]>([])
+  const [isLoadingButterflies, setIsLoadingButterflies] = useState(false)
 
   // 获取用户七影蝶
   const fetchUserButterfly = async () => {
@@ -417,205 +142,103 @@ const DivineRealmPage: React.FC = () => {
     } catch (err: any) {
       if (err.response?.status !== 404) {
         console.error('获取用户七影蝶失败:', err)
-      }
-    }
-  }
-
-  // 上传七影蝶图片（异步优化，轮询结果）
-  const handleButterflyImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !token) return
-    const file = e.target.files[0]
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('image_type', 'hover') // 后端只用一个字段即可
-
-    setUploadingButterflyImage(true)
-    setUploadStatus('uploading')
-    setMessage('上传中，请稍后...')
-    try {
-      // 1. 上传图片，后端返回任务ID或临时图片名
-      const res = await axios.post('/api/butterfly/upload-butterfly-image', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      // 假设后端返回 { task_id, status, url }，status=processing时url为临时图，status=done时url为最终图
-      let { task_id, status, url } = res.data
-      if (status === 'done') {
-        setUserButterflyForm(prev => ({ ...prev, image: url }))
-        setUploadStatus('done')
-        setMessage('图片上传成功')
-      } else {
-        setUploadStatus('processing')
-        setMessage('图片优化中，请稍后...')
-        // 2. 轮询后端获取优化后图片
-        let pollCount = 0
-        const poll = async () => {
-          if (pollCount++ > 30) { // 最多轮询30次（约90秒）
-            setMessage('图片优化超时，请重试')
-            setUploadingButterflyImage(false)
-            setUploadStatus('idle')
-            return
-          }
-          try {
-            const pollRes = await axios.get(`/api/butterfly/upload-status/${task_id}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            })
-            if (pollRes.data.status === 'done') {
-              setUserButterflyForm(prev => ({ ...prev, image: pollRes.data.url }))
-              setUploadStatus('done')
-              setMessage('图片上传成功')
-              setUploadingButterflyImage(false)
-            } else {
-              setTimeout(poll, 3000)
-            }
-          } catch {
-            setTimeout(poll, 3000)
-          }
-        }
-        poll()
-      }
-    } catch (err: any) {
-      setMessage(err?.response?.data?.detail || '图片上传失败')
-      setUploadStatus('idle')
-      setUploadingButterflyImage(false)
-    }
-  }
-
-  // 保存用户七影蝶
-  const handleSaveUserButterfly = async () => {
-    if (!token || !userButterflyForm.label.trim()) {
-      setMessage('请填写标题')
-      return
-    }
-    
-    setLoading(true)
-    try {
-      const payload = {
-        label: userButterflyForm.label,
-        hoverImg: userButterflyForm.image,
-        modalImg: userButterflyForm.image,
-        link: userButterflyForm.link
-      }
-      const res = await axios.post('/api/butterfly/my-butterfly', payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setUserButterfly(res.data)
-      setShowUserButterflyModal(false)
-      setMessage('七影蝶保存成功')
-    } catch (err: any) {
-      setMessage(err?.response?.data?.detail || '保存失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 删除用户七影蝶
-  const handleDeleteUserButterfly = async () => {
-    if (!token) return
-    setLoading(true)
-    try {
-      await axios.delete('/api/butterfly/my-butterfly', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setUserButterfly(null)
-      setMessage('七影蝶已删除')
-    } catch (err: any) {
-      setMessage(err?.response?.data?.detail || '删除失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 生成不重叠的随机位置
-  function getRandomButterflyPositions() {
-    const positions = [];
-    let tries = 0;
-    while (positions.length < BUTTERFLY_COUNT && tries < 200) {
-      tries++;
-      const left = Math.random() * 0.8 + 0.05;
-      const top = Math.random() * 0.8 + 0.05;
-      let overlap = false;
-      for (let i = 0; i < positions.length; i++) {
-        const dx = (left - positions[i].left) * mainImgMaxW * window.innerWidth;
-        const dy = (top - positions[i].top) * mainImgMaxH * window.innerHeight;
-        const minDist = (butterflySizes[positions.length].w + butterflySizes[i].w) / 2 + 12;
-        if (dx * dx + dy * dy < minDist * minDist) {
-          overlap = true;
-          break;
+        // 只在非404错误时显示错误提示
+        if (err.response?.status === 401) {
+          showErrorToast('登录已过期，请重新登录')
+          handleLogout()
+        } else {
+          showErrorToast('获取七影蝶失败，请稍后重试')
         }
       }
-      if (!overlap) positions.push({ left, top });
     }
-    if (positions.length < BUTTERFLY_COUNT) {
-      return Array.from({ length: BUTTERFLY_COUNT }, (_, i) => ({
-        left: 0.1 + 0.15 * i,
-        top: 0.1 + 0.15 * i,
+  }
+
+  // 获取随机七影蝶用于显示
+  const fetchRandomButterflies = async () => {
+    setIsLoadingButterflies(true)
+    try {
+      const res = await axios.get('/api/butterfly/random-display')
+      const butterflies: ButterflyData[] = res.data.map((item: any) => ({
+        id: item.id,
+        label: item.label,
+        hover_img: item.hover_img,
+        modal_img: item.modal_img,
+        link: item.link,
+        butterfly_type: item.butterfly_type
       }))
+      
+      // 生成随机位置
+      generateButterflyPositions(butterflies)
+    } catch (err: any) {
+      console.error('获取随机七影蝶失败:', err)
+      
+      // 显示用户友好的错误提示
+      showErrorToast('获取七影蝶失败，使用本地配置')
+      
+      // 回退到本地配置
+      const fallbackButterflies: ButterflyData[] = [
+        {
+          label: 'anitabi巡礼网站',
+          modal_img: undefined,
+          hover_img: undefined,
+          link: 'https://anitabi.cn/map',
+          butterfly_type: 'official'
+        },
+        {
+          label: '空门苍睡觉的小道',
+          modal_img: '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
+          hover_img: '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
+          link: undefined,
+          butterfly_type: 'official'
+        },
+        {
+          label: '小紬的灯塔',
+          modal_img: '/images/webps/男木岛/男木岛-紬的灯塔.webp',
+          hover_img: '/images/webps/男木岛/男木岛-紬的灯塔.webp',
+          link: undefined,
+          butterfly_type: 'official'
+        }
+      ]
+      generateButterflyPositions(fallbackButterflies)
+    } finally {
+      setIsLoadingButterflies(false)
     }
-    return positions;
   }
 
-  // 刷新夜晚图片和蝴蝶位置/展示
-  const refreshNightImage = () => {
-    const newImage = nightImages[Math.floor(Math.random() * nightImages.length)]
-    setCurrentNightImage(newImage)
-    setButterflyPositions(Array.from({ length: totalButterflyCount }, (_, i) => ({
-      left: 0.1 + 0.15 * i,
-      top: 0.1 + 0.15 * i,
-    })))
-    // 随机选80%展示
-    const arr = Array.from({ length: totalButterflyCount }, (_, i) => i)
-    const showCount = Math.max(1, Math.floor(totalButterflyCount * 0.8))
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]]
-    }
-    setActiveButterflies(arr.slice(0, showCount))
-  }
-  // 首次加载也要随机
-  useEffect(() => {
-    refreshNightImage()
-    // eslint-disable-next-line
+  // 生成七影蝶位置
+  const generateButterflyPositions = useCallback((butterflies: ButterflyData[]) => {
+    // 获取容器尺寸
+    const containerDimensions = getContainerDimensions(imageContainerRef.current)
+    
+    // 随机选择最多5只七影蝶
+    const selectedButterflies = selectRandomButterflies(butterflies, 5)
+    
+    // 生成防重叠的位置
+    const positionedButterflies = generateNonOverlappingPositions(
+      selectedButterflies,
+      containerDimensions.width,
+      containerDimensions.height
+    )
+    
+    // 组合数据
+    const displayData: ButterflyDisplayData[] = selectedButterflies.map((butterfly, index) => ({
+      ...butterfly,
+      position: positionedButterflies[index]?.position || { left: 0.5, top: 0.5 },
+      size: positionedButterflies[index]?.size || { w: 48, h: 48 }
+    }))
+    
+    setDisplayButterflies(displayData)
   }, [])
 
-  // 随机生成星点数组（增加动画参数）
-  const [stars] = useState(() => {
-    const arr = []
-    for (let i = 0; i < 80; i++) {
-      arr.push({
-        x: Math.random() * 100, // vw
-        y: Math.random() * 100, // vh
-        size: Math.random() * 1.8 + 0.7, // 0.7~2.5px
-        opacity: Math.random() * 0.5 + 0.5, // 0.5~1
-        float: Math.random() * 6 + 2, // 浮动幅度2~8px
-        duration: Math.random() * 3 + 2 // 动画时长2~5s
-      })
-    }
-    return arr
-  })
-
-  // 校验规则
-  const validate = () => {
-    if (!username || username.length < 3 || username.length > 20) {
-      setMessage('用户名长度需为3-20个字符')
-      return false
-    }
-    if (!/^[a-zA-Z0-9_\u4e00-\u9fa5]+$/.test(username)) {
-      setMessage('用户名仅支持中英文、数字和下划线')
-      return false
-    }
-    if (!password || password.length < 6 || password.length > 20) {
-      setMessage('密码长度需为6-20位')
-      return false
-    }
-    if (!/^[^\s]+$/.test(password)) {
-      setMessage('密码不能包含空格')
-      return false
-    }
-    return true
-  }
+  // 刷新夜晚图片和蝴蝶位置/展示
+  // 需求 7.2: 当点击刷新按钮时，系统应随机重新定位和重新选择七影蝶
+  const refreshNightImage = useCallback(() => {
+    const newImage = nightImages[Math.floor(Math.random() * nightImages.length)]
+    setCurrentNightImage(newImage)
+    
+    // 重新获取随机七影蝶和位置
+    fetchRandomButterflies()
+  }, [nightImages])
 
   // 登录后获取用户信息
   const fetchUserInfo = async (tk: string) => {
@@ -624,73 +247,24 @@ const DivineRealmPage: React.FC = () => {
         headers: { Authorization: `Bearer ${tk}` }
       })
       setAvatarUrl(res.data.avatar_url || null)
-    } catch {}
-  }
-
-  // 注册提交
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setMessage('')
-    if (!validate()) return
-    setLoading(true)
-    try {
-      await axios.post('/api/auth/register', {
-        username,
-        password
-      })
-      setMessage('注册成功，请前往登录')
     } catch (err: any) {
-      setMessage(err?.response?.data?.detail || '注册失败')
-    } finally {
-      setLoading(false)
+      console.error('获取用户信息失败:', err)
+      if (err.response?.status === 401) {
+        // Token无效，清除本地存储
+        handleLogout()
+      }
     }
   }
 
-  // 登录提交
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setMessage('')
-    if (!validate()) return
-    setLoading(true)
-    try {
-      const res = await axios.post('/api/auth/login', {
-        username,
-        password
-      })
-      setMessage('登录成功')
-      setToken(res.data.access_token)
-      fetchUserInfo(res.data.access_token)
-      setShowAuth(false) // 登录成功后关闭弹窗
-      // 可跳转到主页或其他页面
-      // navigate('/contents')
-    } catch (err: any) {
-      setMessage(err?.response?.data?.detail || '登录失败')
-    } finally {
-      setLoading(false)
-    }
+  // 处理认证成功
+  const handleAuthSuccess = (newToken: string) => {
+    setToken(newToken)
+    fetchUserInfo(newToken)
   }
 
-  // 上传头像
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !token) return
-    const file = e.target.files[0]
-    const formData = new FormData()
-    formData.append('file', file)
-    setUploading(true)
-    try {
-      const res = await axios.post('/api/auth/upload-avatar', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      setAvatarUrl(res.data.avatar_url)
-      setMessage('头像上传成功')
-    } catch {
-      setMessage('头像上传失败')
-    } finally {
-      setUploading(false)
-    }
+  // 处理头像更新
+  const handleAvatarUpdate = (url: string | null) => {
+    setAvatarUrl(url)
   }
 
   // 退出登录
@@ -699,9 +273,164 @@ const DivineRealmPage: React.FC = () => {
     setAvatarUrl(null)
     setUserButterfly(null)
     localStorage.removeItem('token')
-    setTab('login')
-    setMessage('已退出登录')
   }
+
+  // 处理蝴蝶点击
+  const handleButterflyClick = useCallback((butterfly: ButterflyDisplayData) => {
+    if (butterfly.link) {
+      // 有链接的七影蝶在新标签页打开链接
+      window.open(butterfly.link, '_blank')
+    } else {
+      // 没有链接的七影蝶打开模态框
+      if (butterfly.butterfly_type === 'user') {
+        setShowUserButterflyModal(true)
+      } else {
+        setShowButterflyModal(butterfly)
+      }
+    }
+  }, [])
+
+  // 显示成功提示
+  const showSuccessToast = (message: string) => {
+    const toast = document.createElement('div')
+    toast.style.cssText = `
+      position: fixed;
+      top: 100px;
+      right: 30px;
+      background: linear-gradient(45deg, #2E8B57, #3CB371);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(46,139,87,0.3);
+      z-index: 1000;
+      animation: slideInRight 0.3s ease-out;
+      pointer-events: none;
+    `
+    toast.textContent = message
+    
+    // 添加动画样式
+    const style = document.createElement('style')
+    style.textContent = `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    `
+    
+    document.head.appendChild(style)
+    document.body.appendChild(toast)
+    
+    // 3秒后移除提示
+    setTimeout(() => {
+      toast.style.animation = 'slideOutRight 0.3s ease-in'
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast)
+        }
+        if (document.head.contains(style)) {
+          document.head.removeChild(style)
+        }
+      }, 300)
+    }, 3000)
+  }
+
+  // 显示错误提示
+  const showErrorToast = (message: string) => {
+    const toast = document.createElement('div')
+    toast.style.cssText = `
+      position: fixed;
+      top: 100px;
+      right: 30px;
+      background: linear-gradient(45deg, #FF6B35, #FF4757);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(255,107,53,0.3);
+      z-index: 1000;
+      animation: slideInRight 0.3s ease-out;
+      pointer-events: none;
+    `
+    toast.textContent = `⚠️ ${message}`
+    
+    // 添加动画样式（如果不存在）
+    if (!document.getElementById('toast-styles')) {
+      const style = document.createElement('style')
+      style.id = 'toast-styles'
+      style.textContent = `
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slideOutRight {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `
+      document.head.appendChild(style)
+    }
+    
+    document.body.appendChild(toast)
+    
+    // 4秒后移除提示（错误提示显示时间稍长）
+    setTimeout(() => {
+      toast.style.animation = 'slideOutRight 0.3s ease-in'
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast)
+        }
+      }, 300)
+    }, 4000)
+  }
+
+  // 处理蝴蝶更新
+  const handleButterflyUpdate = (butterfly: UserButterfly | null) => {
+    setUserButterfly(butterfly)
+    
+    // 显示相应的提示
+    if (butterfly) {
+      showSuccessToast('🦋 七影蝶已更新，即将在神域中显示')
+    }
+  }
+
+  // 首次加载随机化
+  // 需求 7.1: 当页面加载或改变夜晚场景时，系统应随机选择并显示最多5只七影蝶
+  useEffect(() => {
+    const newImage = nightImages[Math.floor(Math.random() * nightImages.length)]
+    setCurrentNightImage(newImage)
+    fetchRandomButterflies()
+  }, [])
 
   // 自动记住token和头像，下次登录自动显示
   useEffect(() => {
@@ -711,16 +440,24 @@ const DivineRealmPage: React.FC = () => {
       fetchUserInfo(tk)
     }
   }, [])
+
   useEffect(() => {
     if (token) localStorage.setItem('token', token)
   }, [token])
 
-  // 当token变化时获取用户七影蝶
+  // 当token变化时获取用户七影蝶并刷新显示
   useEffect(() => {
     if (token) {
       fetchUserButterfly()
+      // 用户登录后重新获取七影蝶显示（可能包含用户的七影蝶）
+      fetchRandomButterflies()
     }
   }, [token])
+
+  // 当用户七影蝶变化时刷新显示
+  useEffect(() => {
+    fetchRandomButterflies()
+  }, [userButterfly])
 
   const handleBack = () => {
     navigate('/contents')
@@ -728,55 +465,22 @@ const DivineRealmPage: React.FC = () => {
 
   return (
     <Container>
-      {/* 星空白点 */}
-      {stars.map((star, idx) => (
-        <Star
-          key={idx}
-          x={star.x}
-          y={star.y}
-          size={star.size}
-          opacity={star.opacity}
-          animate={{
-            y: [0, -star.float, 0, star.float, 0],
-          }}
-          transition={{
-            duration: star.duration,
-            repeat: Infinity,
-            repeatType: 'loop',
-            ease: 'easeInOut',
-            delay: Math.random() * 3
-          }}
-        />
-      ))}
-      {/* 右上角头像显示和上传/登录注册按钮 */}
-      {token ? (
-        <div style={{ position: 'fixed', top: 20, right: 40, zIndex: 200, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img
-            src={avatarUrl ? avatarUrl : defaultAvatar}
-            alt="头像"
-            style={{ width: 56, height: 56, borderRadius: '50%', border: '3px solid #FFB347', objectFit: 'cover', background: '#fff' }}
-            onError={(e) => {
-              // 如果头像加载失败，使用默认的SVG头像
-              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjgiIGN5PSIyOCIgcj0iMjgiIGZpbGw9IiNGRkI5NDciLz4KPHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAxMmMyLjIxIDAgNC0xLjc5IDQtNHMtMS43OS00LTQtNC00IDEuNzktNCA0IDEuNzkgNCA0IDR6bTAgMmMtMi42NyAwLTggMS4zNC04IDR2MmgxNnYtMmMwLTIuNjYtNS4zMy00LTgtNHoiLz4KPC9zdmc+Cjwvc3ZnPgo=';
-            }}
-          />
-          <label style={{ cursor: uploading ? 'not-allowed' : 'pointer', color: '#FF6B35', fontWeight: 600 }}>
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} disabled={uploading} />
-            {uploading ? '上传中...' : '更换头像'}
-          </label>
-          <button onClick={handleLogout} style={{ marginLeft: 8, background: '#fff', color: '#FF6B35', border: '1.5px solid #FFB347', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }}>退出登录</button>
-        </div>
-      ) : (
-        <button
-          style={{ position: 'fixed', top: 20, right: 40, zIndex: 200, background: 'linear-gradient(45deg, #FFB347, #FF6B35)', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 18, cursor: 'pointer', boxShadow: '0 4px 16px rgba(255, 179, 71, 0.18)' }}
-          onClick={() => setShowAuth(true)}
-        >登录/注册</button>
-      )}
+      {/* 星空背景 */}
+      <StarryBackground />
+      
+      {/* 用户资料组件 */}
+      <UserProfile
+        token={token}
+        avatarUrl={avatarUrl}
+        onAvatarUpdate={handleAvatarUpdate}
+        onLogout={handleLogout}
+        onShowAuth={() => setShowAuth(true)}
+      />
       {/* 夜晚场景图主展示 */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 80 }}>
         <Title>神域</Title>
-        {/* 夜晚图片和蝴蝶包裹在一起，蝴蝶定位在图片右下角 */}
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        {/* 夜晚图片和蝴蝶包裹在一起 */}
+        <div ref={imageContainerRef} style={{ position: 'relative', display: 'inline-block' }}>
           <img 
             src={currentNightImage} 
             alt="夜晚场景" 
@@ -789,172 +493,33 @@ const DivineRealmPage: React.FC = () => {
               display: 'block'
             }} 
           />
-          {/* 渲染所有蝴蝶，最后一只是用户七影蝶 */}
-          {Array.from({ length: totalButterflyCount }).map((_, idx) => {
-            // 判断是否用户七影蝶
-            const isUser = userButterfly && idx === totalButterflyCount - 1;
-            const label = isUser ? userButterfly.label : butterflyConfig[idx]?.label;
-            const hoverImg = isUser ? userButterfly.hoverImg : butterflyConfig[idx]?.hoverImg;
-            const modalImg = isUser ? userButterfly.modalImg : butterflyConfig[idx]?.modalImg;
-            const link = isUser ? userButterfly.link : butterflyConfig[idx]?.link;
-            return activeButterflies.includes(idx) && (
-              <React.Fragment key={idx}>
-                <img
-                  src={butterflyFrames[butterflyFramesState[idx]]}
-                  alt={isUser ? '用户七影蝶' : `七影蝶${idx+1}`}
-                  style={{
-                    position: 'absolute',
-                    left: `calc(${butterflyPositions[idx].left * 100}% - ${butterflySizes[idx % butterflySizes.length].w / 2}px)`,
-                    top: `calc(${butterflyPositions[idx].top * 100}% - ${butterflySizes[idx % butterflySizes.length].h / 2}px)`,
-                    width: butterflySizes[idx % butterflySizes.length].w,
-                    height: butterflySizes[idx % butterflySizes.length].h,
-                    cursor: 'pointer',
-                    filter: isUser ? 'drop-shadow(0 4px 12px rgba(255,165,0,0.6))' : 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))',
-                    zIndex: 10,
-                    transition: 'transform 0.2s',
-                    border: isUser ? '2px solid #FFB347' : undefined,
-                    borderRadius: isUser ? '50%' : undefined,
-                  }}
-                  onClick={() => {
-                    if (link) {
-                      window.open(link, '_blank');
-                    } else {
-                      if (isUser) setShowUserButterflyModal(true);
-                      else setShowButterflyModal((idx+1) as 0|1|2|3|4|5);
-                    }
-                  }}
-                  onMouseEnter={() => {
-                    if (isUser) setHoverUserButterfly(true);
-                    else {
-                      setHoverButterfly((idx+1) as 0|1|2|3|4|5);
-                      setButterflyFastArr(arr => arr.map((v, i) => i === idx ? true : v));
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    if (isUser) setHoverUserButterfly(false);
-                    else {
-                      setHoverButterfly(0 as 0|1|2|3|4|5);
-                      setButterflyFastArr(arr => arr.map((v, i) => i === idx ? false : v));
-                    }
-                  }}
-                />
-                {/* 悬停弹窗 */}
-                {isUser && hoverUserButterfly && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: `calc(${butterflyPositions[idx].left * 100}% - 120px)`,
-                      top: `calc(${butterflyPositions[idx].top * 100}% - ${butterflySizes[idx % butterflySizes.length].h / 2 + 120}px)`,
-                      background: '#fff',
-                      borderRadius: 16,
-                      padding: '18px 28px',
-                      minWidth: 180,
-                      fontSize: 18,
-                      color: '#533483',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 16px rgba(255,165,0,0.13)',
-                      zIndex: 100,
-                      pointerEvents: 'none',
-                      textAlign: 'center',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {hoverImg && (
-                      <img src={hoverImg} alt="butterfly" style={{ width: 120, borderRadius: 8, marginBottom: 8, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                    )}
-                    {label}
-                  </div>
-                )}
-                {!isUser && hoverButterfly === idx+1 && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: `calc(${butterflyPositions[idx].left * 100}% - 120px)`,
-                      top: `calc(${butterflyPositions[idx].top * 100}% - ${butterflySizes[idx % butterflySizes.length].h / 2 + 120}px)`,
-                      background: '#fff',
-                      borderRadius: 16,
-                      padding: '18px 28px',
-                      minWidth: 180,
-                      fontSize: 18,
-                      color: '#533483',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 16px rgba(123,9,183,0.13)',
-                      zIndex: 100,
-                      pointerEvents: 'none',
-                      textAlign: 'center',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {hoverImg && (
-                      <img src={hoverImg} alt="butterfly" style={{ width: 120, borderRadius: 8, marginBottom: 8, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                    )}
-                    {label}
-                  </div>
-                )}
-              </React.Fragment>
-            );
-          })}
-          {/* 用户七影蝶 */}
-          {userButterfly && (
-            <>
-              <img
-                src={butterflyFrames[0]}
-                alt="用户七影蝶"
-                style={{
-                  position: 'absolute',
-                  left: 'calc(85% - 32px)',
-                  top: 'calc(85% - 32px)',
-                  width: 64,
-                  height: 64,
-                  cursor: 'pointer',
-                  filter: 'drop-shadow(0 4px 12px rgba(255,165,0,0.6))',
-                  zIndex: 15,
-                  transition: 'transform 0.2s',
-                  border: '2px solid #FFB347',
-                  borderRadius: '50%',
-                }}
-                onClick={() => {
-                  if (userButterfly.link) {
-                    window.open(userButterfly.link, '_blank');
-                  } else {
-                    setShowUserButterflyModal(true);
-                  }
-                }}
-                onMouseEnter={() => setHoverUserButterfly(true)}
-                onMouseLeave={() => setHoverUserButterfly(false)}
-              />
-              {hoverUserButterfly && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: 'calc(85% - 120px)',
-                    top: 'calc(85% - 120px)',
-                    background: '#fff',
-                    borderRadius: 16,
-                    padding: '18px 28px',
-                    minWidth: 180,
-                    fontSize: 18,
-                    color: '#533483',
-                    fontWeight: 600,
-                    boxShadow: '0 4px 16px rgba(255,165,0,0.13)',
-                    zIndex: 100,
-                    pointerEvents: 'none',
-                    textAlign: 'center',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {userButterfly.hoverImg && (
-                    <img src={userButterfly.hoverImg} alt="butterfly" style={{ width: 120, borderRadius: 8, marginBottom: 8, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                  )}
-                  {userButterfly.label}
-                </div>
-              )}
-            </>
+          {/* 新的蝴蝶显示系统 */}
+          {!isLoadingButterflies && displayButterflies.map((butterfly, index) => (
+            <ButterflyDisplay
+              key={`${butterfly.butterfly_type}-${butterfly.id || index}-${butterfly.label}`}
+              butterfly={butterfly}
+              onButterflyClick={handleButterflyClick}
+            />
+          ))}
+          {isLoadingButterflies && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              color: '#fff',
+              fontSize: 16,
+              fontWeight: 600,
+              textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+            }}>
+              加载七影蝶中...
+            </div>
           )}
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
           <button
             onClick={refreshNightImage}
+            disabled={isLoadingButterflies}
             style={{
               background: 'linear-gradient(45deg, #533483, #7209b7)',
               color: '#fff',
@@ -963,20 +528,56 @@ const DivineRealmPage: React.FC = () => {
               padding: '12px 28px',
               fontSize: 16,
               fontWeight: 600,
-              cursor: 'pointer',
+              cursor: isLoadingButterflies ? 'not-allowed' : 'pointer',
               boxShadow: '0 4px 16px rgba(123,9,183,0.3)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              opacity: isLoadingButterflies ? 0.7 : 1
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-2px)'
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(123,9,183,0.4)'
+              if (!isLoadingButterflies) {
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(123,9,183,0.4)'
+              }
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(123,9,183,0.3)'
+              if (!isLoadingButterflies) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(123,9,183,0.3)'
+              }
             }}
           >
-            🌙 刷新夜景
+            🌙 {isLoadingButterflies ? '刷新中...' : '刷新夜景'}
+          </button>
+          <button
+            onClick={fetchRandomButterflies}
+            disabled={isLoadingButterflies}
+            style={{
+              background: 'linear-gradient(45deg, #4A90E2, #357ABD)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 12,
+              padding: '12px 28px',
+              fontSize: 16,
+              fontWeight: 600,
+              cursor: isLoadingButterflies ? 'not-allowed' : 'pointer',
+              boxShadow: '0 4px 16px rgba(74,144,226,0.3)',
+              transition: 'all 0.2s',
+              opacity: isLoadingButterflies ? 0.7 : 1
+            }}
+            onMouseEnter={e => {
+              if (!isLoadingButterflies) {
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(74,144,226,0.4)'
+              }
+            }}
+            onMouseLeave={e => {
+              if (!isLoadingButterflies) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(74,144,226,0.3)'
+              }
+            }}
+          >
+            🦋 {isLoadingButterflies ? '刷新中...' : '刷新七影蝶'}
           </button>
           {token && (
             <button
@@ -1002,369 +603,96 @@ const DivineRealmPage: React.FC = () => {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(255,179,71,0.3)'
               }}
             >
-              🦋 {userButterfly ? '编辑我的七影蝶' : '创建我的七影蝶'}
+              👤 {userButterfly ? '我的七影蝶' : '创建我的七影蝶'}
             </button>
           )}
         </div>
       </div>
-      {/* 蝴蝶弹窗，支持5只 */}
-      {showButterflyModal >= 1 && showButterflyModal <= BUTTERFLY_COUNT && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowButterflyModal(0 as 0|1|2|3|4|5)}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: '36px 48px', minWidth: 260, fontSize: 22, color: '#533483', fontWeight: 700, boxShadow: '0 8px 32px rgba(123,9,183,0.18)', position: 'relative', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
-            {butterflyConfig[showButterflyModal-1].modalImg ? (
-              <img src={butterflyConfig[showButterflyModal-1].modalImg!} alt="butterfly" style={{ width: 220, borderRadius: 12, marginBottom: 18, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-            ) : null}
-            {butterflyConfig[showButterflyModal-1].label}
-            <button onClick={() => setShowButterflyModal(0 as 0|1|2|3|4|5)} style={{ position: 'absolute', top: 12, right: 18, background: 'none', border: 'none', fontSize: 22, color: '#7209b7', cursor: 'pointer' }}>×</button>
-          </div>
-        </div>
-      )}
-
-      {/* 用户七影蝶编辑弹窗 */}
-      {showUserButterflyModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => { setShowUserButterflyModal(false); setIsEditingButterfly(false); }}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: '36px 48px', minWidth: 400, maxWidth: 600, fontSize: 18, color: '#533483', fontWeight: 600, boxShadow: '0 8px 32px rgba(123,9,183,0.18)', position: 'relative' }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ marginBottom: 24, textAlign: 'center', fontSize: 24, fontWeight: 700 }}>🦋 {userButterfly ? '我的七影蝶' : '创建我的七影蝶'}</h3>
-            {/* 只读模式 */}
-            {!isEditingButterfly && userButterfly && (
-              <div>
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>标题</div>
-                  <div style={{ padding: '10px 0', color: '#333', fontSize: 18 }}>{userButterfly.label || '（无）'}</div>
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>图片</div>
-                  {userButterfly.hoverImg ? (
-                    <img src={userButterfly.hoverImg} alt="七影蝶图片" style={{ width: 80, height: 80, borderRadius: 10, objectFit: 'cover', border: '1.5px solid #FFB347' }} />
-                  ) : <span style={{ color: '#aaa' }}>（无图片）</span>}
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>链接</div>
-                  {userButterfly.link ? (
-                    <a href={userButterfly.link} target="_blank" rel="noopener noreferrer" style={{ color: '#3498db' }}>{userButterfly.link}</a>
-                  ) : <span style={{ color: '#aaa' }}>（无）</span>}
-                </div>
-                <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 24 }}>
-                  <button
-                    onClick={() => {
-                      setIsEditingButterfly(true)
-                      setUserButterflyForm({
-                        label: userButterfly.label || '',
-                        image: userButterfly.hoverImg || '',
-                        link: userButterfly.link || ''
-                      })
-                    }}
-                    style={{
-                      padding: '12px 32px',
-                      background: 'linear-gradient(45deg, #FFB347, #FF6B35)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >编辑</button>
-                  <button
-                    onClick={() => { setShowUserButterflyModal(false); setIsEditingButterfly(false); }}
-                    style={{
-                      padding: '12px 32px',
-                      background: '#f1f2f6',
-                      color: '#2f3542',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >关闭</button>
-                </div>
-              </div>
+      {/* 蝴蝶弹窗 */}
+      {showButterflyModal && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            width: '100vw', 
+            height: '100vh', 
+            background: 'rgba(0,0,0,0.25)', 
+            zIndex: 999, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }} 
+          onClick={() => setShowButterflyModal(null)}
+        >
+          <div 
+            style={{ 
+              background: '#fff', 
+              borderRadius: 18, 
+              padding: '36px 48px', 
+              minWidth: 260, 
+              fontSize: 22, 
+              color: '#533483', 
+              fontWeight: 700, 
+              boxShadow: '0 8px 32px rgba(123,9,183,0.18)', 
+              position: 'relative', 
+              textAlign: 'center' 
+            }} 
+            onClick={e => e.stopPropagation()}
+          >
+            {showButterflyModal.modal_img && (
+              <img 
+                src={showButterflyModal.modal_img} 
+                alt="butterfly" 
+                style={{ 
+                  width: 220, 
+                  borderRadius: 12, 
+                  marginBottom: 18, 
+                  display: 'block', 
+                  marginLeft: 'auto', 
+                  marginRight: 'auto' 
+                }} 
+              />
             )}
-            {/* 编辑/创建模式 */}
-            {(isEditingButterfly || !userButterfly) && (
-              <>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: 'block', marginBottom: 8, fontWeight: 600 }}>标题 *</label>
-                  <input
-                    type="text"
-                    value={userButterflyForm.label}
-                    onChange={(e) => setUserButterflyForm(prev => ({ ...prev, label: e.target.value }))}
-                    placeholder="请输入七影蝶标题"
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      border: '1.5px solid #FFB347',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: 'block', marginBottom: 8, fontWeight: 600 }}>图片（可选，悬停和弹窗共用）</label>
-                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleButterflyImageUpload}
-                      disabled={uploadingButterflyImage}
-                      style={{ display: 'none' }}
-                      id="butterfly-image-upload"
-                    />
-                    <label
-                      htmlFor="butterfly-image-upload"
-                      style={{
-                        padding: '8px 16px',
-                        background: uploadingButterflyImage ? '#ccc' : 'linear-gradient(45deg, #87CEEB, #98E4D6)',
-                        color: '#fff',
-                        borderRadius: 6,
-                        cursor: uploadingButterflyImage ? 'not-allowed' : 'pointer',
-                        fontSize: 14,
-                        fontWeight: 600
-                      }}
-                    >
-                      {uploadingButterflyImage ? (uploadStatus === 'processing' ? '优化中...' : '上传中...') : '选择图片'}
-                    </label>
-                    {uploadStatus !== 'idle' && (
-                      <span style={{ color: '#FF6B35', marginLeft: 10, fontSize: 13 }}>
-                        {message}
-                      </span>
-                    )}
-                    {userButterflyForm.image && (
-                      <img src={userButterflyForm.image} alt="七影蝶图片" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover' }} />
-                    )}
-                  </div>
-                </div>
-                <div style={{ marginBottom: 24 }}>
-                  <label style={{ display: 'block', marginBottom: 8, fontWeight: 600 }}>链接（可选）</label>
-                  <input
-                    type="url"
-                    value={userButterflyForm.link}
-                    onChange={(e) => setUserButterflyForm(prev => ({ ...prev, link: e.target.value }))}
-                    placeholder="https://example.com"
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      border: '1.5px solid #FFB347',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-                <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-                  <button
-                    onClick={handleSaveUserButterfly}
-                    disabled={loading}
-                    style={{
-                      padding: '12px 24px',
-                      background: loading ? '#ccc' : 'linear-gradient(45deg, #FFB347, #FF6B35)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      fontWeight: 600,
-                      cursor: loading ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    {loading ? '保存中...' : '保存'}
-                  </button>
-                  {userButterfly && (
-                    <button
-                      onClick={handleDeleteUserButterfly}
-                      disabled={loading}
-                      style={{
-                        padding: '12px 24px',
-                        background: loading ? '#ccc' : '#ff4757',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: 8,
-                        fontSize: 16,
-                        fontWeight: 600,
-                        cursor: loading ? 'not-allowed' : 'pointer'
-                      }}
-                    >
-                      {loading ? '删除中...' : '删除'}
-                    </button>
-                  )}
-                  <button
-                    onClick={() => { setIsEditingButterfly(false); if (userButterfly) setUserButterflyForm({ label: userButterfly.label || '', image: userButterfly.hoverImg || '', link: userButterfly.link || '' }); else setUserButterflyForm({ label: '', image: '', link: '' }); }}
-                    style={{
-                      padding: '12px 24px',
-                      background: '#f1f2f6',
-                      color: '#2f3542',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >取消</button>
-                </div>
-              </>
-            )}
-            <button onClick={() => { setShowUserButterflyModal(false); setIsEditingButterfly(false); }} style={{ position: 'absolute', top: 12, right: 18, background: 'none', border: 'none', fontSize: 22, color: '#7209b7', cursor: 'pointer' }}>×</button>
+            {showButterflyModal.label}
+            <button 
+              onClick={() => setShowButterflyModal(null)} 
+              style={{ 
+                position: 'absolute', 
+                top: 12, 
+                right: 18, 
+                background: 'none', 
+                border: 'none', 
+                fontSize: 22, 
+                color: '#7209b7', 
+                cursor: 'pointer' 
+              }}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
 
-      {/* 登录/注册弹窗 */}
-      {showAuth && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowAuth(false)}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: '36px 48px', minWidth: 400, maxWidth: 500, fontSize: 18, color: '#533483', fontWeight: 600, boxShadow: '0 8px 32px rgba(123,9,183,0.18)', position: 'relative' }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ marginBottom: 24, textAlign: 'center', fontSize: 24, fontWeight: 700 }}>🔐 {tab === 'login' ? '登录' : '注册'}</h3>
-            
-            {/* 切换按钮 */}
-            <div style={{ display: 'flex', marginBottom: 24, borderRadius: 8, overflow: 'hidden', border: '2px solid #FFB347' }}>
-              <button
-                onClick={() => setTab('login')}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: tab === 'login' ? 'linear-gradient(45deg, #FFB347, #FF6B35)' : '#f1f2f6',
-                  color: tab === 'login' ? '#fff' : '#2f3542',
-                  border: 'none',
-                  fontSize: 16,
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                登录
-              </button>
-              <button
-                onClick={() => setTab('register')}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: tab === 'register' ? 'linear-gradient(45deg, #FFB347, #FF6B35)' : '#f1f2f6',
-                  color: tab === 'register' ? '#fff' : '#2f3542',
-                  border: 'none',
-                  fontSize: 16,
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                注册
-              </button>
-            </div>
+      {/* 认证模态框 */}
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        onAuthSuccess={handleAuthSuccess}
+        token={token}
+        avatarUrl={avatarUrl}
+        onAvatarUpdate={handleAvatarUpdate}
+        onLogout={handleLogout}
+      />
 
-            <form onSubmit={tab === 'login' ? handleLogin : handleRegister}>
-              <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600 }}>用户名</label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="请输入用户名"
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1.5px solid #FFB347',
-                    borderRadius: 8,
-                    fontSize: 16,
-                    outline: 'none'
-                  }}
-                />
-                {tab === 'register' && (
-                  <div style={{ 
-                    fontSize: 12, 
-                    color: '#FF6B35', 
-                    marginTop: 4,
-                    lineHeight: '1.4'
-                  }}>
-                    💡 用户名规则：3-20个字符，支持中英文、数字和下划线
-                  </div>
-                )}
-              </div>
-
-              <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 600 }}>密码</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="请输入密码"
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      paddingRight: '50px',
-                      border: '1.5px solid #FFB347',
-                      borderRadius: 8,
-                      fontSize: 16,
-                      outline: 'none'
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: 'absolute',
-                      right: 12,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#FFB347',
-                      fontSize: 18
-                    }}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {tab === 'register' && (
-                  <div style={{ 
-                    fontSize: 12, 
-                    color: '#FF6B35', 
-                    marginTop: 4,
-                    lineHeight: '1.4'
-                  }}>
-                    💡 密码规则：6-20位字符，不能包含空格
-                  </div>
-                )}
-              </div>
-
-              <div style={{ marginBottom: 24 }}>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: loading ? '#ccc' : 'linear-gradient(45deg, #FFB347, #FF6B35)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    fontSize: 16,
-                    fontWeight: 600,
-                    cursor: loading ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {loading ? (tab === 'login' ? '登录中...' : '注册中...') : (tab === 'login' ? '登录' : '注册')}
-                </button>
-              </div>
-
-              {message && (
-                <div style={{ 
-                  textAlign: 'center', 
-                  color: message.includes('成功') ? '#2E8B57' : '#FF6B35',
-                  fontSize: 14,
-                  marginBottom: 16
-                }}>
-                  {message}
-                </div>
-              )}
-            </form>
-
-            <button onClick={() => setShowAuth(false)} style={{ position: 'absolute', top: 12, right: 18, background: 'none', border: 'none', fontSize: 22, color: '#7209b7', cursor: 'pointer' }}>×</button>
-          </div>
-        </div>
-      )}
-      
-      {/* 移除背景中的FloatingElement图标元素 */}
-      {/* 只保留夜晚背景和主内容 */}
+      {/* 蝴蝶管理模态框 */}
+      <ButterflyManagementModal
+        isOpen={showUserButterflyModal}
+        onClose={() => setShowUserButterflyModal(false)}
+        token={token}
+        userButterfly={userButterfly}
+        onButterflyUpdate={handleButterflyUpdate}
+      />
 
       <BackButton
         onClick={handleBack}
@@ -1373,9 +701,6 @@ const DivineRealmPage: React.FC = () => {
       >
         🏠 返回目录
       </BackButton>
-
-      {/* 移除页面中间的注册窗口（FormCard） */}
-      {/* 只保留主图和弹窗逻辑 */}
     </Container>
   )
 }
