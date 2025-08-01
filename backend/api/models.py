@@ -65,8 +65,7 @@ class UserButterfly(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     label = Column(String(200), nullable=False)  # 悬停时显示的标题
-    hover_img = Column(String(500))  # 悬停时显示的图片路径
-    modal_img = Column(String(500))  # 点击弹窗时显示的图片路径
+    description = Column(Text, nullable=True)  # 可选说明文本
     link = Column(String(500))  # 点击时跳转的链接
     is_active = Column(Boolean, default=True)  # 是否激活
     created_at = Column(TIMESTAMP)

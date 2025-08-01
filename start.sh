@@ -13,7 +13,7 @@ set -e
 function kill_ports() {
     echo "🛑 正在释放端口 3000, 3001, 8000, 8001..."
     for port in 3000 3001 8000 8001; do
-        pids=$(lsof -ti :$port)
+        pids=$(lsof -ti :$port 2>/dev/null || true)
         if [ -n "$pids" ]; then
             echo "🔪 杀死占用 $port 的进程: $pids"
             kill -9 $pids || true

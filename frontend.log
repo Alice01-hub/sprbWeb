@@ -1,12 +1,9 @@
-nohup: ignoring input
 
 > sprb-web@1.0.0 dev
 > vite --host 0.0.0.0 --port 3000
 
 
-  VITE v4.5.14  ready in 233 ms
+  VITE v4.5.14  ready in 515 ms
 
   ➜  Local:   http://localhost:3000/
-  ➜  Network: http://10.107.183.40:3000/
-(node:9664) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
+  ➜  Network: http://10.107.230.110:3000/

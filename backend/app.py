@@ -22,6 +22,9 @@ from datetime import datetime
 import tempfile
 from api import auth
 from api import butterfly
+from performance_monitor import get_monitor
+from config_loader import ConfigLoader
+import psutil
 
 app = FastAPI(title="Summer Pockets API", version="1.0.0")
 
@@ -738,4 +741,89 @@ async def download_checklist():
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(butterfly.router, prefix="/api/butterfly", tags=["butterfly"])
+
+# 监控和健康检查端点
+@app.get("/health")
+async def health_check():
+    """健康检查端点"""
+    try:
+        # 检查数据库连接
+        from api.database import get_db
+        db = next(get_db())
+        db.execute("SELECT 1").fetchone()
+        db.close()
+        
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "version": "1.0.0",
+            "environment": os.getenv("ENVIRONMENT", "development")
+        }
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
+
+@app.get("/metrics")
+async def get_metrics():
+    """获取性能指标"""
+    try:
+        monitor = get_monitor()
+        metrics = monitor.get_current_metrics()
+        return metrics
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get metrics: {str(e)}")
+
+@app.get("/metrics/report")
+async def get_performance_report(hours: int = 24):
+    """获取性能报告"""
+    try:
+        monitor = get_monitor()
+        report = monitor.get_performance_report(hours)
+        return report
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(e)}")
+
+@app.get("/system/info")
+async def get_system_info():
+    """获取系统信息"""
+    try:
+        config = ConfigLoader.load()
+        
+        # 系统信息
+        cpu_count = psutil.cpu_count()
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage('.')
+        boot_time = datetime.fromtimestamp(psutil.boot_time())
+        
+        # 进程信息
+        current_process = psutil.Process()
+        process_info = {
+            "pid": current_process.pid,
+            "cpu_percent": current_process.cpu_percent(),
+            "memory_percent": current_process.memory_percent(),
+            "memory_info": current_process.memory_info()._asdict(),
+            "create_time": datetime.fromtimestamp(current_process.create_time()).isoformat(),
+            "num_threads": current_process.num_threads()
+        }
+        
+        return {
+            "system": {
+                "cpu_count": cpu_count,
+                "memory_total": memory.total,
+                "memory_available": memory.available,
+                "disk_total": disk.total,
+                "disk_free": disk.free,
+                "boot_time": boot_time.isoformat(),
+                "platform": os.name
+            },
+            "process": process_info,
+            "config": {
+                "environment": config.get("environment"),
+                "database_path": config.get("database", {}).get("path"),
+                "log_level": config.get("logging", {}).get("level")
+            },
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get system info: {str(e)}")
+
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 

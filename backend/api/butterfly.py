@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, validator
 from typing import Optional, List
@@ -9,6 +9,7 @@ from .database import SessionLocal
 from .models import User, UserButterfly, ImageProcessingTask, ProcessingStatusEnum
 from .auth import get_current_user
 from .image_processing import image_processor
+from .butterfly_title_service import butterfly_title_service
 import uuid
 
 router = APIRouter()
@@ -19,41 +20,30 @@ MAX_LABEL_LENGTH = 200  # 标题最大长度
 
 # Pydantic模型
 class UserButterflyCreate(BaseModel):
-    label: str
-    hover_img: Optional[str] = None
-    modal_img: Optional[str] = None
+    description: Optional[str] = None
     link: Optional[str] = None
     
-    @validator('label')
-    def validate_label(cls, v):
-        if not v or len(v.strip()) == 0:
-            raise ValueError('标题不能为空')
-        if len(v) > MAX_LABEL_LENGTH:
-            raise ValueError(f'标题长度不能超过{MAX_LABEL_LENGTH}个字符')
-        return v.strip()
+    @validator('description')
+    def validate_description(cls, v):
+        if v is not None and len(v.strip()) == 0:
+            return None
+        return v.strip() if v else None
 
 class UserButterflyUpdate(BaseModel):
-    label: Optional[str] = None
-    hover_img: Optional[str] = None
-    modal_img: Optional[str] = None
+    description: Optional[str] = None
     link: Optional[str] = None
     is_active: Optional[bool] = None
     
-    @validator('label')
-    def validate_label(cls, v):
-        if v is not None:
-            if len(v.strip()) == 0:
-                raise ValueError('标题不能为空')
-            if len(v) > MAX_LABEL_LENGTH:
-                raise ValueError(f'标题长度不能超过{MAX_LABEL_LENGTH}个字符')
-            return v.strip()
-        return v
+    @validator('description')
+    def validate_description(cls, v):
+        if v is not None and len(v.strip()) == 0:
+            return None
+        return v.strip() if v else None
 
 class UserButterflyResponse(BaseModel):
     id: int
     label: str
-    hover_img: Optional[str] = None
-    modal_img: Optional[str] = None
+    description: Optional[str] = None
     link: Optional[str] = None
     is_active: bool
     created_at: Optional[str] = None
@@ -71,6 +61,18 @@ def get_db():
     finally:
         db.close()
 
+def get_current_user_optional(authorization: Optional[str] = None, db: Session = Depends(get_db)) -> Optional[User]:
+    """Get current user if authenticated, return None if not authenticated"""
+    if not authorization or not authorization.startswith('Bearer '):
+        return None
+    
+    try:
+        token = authorization[7:]  # Remove 'Bearer ' prefix
+        return get_current_user(token, db)
+    except:
+        # If authentication fails, return None (user not logged in)
+        return None
+
 # 获取当前用户的活跃七影蝶
 @router.get('/my-butterfly', response_model=Optional[UserButterflyResponse])
 def get_my_active_butterfly(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -86,8 +88,7 @@ def get_my_active_butterfly(current_user: User = Depends(get_current_user), db: 
     return UserButterflyResponse(
         id=user_butterfly.id,
         label=user_butterfly.label,
-        hover_img=user_butterfly.hover_img,
-        modal_img=user_butterfly.modal_img,
+        description=user_butterfly.description,
         link=user_butterfly.link,
         is_active=user_butterfly.is_active,
         created_at=user_butterfly.created_at.isoformat() if user_butterfly.created_at else None,
@@ -112,8 +113,7 @@ def get_my_butterflies(current_user: User = Depends(get_current_user), db: Sessi
         butterfly_responses.append(UserButterflyResponse(
             id=butterfly.id,
             label=butterfly.label,
-            hover_img=butterfly.hover_img,
-            modal_img=butterfly.modal_img,
+            description=butterfly.description,
             link=butterfly.link,
             is_active=butterfly.is_active,
             created_at=butterfly.created_at.isoformat() if butterfly.created_at else None,
@@ -145,8 +145,7 @@ def get_butterfly_by_id(
     return UserButterflyResponse(
         id=butterfly.id,
         label=butterfly.label,
-        hover_img=butterfly.hover_img,
-        modal_img=butterfly.modal_img,
+        description=butterfly.description,
         link=butterfly.link,
         is_active=butterfly.is_active,
         created_at=butterfly.created_at.isoformat() if butterfly.created_at else None,
@@ -181,12 +180,14 @@ def create_butterfly(
     
     now = datetime.utcnow()
     
+    # 自动生成标题
+    auto_generated_label = butterfly_title_service.generate_title_from_user(current_user)
+    
     # 创建新的七影蝶
     new_butterfly = UserButterfly(
         user_id=current_user.id,
-        label=butterfly_data.label,
-        hover_img=butterfly_data.hover_img,
-        modal_img=butterfly_data.modal_img,
+        label=auto_generated_label,
+        description=butterfly_data.description,
         link=butterfly_data.link,
         is_active=active_butterfly is None,  # 如果没有活跃的七影蝶，则设为活跃
         created_at=now,
@@ -200,8 +201,7 @@ def create_butterfly(
     return UserButterflyResponse(
         id=new_butterfly.id,
         label=new_butterfly.label,
-        hover_img=new_butterfly.hover_img,
-        modal_img=new_butterfly.modal_img,
+        description=new_butterfly.description,
         link=new_butterfly.link,
         is_active=new_butterfly.is_active,
         created_at=new_butterfly.created_at.isoformat() if new_butterfly.created_at else None,
@@ -226,11 +226,17 @@ def update_active_butterfly(
     if not butterfly:
         raise HTTPException(status_code=404, detail="未找到活跃的七影蝶")
     
-    # 更新字段
+    # 更新字段 (排除label字段，因为它是自动生成的)
     update_data = butterfly_data.dict(exclude_unset=True)
+    # 确保label不被更新，始终保持自动生成的格式
+    if 'label' in update_data:
+        del update_data['label']
+    
     for field, value in update_data.items():
         setattr(butterfly, field, value)
     
+    # 确保标题始终是自动生成的格式
+    butterfly.label = butterfly_title_service.generate_title_from_user(current_user)
     butterfly.updated_at = datetime.utcnow()
     
     db.commit()
@@ -239,8 +245,7 @@ def update_active_butterfly(
     return UserButterflyResponse(
         id=butterfly.id,
         label=butterfly.label,
-        hover_img=butterfly.hover_img,
-        modal_img=butterfly.modal_img,
+        description=butterfly.description,
         link=butterfly.link,
         is_active=butterfly.is_active,
         created_at=butterfly.created_at.isoformat() if butterfly.created_at else None,
@@ -274,11 +279,17 @@ def update_butterfly(
             UserButterfly.is_active == True
         ).update({"is_active": False, "updated_at": datetime.utcnow()})
     
-    # 更新字段
+    # 更新字段 (排除label字段，因为它是自动生成的)
     update_data = butterfly_data.dict(exclude_unset=True)
+    # 确保label不被更新，始终保持自动生成的格式
+    if 'label' in update_data:
+        del update_data['label']
+    
     for field, value in update_data.items():
         setattr(butterfly, field, value)
     
+    # 确保标题始终是自动生成的格式
+    butterfly.label = butterfly_title_service.generate_title_from_user(current_user)
     butterfly.updated_at = datetime.utcnow()
     
     db.commit()
@@ -287,8 +298,7 @@ def update_butterfly(
     return UserButterflyResponse(
         id=butterfly.id,
         label=butterfly.label,
-        hover_img=butterfly.hover_img,
-        modal_img=butterfly.modal_img,
+        description=butterfly.description,
         link=butterfly.link,
         is_active=butterfly.is_active,
         created_at=butterfly.created_at.isoformat() if butterfly.created_at else None,
@@ -496,8 +506,7 @@ def get_all_active_butterflies(db: Session = Depends(get_db)):
         butterfly_responses.append(UserButterflyResponse(
             id=butterfly.id,
             label=butterfly.label,
-            hover_img=butterfly.hover_img,
-            modal_img=butterfly.modal_img,
+            description=butterfly.description,
             link=butterfly.link,
             is_active=butterfly.is_active,
             created_at=butterfly.created_at.isoformat() if butterfly.created_at else None,
@@ -510,8 +519,7 @@ def get_all_active_butterflies(db: Session = Depends(get_db)):
 class ButterflyDisplayResponse(BaseModel):
     id: Optional[int] = None  # 用户七影蝶有ID，官方七影蝶为None
     label: str
-    hover_img: Optional[str] = None
-    modal_img: Optional[str] = None
+    description: Optional[str] = None
     link: Optional[str] = None
     butterfly_type: str  # 'official' 或 'user'
     created_at: Optional[str] = None
@@ -519,87 +527,129 @@ class ButterflyDisplayResponse(BaseModel):
 
 # 随机七影蝶显示API
 @router.get('/random-display', response_model=List[ButterflyDisplayResponse])
-def get_random_butterflies_for_display(db: Session = Depends(get_db)):
-    """获取随机选择的七影蝶用于显示（官方+用户，最多5只）
+def get_random_butterflies_for_display(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """获取随机选择的七影蝶用于显示，根据登录状态过滤内容
     
-    需求: 7.1, 7.3
-    - 7.1: 当页面加载或改变夜晚场景时，系统应随机选择并显示最多5只七影蝶
-    - 7.3: 当七影蝶被显示时，系统应在随机选择中包含官方和用户创建的七影蝶
+    需求: 8, 9
+    - 需求8: 未登录用户只显示官方七影蝶
+    - 需求9: 登录用户显示官方+用户七影蝶，确保包含自己的七影蝶
     """
     import random
+    
+    # 尝试获取当前用户（如果已登录）
+    current_user = get_current_user_optional(authorization, db)
     
     # 官方七影蝶配置（与前端保持一致）
     official_butterflies = [
         {
             'label': 'anitabi巡礼网站',
-            'modal_img': None,
-            'hover_img': None,
+            'description': '动画巡礼地图网站',
             'link': 'https://anitabi.cn/map',
         },
         {
             'label': '空门苍睡觉的小道',
-            'modal_img': '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
-            'hover_img': '/images/webps/男木岛/男木岛-苍睡觉小道.webp',
+            'description': '男木岛上苍睡觉的地方',
             'link': None,
         },
         {
             'label': '小紬的灯塔',
-            'modal_img': '/images/webps/男木岛/男木岛-紬的灯塔.webp',
-            'hover_img': '/images/webps/男木岛/男木岛-紬的灯塔.webp',
+            'description': '男木岛上紬的灯塔',
             'link': None,
         },
         {
             'label': '齐须千人的小红书巡礼笔记',
-            'modal_img': None,
-            'hover_img': None,
+            'description': '小红书巡礼笔记分享',
             'link': 'https://www.xiaohongshu.com/discovery/item/67cb0ff80000000009015f05?source=webshare&xhsshare=pc_web&xsec_token=ABsqu3D76eAwSeSBQFe7MfGSblyZpnXnAJZN6ccVffjpg=&xsec_source=pc_share',
         },
         {
             'label': '空白的b站巡礼网站视频介绍',
-            'modal_img': None,
-            'hover_img': None,
+            'description': 'B站巡礼网站视频介绍',
             'link': 'https://www.bilibili.com/video/BV16pgBz7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=88afb36e81beb22aa12c2c69722c5c7f',
         },
     ]
     
-    # 获取所有活跃的用户七影蝶
-    user_butterflies = db.query(UserButterfly).filter(
-        UserButterfly.is_active == True
-    ).all()
-    
-    # 构建所有七影蝶列表
+    # 构建七影蝶列表
     all_butterflies = []
     
-    # 添加官方七影蝶
+    # 始终添加官方七影蝶
     for official in official_butterflies:
         all_butterflies.append(ButterflyDisplayResponse(
             id=None,
             label=official['label'],
-            hover_img=official['hover_img'],
-            modal_img=official['modal_img'],
+            description=official['description'],
             link=official['link'],
             butterfly_type='official'
         ))
     
-    # 添加用户七影蝶
-    for user_butterfly in user_butterflies:
-        all_butterflies.append(ButterflyDisplayResponse(
-            id=user_butterfly.id,
-            label=user_butterfly.label,
-            hover_img=user_butterfly.hover_img,
-            modal_img=user_butterfly.modal_img,
-            link=user_butterfly.link,
-            butterfly_type='user',
-            created_at=user_butterfly.created_at.isoformat() if user_butterfly.created_at else None,
-            updated_at=user_butterfly.updated_at.isoformat() if user_butterfly.updated_at else None
-        ))
+    # 根据登录状态决定是否添加用户七影蝶
+    if current_user:
+        # 登录用户：显示所有用户七影蝶，确保包含自己的七影蝶
+        user_butterflies = db.query(UserButterfly).filter(
+            UserButterfly.is_active == True
+        ).all()
+        
+        # 确保当前用户的七影蝶在列表中
+        user_butterfly_found = False
+        for user_butterfly in user_butterflies:
+            all_butterflies.append(ButterflyDisplayResponse(
+                id=user_butterfly.id,
+                label=user_butterfly.label,
+                description=user_butterfly.description,
+                link=user_butterfly.link,
+                butterfly_type='user',
+                created_at=user_butterfly.created_at.isoformat() if user_butterfly.created_at else None,
+                updated_at=user_butterfly.updated_at.isoformat() if user_butterfly.updated_at else None
+            ))
+            
+            if user_butterfly.user_id == current_user.id:
+                user_butterfly_found = True
+        
+        # 如果当前用户有七影蝶但不在活跃列表中，确保它被包含
+        if not user_butterfly_found:
+            current_user_butterfly = db.query(UserButterfly).filter(
+                UserButterfly.user_id == current_user.id,
+                UserButterfly.is_active == True
+            ).first()
+            
+            if current_user_butterfly:
+                all_butterflies.append(ButterflyDisplayResponse(
+                    id=current_user_butterfly.id,
+                    label=current_user_butterfly.label,
+                    description=current_user_butterfly.description,
+                    link=current_user_butterfly.link,
+                    butterfly_type='user',
+                    created_at=current_user_butterfly.created_at.isoformat() if current_user_butterfly.created_at else None,
+                    updated_at=current_user_butterfly.updated_at.isoformat() if current_user_butterfly.updated_at else None
+                ))
     
-    # 随机选择最多5只七影蝶
-    max_butterflies = 5
-    if len(all_butterflies) <= max_butterflies:
-        # 如果总数不超过5只，返回所有七影蝶（随机打乱顺序）
-        random.shuffle(all_butterflies)
-        return all_butterflies
+    # 未登录用户：只显示官方七影蝶（已经添加了）
+    
+    # 随机选择显示的七影蝶
+    if current_user:
+        # 登录用户：显示官方+其他用户七影蝶（最多5只），确保包含自己的七影蝶
+        max_random_butterflies = 5
+        
+        # 分离用户自己的七影蝶和其他七影蝶
+        user_own_butterflies = [b for b in all_butterflies if b.butterfly_type == 'user' and b.id and any(ub.id == b.id and ub.user_id == current_user.id for ub in db.query(UserButterfly).filter(UserButterfly.is_active == True).all())]
+        other_butterflies = [b for b in all_butterflies if not (b.butterfly_type == 'user' and b.id and any(ub.id == b.id and ub.user_id == current_user.id for ub in db.query(UserButterfly).filter(UserButterfly.is_active == True).all()))]
+        
+        # 从其他七影蝶中随机选择最多5只
+        if len(other_butterflies) <= max_random_butterflies:
+            selected_butterflies = other_butterflies.copy()
+        else:
+            selected_butterflies = random.sample(other_butterflies, max_random_butterflies)
+        
+        # 添加用户自己的七影蝶（如果有的话）
+        selected_butterflies.extend(user_own_butterflies)
+        
+        # 随机打乱顺序
+        random.shuffle(selected_butterflies)
+        return selected_butterflies
     else:
-        # 如果超过5只，随机选择5只
-        return random.sample(all_butterflies, max_butterflies)
+        # 未登录用户：只返回官方七影蝶
+        official_only = [b for b in all_butterflies if b.butterfly_type == 'official']
+        random.shuffle(official_only)
+        return official_only

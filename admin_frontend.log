@@ -1,10 +1,9 @@
-nohup: ignoring input
 
 > sprb-admin-frontend@1.0.0 dev
 > vite --host 0.0.0.0 --port 3001
 
 
-  VITE v4.5.14  ready in 518 ms
+  VITE v4.5.14  ready in 992 ms
 
   ➜  Local:   http://localhost:3001/
-  ➜  Network: http://10.107.183.40:3001/
+  ➜  Network: http://10.107.230.110:3001/
