@@ -88,6 +88,41 @@ const defaultPlaylist: Track[] = [
     artist: '水月陵',
     src: '/audio/水月陵 - 夜は短く、空は遠くて….wav',
     album: 'Summer Pockets OST'
+  },
+  {
+    id: 'departure',
+    name: 'Departure!',
+    artist: '嶺内ともみ',
+    src: '/audio/嶺内ともみ - Departure!.flac',
+    album: 'Summer Pockets OST'
+  },
+  {
+    id: 'with',
+    name: 'with',
+    artist: '嶺内ともみ',
+    src: '/audio/嶺内ともみ - with.flac',
+    album: 'Summer Pockets OST'
+  },
+  {
+    id: 'hiyoku-no-chou',
+    name: '比翼の蝶たち',
+    artist: '高森奈津美',
+    src: '/audio/高森奈津美 - 比翼の蝶たち.flac',
+    album: 'Summer Pockets OST'
+  },
+  {
+    id: 'natsu-ni-kimi-wo',
+    name: '夏に君を待ちながら',
+    artist: '小原好美',
+    src: '/audio/小原好美 - 夏に君を待ちながら.flac',
+    album: 'Summer Pockets OST'
+  },
+  {
+    id: 'tsumugi-no-natsuyasumi',
+    name: '紬の夏休み',
+    artist: '岩井映美里',
+    src: '/audio/岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac',
+    album: 'Summer Pockets OST'
   }
 ]
 
@@ -193,10 +228,16 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       setIsPlaying(true)
       setIsPaused(false)
       console.log('开始播放:', currentTrack.name, '从位置:', audio.currentTime)
-    } catch (error) {
-      console.error('播放失败:', error)
-      setIsPlaying(false)
-      setIsPaused(true)
+    } catch (error: any) {
+      console.error('播放失败:', error.message)
+      if (error.name === 'NotAllowedError') {
+        console.log('浏览器阻止自动播放，需要用户交互')
+        // 不设置错误状态，保持当前状态
+      } else {
+        console.error('其他播放错误:', error)
+        setIsPlaying(false)
+        setIsPaused(true)
+      }
     }
   }, [currentTrack])
 
@@ -228,8 +269,14 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
           setIsPaused(false)
           console.log('从暂停位置继续播放:', audio.currentTime)
         }).catch(err => {
-          console.error('继续播放失败，尝试重新加载:', err)
-          play()
+          console.error('继续播放失败:', err.message)
+          if (err.name === 'NotAllowedError') {
+            console.log('浏览器阻止自动播放，需要用户交互')
+            // 不尝试重新播放，等待用户再次点击
+          } else {
+            // 其他错误，尝试重新加载
+            play()
+          }
         })
       } else {
         // 其他情况（首次播放或已切换歌曲）
@@ -379,44 +426,11 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     loadPlaylistFromAPI()
   }, [loadPlaylistFromAPI])
 
-  // 自动播放BGM（延迟启动，避免浏览器阻止）
-  useEffect(() => {
-    if (playlist.length > 0 && currentTrack && !isPlaying && !isPaused) {
-      const timer = setTimeout(() => {
-        // 尝试自动播放，如果失败则等待用户交互
-        play().catch(() => {
-          console.log('自动播放被阻止，等待用户交互')
-        })
-      }, 2000)
+  // 移除自动播放，改为等待用户交互
+  // 现代浏览器阻止自动播放，需要用户交互才能播放音频
 
-      return () => clearTimeout(timer)
-    }
-  }, [playlist, currentTrack, isPlaying, isPaused, play])
-
-  // 监听用户交互，如果自动播放失败则在用户交互时开始播放
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      if (!isPlaying && !isPaused && currentTrack) {
-        play()
-        // 移除监听器
-        document.removeEventListener('click', handleUserInteraction)
-        document.removeEventListener('keydown', handleUserInteraction)
-        document.removeEventListener('touchstart', handleUserInteraction)
-      }
-    }
-
-    if (!isPlaying && !isPaused && currentTrack) {
-      document.addEventListener('click', handleUserInteraction)
-      document.addEventListener('keydown', handleUserInteraction)
-      document.addEventListener('touchstart', handleUserInteraction)
-    }
-
-    return () => {
-      document.removeEventListener('click', handleUserInteraction)
-      document.removeEventListener('keydown', handleUserInteraction)
-      document.removeEventListener('touchstart', handleUserInteraction)
-    }
-  }, [isPlaying, isPaused, currentTrack, play])
+  // 移除全局用户交互监听，改为在播放器组件内部处理
+  // 这样可以避免不必要的播放尝试
 
   const value = {
     // 播放状态

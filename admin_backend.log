@@ -1,28 +1,26 @@
-INFO:     Started server process [35366]
+INFO:     Started server process [56690]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     127.0.0.1:37510 - "GET / HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:37510 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-2025-08-01 11:43:06,365 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-08-04 01:03:35,410 INFO sqlalchemy.engine.Engine BEGIN (implicit)
 INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
-2025-08-01 11:43:06,370 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+2025-08-04 01:03:35,415 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
 FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
 FROM users) AS anon_1
 INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
 FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
 FROM users) AS anon_1
-2025-08-01 11:43:06,370 INFO sqlalchemy.engine.Engine [generated in 0.00024s] ()
-INFO:sqlalchemy.engine.Engine:[generated in 0.00024s] ()
-2025-08-01 11:43:06,375 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
-FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
-FROM user_butterflies) AS anon_1
-INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
-FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
-FROM user_butterflies) AS anon_1
-2025-08-01 11:43:06,376 INFO sqlalchemy.engine.Engine [generated in 0.00023s] ()
+2025-08-04 01:03:35,415 INFO sqlalchemy.engine.Engine [generated in 0.00023s] ()
 INFO:sqlalchemy.engine.Engine:[generated in 0.00023s] ()
-2025-08-01 11:43:06,378 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+2025-08-04 01:03:35,423 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:35,423 INFO sqlalchemy.engine.Engine [generated in 0.00021s] ()
+INFO:sqlalchemy.engine.Engine:[generated in 0.00021s] ()
+2025-08-04 01:03:35,426 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies 
 WHERE user_butterflies.is_active = 1) AS anon_1
@@ -30,30 +28,30 @@ INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies 
 WHERE user_butterflies.is_active = 1) AS anon_1
-2025-08-01 11:43:06,378 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ()
+2025-08-04 01:03:35,426 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ()
 INFO:sqlalchemy.engine.Engine:[generated in 0.00019s] ()
-INFO:     127.0.0.1:41364 - "GET /api/admin/stats HTTP/1.1" 200 OK
-2025-08-01 11:43:06,380 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:56162 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:35,435 INFO sqlalchemy.engine.Engine ROLLBACK
 INFO:sqlalchemy.engine.Engine:ROLLBACK
-2025-08-01 11:43:06,444 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-08-04 01:03:35,497 INFO sqlalchemy.engine.Engine BEGIN (implicit)
 INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
-2025-08-01 11:43:06,445 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+2025-08-04 01:03:35,498 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
 FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
 FROM users) AS anon_1
 INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
 FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
 FROM users) AS anon_1
-2025-08-01 11:43:06,445 INFO sqlalchemy.engine.Engine [cached since 0.07506s ago] ()
-INFO:sqlalchemy.engine.Engine:[cached since 0.07506s ago] ()
-2025-08-01 11:43:06,446 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+2025-08-04 01:03:35,498 INFO sqlalchemy.engine.Engine [cached since 0.08274s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 0.08274s ago] ()
+2025-08-04 01:03:35,498 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies) AS anon_1
 INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies) AS anon_1
-2025-08-01 11:43:06,446 INFO sqlalchemy.engine.Engine [cached since 0.07038s ago] ()
-INFO:sqlalchemy.engine.Engine:[cached since 0.07038s ago] ()
-2025-08-01 11:43:06,446 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+2025-08-04 01:03:35,498 INFO sqlalchemy.engine.Engine [cached since 0.0754s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 0.0754s ago] ()
+2025-08-04 01:03:35,499 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies 
 WHERE user_butterflies.is_active = 1) AS anon_1
@@ -61,8 +59,554 @@ INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1
 FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
 FROM user_butterflies 
 WHERE user_butterflies.is_active = 1) AS anon_1
-2025-08-01 11:43:06,447 INFO sqlalchemy.engine.Engine [cached since 0.06852s ago] ()
-INFO:sqlalchemy.engine.Engine:[cached since 0.06852s ago] ()
-INFO:     127.0.0.1:41366 - "GET /api/admin/stats HTTP/1.1" 200 OK
-2025-08-01 11:43:06,448 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-08-04 01:03:35,499 INFO sqlalchemy.engine.Engine [cached since 0.07329s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 0.07329s ago] ()
+INFO:     127.0.0.1:56172 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:35,500 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:36,798 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:36,799 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:36,799 INFO sqlalchemy.engine.Engine [generated in 0.00021s] ()
+INFO:sqlalchemy.engine.Engine:[generated in 0.00021s] ()
+INFO:     127.0.0.1:56172 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:36,803 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:36,832 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:36,832 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:36,832 INFO sqlalchemy.engine.Engine [cached since 0.03292s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 0.03292s ago] ()
+INFO:     127.0.0.1:56162 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:36,835 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:39,717 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:39,718 INFO sqlalchemy.engine.Engine SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+INFO:sqlalchemy.engine.Engine:SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+2025-08-04 01:03:39,718 INFO sqlalchemy.engine.Engine [generated in 0.00020s] ()
+INFO:sqlalchemy.engine.Engine:[generated in 0.00020s] ()
+2025-08-04 01:03:39,720 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+2025-08-04 01:03:39,720 INFO sqlalchemy.engine.Engine [generated in 0.00019s] (18, 1, 0)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00019s] (18, 1, 0)
+2025-08-04 01:03:39,721 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:     127.0.0.1:56162 - "GET /api/admin/butterflies HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 408, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/to_thread.py", line 33, in run_sync
+    return await get_asynclib().run_sync_in_worker_thread(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 877, in run_sync_in_worker_thread
+    return await future
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 807, in run
+    result = context.run(func, *args)
+  File "/home/devbox/project/sprb-web/admin/backend/admin_api.py", line 202, in get_all_butterflies
+    hover_img=butterfly.hover_img,
+AttributeError: 'UserButterfly' object has no attribute 'hover_img'
+2025-08-04 01:03:39,751 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:39,751 INFO sqlalchemy.engine.Engine SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+INFO:sqlalchemy.engine.Engine:SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+2025-08-04 01:03:39,752 INFO sqlalchemy.engine.Engine [cached since 0.03359s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 0.03359s ago] ()
+2025-08-04 01:03:39,752 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+2025-08-04 01:03:39,753 INFO sqlalchemy.engine.Engine [cached since 0.03265s ago] (18, 1, 0)
+INFO:sqlalchemy.engine.Engine:[cached since 0.03265s ago] (18, 1, 0)
+2025-08-04 01:03:39,753 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:     127.0.0.1:56172 - "GET /api/admin/butterflies HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 408, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/to_thread.py", line 33, in run_sync
+    return await get_asynclib().run_sync_in_worker_thread(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 877, in run_sync_in_worker_thread
+    return await future
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 807, in run
+    result = context.run(func, *args)
+  File "/home/devbox/project/sprb-web/admin/backend/admin_api.py", line 202, in get_all_butterflies
+    hover_img=butterfly.hover_img,
+AttributeError: 'UserButterfly' object has no attribute 'hover_img'
+2025-08-04 01:03:40,713 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:40,714 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:40,714 INFO sqlalchemy.engine.Engine [cached since 5.299s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.299s ago] ()
+2025-08-04 01:03:40,715 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:40,715 INFO sqlalchemy.engine.Engine [cached since 5.292s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.292s ago] ()
+2025-08-04 01:03:40,716 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:40,716 INFO sqlalchemy.engine.Engine [cached since 5.29s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.29s ago] ()
+INFO:     127.0.0.1:56176 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:40,717 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:40,778 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:40,778 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:40,778 INFO sqlalchemy.engine.Engine [cached since 5.363s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.363s ago] ()
+2025-08-04 01:03:40,779 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:40,779 INFO sqlalchemy.engine.Engine [cached since 5.356s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.356s ago] ()
+2025-08-04 01:03:40,780 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:40,780 INFO sqlalchemy.engine.Engine [cached since 5.354s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 5.354s ago] ()
+INFO:     127.0.0.1:56186 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:40,781 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:41,245 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:41,245 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:41,245 INFO sqlalchemy.engine.Engine [cached since 4.446s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 4.446s ago] ()
+INFO:     127.0.0.1:56186 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:41,248 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:41,276 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:41,277 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:41,277 INFO sqlalchemy.engine.Engine [cached since 4.478s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 4.478s ago] ()
+INFO:     127.0.0.1:56176 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:41,279 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:41,978 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:41,979 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:41,979 INFO sqlalchemy.engine.Engine [cached since 6.564s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.564s ago] ()
+2025-08-04 01:03:41,980 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:41,980 INFO sqlalchemy.engine.Engine [cached since 6.557s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.557s ago] ()
+2025-08-04 01:03:41,980 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:41,981 INFO sqlalchemy.engine.Engine [cached since 6.555s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.555s ago] ()
+INFO:     127.0.0.1:56176 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:41,982 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:42,012 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:42,012 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:42,012 INFO sqlalchemy.engine.Engine [cached since 6.597s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.597s ago] ()
+2025-08-04 01:03:42,013 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:42,013 INFO sqlalchemy.engine.Engine [cached since 6.59s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.59s ago] ()
+2025-08-04 01:03:42,014 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:42,014 INFO sqlalchemy.engine.Engine [cached since 6.588s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.588s ago] ()
+INFO:     127.0.0.1:56186 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:42,015 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:43,087 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:43,087 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:43,087 INFO sqlalchemy.engine.Engine [cached since 6.288s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.288s ago] ()
+INFO:     127.0.0.1:56186 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:43,090 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:43,119 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:43,119 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:43,119 INFO sqlalchemy.engine.Engine [cached since 6.32s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 6.32s ago] ()
+INFO:     127.0.0.1:56176 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:43,122 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:43,608 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:43,609 INFO sqlalchemy.engine.Engine SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+INFO:sqlalchemy.engine.Engine:SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+2025-08-04 01:03:43,609 INFO sqlalchemy.engine.Engine [cached since 3.891s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 3.891s ago] ()
+2025-08-04 01:03:43,610 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+2025-08-04 01:03:43,610 INFO sqlalchemy.engine.Engine [cached since 3.89s ago] (18, 1, 0)
+INFO:sqlalchemy.engine.Engine:[cached since 3.89s ago] (18, 1, 0)
+2025-08-04 01:03:43,611 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:     127.0.0.1:56176 - "GET /api/admin/butterflies HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 408, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/to_thread.py", line 33, in run_sync
+    return await get_asynclib().run_sync_in_worker_thread(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 877, in run_sync_in_worker_thread
+    return await future
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 807, in run
+    result = context.run(func, *args)
+  File "/home/devbox/project/sprb-web/admin/backend/admin_api.py", line 202, in get_all_butterflies
+    hover_img=butterfly.hover_img,
+AttributeError: 'UserButterfly' object has no attribute 'hover_img'
+2025-08-04 01:03:43,641 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:43,641 INFO sqlalchemy.engine.Engine SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+INFO:sqlalchemy.engine.Engine:SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies
+2025-08-04 01:03:43,641 INFO sqlalchemy.engine.Engine [cached since 3.923s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 3.923s ago] ()
+2025-08-04 01:03:43,642 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.id = ?
+ LIMIT ? OFFSET ?
+2025-08-04 01:03:43,642 INFO sqlalchemy.engine.Engine [cached since 3.922s ago] (18, 1, 0)
+INFO:sqlalchemy.engine.Engine:[cached since 3.922s ago] (18, 1, 0)
+2025-08-04 01:03:43,643 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:     127.0.0.1:56186 - "GET /api/admin/butterflies HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 408, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/fastapi/routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/starlette/concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/to_thread.py", line 33, in run_sync
+    return await get_asynclib().run_sync_in_worker_thread(
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 877, in run_sync_in_worker_thread
+    return await future
+  File "/home/devbox/miniconda3/envs/sprb-web/lib/python3.9/site-packages/anyio/_backends/_asyncio.py", line 807, in run
+    result = context.run(func, *args)
+  File "/home/devbox/project/sprb-web/admin/backend/admin_api.py", line 202, in get_all_butterflies
+    hover_img=butterfly.hover_img,
+AttributeError: 'UserButterfly' object has no attribute 'hover_img'
+2025-08-04 01:03:45,258 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:45,259 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:45,259 INFO sqlalchemy.engine.Engine [cached since 8.46s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 8.46s ago] ()
+INFO:     127.0.0.1:47220 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:45,261 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:45,319 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:45,319 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+INFO:sqlalchemy.engine.Engine:SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users
+2025-08-04 01:03:45,319 INFO sqlalchemy.engine.Engine [cached since 8.52s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 8.52s ago] ()
+INFO:     127.0.0.1:47232 - "GET /api/admin/users HTTP/1.1" 200 OK
+2025-08-04 01:03:45,322 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:45,653 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:45,654 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:45,654 INFO sqlalchemy.engine.Engine [cached since 10.24s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.24s ago] ()
+2025-08-04 01:03:45,654 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:45,654 INFO sqlalchemy.engine.Engine [cached since 10.23s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.23s ago] ()
+2025-08-04 01:03:45,655 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:45,655 INFO sqlalchemy.engine.Engine [cached since 10.23s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.23s ago] ()
+INFO:     127.0.0.1:47232 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:45,656 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+2025-08-04 01:03:45,685 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2025-08-04 01:03:45,685 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT users.id AS users_id, users.username AS users_username, users.password_hash AS users_password_hash, users.email AS users_email, users.avatar_url AS users_avatar_url, users.energy AS users_energy, users.max_energy AS users_max_energy, users.last_sleep_time AS users_last_sleep_time, users.total_sleep_time AS users_total_sleep_time, users.level AS users_level, users.experience AS users_experience, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users) AS anon_1
+2025-08-04 01:03:45,686 INFO sqlalchemy.engine.Engine [cached since 10.27s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.27s ago] ()
+2025-08-04 01:03:45,686 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies) AS anon_1
+2025-08-04 01:03:45,686 INFO sqlalchemy.engine.Engine [cached since 10.26s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.26s ago] ()
+2025-08-04 01:03:45,687 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+INFO:sqlalchemy.engine.Engine:SELECT count(*) AS count_1 
+FROM (SELECT user_butterflies.id AS user_butterflies_id, user_butterflies.user_id AS user_butterflies_user_id, user_butterflies.label AS user_butterflies_label, user_butterflies.description AS user_butterflies_description, user_butterflies.link AS user_butterflies_link, user_butterflies.is_active AS user_butterflies_is_active, user_butterflies.created_at AS user_butterflies_created_at, user_butterflies.updated_at AS user_butterflies_updated_at 
+FROM user_butterflies 
+WHERE user_butterflies.is_active = 1) AS anon_1
+2025-08-04 01:03:45,687 INFO sqlalchemy.engine.Engine [cached since 10.26s ago] ()
+INFO:sqlalchemy.engine.Engine:[cached since 10.26s ago] ()
+INFO:     127.0.0.1:47220 - "GET /api/admin/stats HTTP/1.1" 200 OK
+2025-08-04 01:03:45,688 INFO sqlalchemy.engine.Engine ROLLBACK
 INFO:sqlalchemy.engine.Engine:ROLLBACK

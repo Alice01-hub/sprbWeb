@@ -529,6 +529,7 @@ const CheckinPage: React.FC = () => {
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   // tooltip悬停状态
   const [hoveredIcon, setHoveredIcon] = useState<null | {
     x: number;
@@ -553,6 +554,10 @@ const CheckinPage: React.FC = () => {
 
   const closeModal = () => {
     setIsModalOpen(false)
+  }
+
+  const closeScheduleModal = () => {
+    setIsScheduleModalOpen(false)
   }
 
   const handleBack = () => {
@@ -660,12 +665,13 @@ const CheckinPage: React.FC = () => {
                 animate={{ scale: 1 }}
                 transition={{ delay: 1, duration: 0.5 }}
                 whileHover={{ scale: 1.2 }}
+                onClick={() => setIsScheduleModalOpen(true)}
                 onMouseEnter={() => {
                   setHoveredIcon({
                     x: 76,
                     y: 90,
                     title: '高松港',
-                    desc: '前往各岛屿的起点港口',
+                    desc: '前往各岛屿的起点港口，点击查看时刻表',
                   });
                 }}
                 onMouseLeave={() => setHoveredIcon(null)}
@@ -838,6 +844,36 @@ const CheckinPage: React.FC = () => {
               </QRCodeLink>
             </QRCodeContent>
           </QRCodeModal>
+        )}
+      </AnimatePresence>
+
+      {/* 时刻表模态框 */}
+      <AnimatePresence>
+        {isScheduleModalOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeScheduleModal}
+          >
+            <ModalContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CloseButton onClick={closeScheduleModal}>×</CloseButton>
+              <ModalImage 
+                src="images/webps/高松发船时刻表.webp" 
+                alt="高松发船时刻表"
+                onError={(e) => {
+                  console.error('时刻表图片加载失败:', e)
+                }}
+              />
+              <ModalText>高松港发船时刻表</ModalText>
+            </ModalContent>
+          </ModalOverlay>
         )}
       </AnimatePresence>
     </Container>

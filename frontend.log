@@ -3,7 +3,21 @@
 > vite --host 0.0.0.0 --port 3000
 
 
-  VITE v4.5.14  ready in 515 ms
+  VITE v4.5.14  ready in 584 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://10.107.230.110:3000/
+3:19:58 PM [vite] hmr update /src/contexts/MusicContext.tsx
+1:11:36 AM [vite] vite.config.ts changed, restarting server...
+1:11:36 AM [vite] server restarted.
+1:13:45 AM [vite] vite.config.ts changed, restarting server...
+Port 3000 is in use, trying another one...
+Port 3001 is in use, trying another one...
+1:13:45 AM [vite] server restarted.
+
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://10.107.230.110:3002/
+ [vite] server restarted.
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://10.107.230.110:3000/

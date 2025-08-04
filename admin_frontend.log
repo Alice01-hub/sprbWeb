@@ -3,7 +3,7 @@
 > vite --host 0.0.0.0 --port 3001
 
 
-  VITE v4.5.14  ready in 992 ms
+  VITE v4.5.14  ready in 1280 ms
 
   ➜  Local:   http://localhost:3001/
   ➜  Network: http://10.107.230.110:3001/

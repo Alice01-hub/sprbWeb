@@ -836,6 +836,12 @@ const MegijimaPage: React.FC = () => {
           { src: "images/webps/女木岛/女木岛-山道.webp", label: "苍引导七影碟的山道" }
         ];
         break;
+      case 'bus':
+        locationTitle = '公交时刻表';
+        locationImages = [
+          { src: "images/webps/女木岛/女木岛-公交时间表.webp", label: "女木岛公交时刻表" }
+        ];
+        break;
     }
     
     if (locationTitle && locationImages.length > 0) {
@@ -902,10 +908,16 @@ const MegijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    女木岛是瀬戸内海中的一个小岛。传说中，这里曾是恶鬼的栖息地，但如今已成为一个宁静美丽的观光胜地。
+                    拥有鬼岛大洞窟和桃太郎传说的观光岛屿
                   </Description>
                   <Description>
-                    女木岛的海岸线曲折多变，形成了众多天然的海湾和奇特的岩石景观。
+                    女木岛坐落于高松市北部，从高松港乘坐渡轮大约20分钟即可到达。<br/>
+                  </Description>
+                  <Description>
+                    岛中央为“阿利比克峰”，传说鬼族曾在此隐居，女木岛因此又称“鬼岛”。
+                  </Description>
+                  <Description>
+                    女木岛有一个名为“鬼岛大洞窟”的采石场遗迹，这里是鸥探险的原型。从港口到鬼岛大洞窟可以乘坐接送巴士。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -970,7 +982,7 @@ const MegijimaPage: React.FC = () => {
                   }}
                   onMouseLeave={() => setHoveredIcon(null)}
                   onClick={() => handleIconClick('cave')}
-                  style={{ zIndex: 15 }}
+                  style={{ zIndex: 15, cursor: 'pointer' }}
                 >
                   <img 
                     src="images/webps/女木岛/女木岛-山洞.webp" 
@@ -1012,7 +1024,8 @@ const MegijimaPage: React.FC = () => {
                     });
                   }}
                   onMouseLeave={() => setHoveredIcon(null)}
-                  style={{ zIndex: 25 }}
+                  onClick={() => handleIconClick('bus')}
+                  style={{ zIndex: 25, cursor: 'pointer' }}
                 >
                   🚌
                   {/* Tooltip渲染 */}
@@ -1049,7 +1062,7 @@ const MegijimaPage: React.FC = () => {
                   }}
                   onMouseLeave={() => setHoveredIcon(null)}
                   onClick={() => handleIconClick('mountainUP')}
-                  style={{ zIndex: 10 }}
+                  style={{ zIndex: 10, cursor: 'pointer' }}
                 >
                   <img 
                     src="images/webps/女木岛/女木岛-山路地标.webp" 

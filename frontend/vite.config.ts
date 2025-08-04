@@ -5,11 +5,16 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   
+  // 根据环境设置不同的配置
+  const isProduction = mode === 'production'
+  const isStaging = mode === 'staging'
+  const isDevelopment = mode === 'development'
+  
   return {
     plugins: [react()],
     server: {
       port: 3000,
-      host: true,
+      host: isDevelopment ? true : '0.0.0.0',
       proxy: {
         '/api': env.VITE_API_URL || 'http://localhost:8000'
       }
@@ -17,8 +22,8 @@ export default defineConfig(({ command, mode }) => {
     assetsInclude: ['**/*.mp3', '**/*.wav'],
     build: {
       outDir: 'dist',
-      sourcemap: mode === 'development',
-      minify: mode === 'production' ? 'esbuild' : false,
+      sourcemap: isDevelopment,
+      minify: isProduction ? 'esbuild' : false,
       target: 'es2015',
       rollupOptions: {
         output: {
@@ -51,10 +56,15 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-      __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+      __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+      __ENVIRONMENT__: JSON.stringify(mode)
     },
     esbuild: {
-      drop: mode === 'production' ? ['console', 'debugger'] : []
+      drop: isProduction ? ['console', 'debugger'] : []
+    },
+    preview: {
+      port: 3000,
+      host: isDevelopment ? true : '0.0.0.0'
     }
   }
 }) 

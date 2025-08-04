@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMusic, PlayMode } from '../contexts/MusicContext'
@@ -253,7 +253,34 @@ const PlaylistHeader = styled.div`
 
 
 const PlaylistContainer = styled.div`
-  max-height: none;
+  max-height: 200px; /* 固定高度，显示约4首歌曲 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+  position: relative;
+  
+  /* 自定义滚动条样式 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 71, 87, 0.3);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(255, 71, 87, 0.5);
+    }
+  }
+  
+  /* Firefox 滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 71, 87, 0.3) rgba(0, 0, 0, 0.05);
 `
 
 const PlaylistItem = styled(motion.div)<{ isActive: boolean }>`
@@ -300,6 +327,22 @@ const PlaylistArtistName = styled.div`
   text-overflow: ellipsis;
 `
 
+// 滚动指示器
+const ScrollIndicator = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.8));
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #999;
+`
+
 // 工具函数
 const formatTime = (time: number): string => {
   const minutes = Math.floor(time / 60)
@@ -327,6 +370,12 @@ const MusicPlayer: React.FC = () => {
     isPlayerOpen,
     setPlayerOpen
   } = useMusic()
+
+  // 播放列表容器的引用
+  const playlistContainerRef = useRef<HTMLDivElement>(null)
+  
+  // 滚动状态
+  const [isScrolled, setIsScrolled] = useState(false)
 
 
 
@@ -365,14 +414,56 @@ const MusicPlayer: React.FC = () => {
   // 计算进度百分比
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
+  // 滚动到当前播放的歌曲
+  useEffect(() => {
+    if (playlistContainerRef.current && currentIndex >= 0) {
+      const container = playlistContainerRef.current
+      const items = container.children
+      const currentItem = items[currentIndex] as HTMLElement
+      
+      if (currentItem) {
+        const containerRect = container.getBoundingClientRect()
+        const itemRect = currentItem.getBoundingClientRect()
+        
+        // 检查当前歌曲是否在可视区域内
+        const isVisible = 
+          itemRect.top >= containerRect.top && 
+          itemRect.bottom <= containerRect.bottom
+        
+        if (!isVisible) {
+          // 滚动到当前歌曲
+          currentItem.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          })
+        }
+      }
+    }
+  }, [currentIndex])
+
+  // 监听滚动事件
+  useEffect(() => {
+    const container = playlistContainerRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      const { scrollTop } = container
+      setIsScrolled(scrollTop > 10)
+    }
+
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <PlayerContainer>
+    <PlayerContainer data-music-player="true">
       {/* 音乐播放器菜单按钮 */}
       <PlayButton
         isPlaying={isPlaying}
         onClick={() => setPlayerOpen(!isPlayerOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
+        data-music-player="true"
       />
 
       {/* 展开的播放器面板 */}
@@ -422,6 +513,7 @@ const MusicPlayer: React.FC = () => {
                 onClick={togglePlay}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                data-music-player="true"
               >
                 {isPlaying ? '⏸️' : '▶️'}
               </PlayControlButton>
@@ -449,9 +541,16 @@ const MusicPlayer: React.FC = () => {
 
             {/* 播放列表 */}
             <PlaylistHeader>
-              <span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
-                播放列表 ({playlist.length})
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+                  播放列表 ({playlist.length})
+                </span>
+                {playlist.length > 4 && (
+                  <span style={{ fontSize: '11px', color: '#999' }}>
+                    显示前4首，滚动查看更多
+                  </span>
+                )}
+              </div>
               <motion.button
                 onClick={togglePlayMode}
                 style={{
@@ -474,7 +573,7 @@ const MusicPlayer: React.FC = () => {
               </motion.button>
             </PlaylistHeader>
 
-            <PlaylistContainer>
+            <PlaylistContainer ref={playlistContainerRef}>
               {playlist.map((track, index) => (
                 <PlaylistItem
                   key={track.id}
@@ -493,6 +592,11 @@ const MusicPlayer: React.FC = () => {
                   </PlaylistTrackInfo>
                 </PlaylistItem>
               ))}
+              {playlist.length > 4 && !isScrolled && (
+                <ScrollIndicator>
+                  ↓ 滚动查看更多
+                </ScrollIndicator>
+              )}
             </PlaylistContainer>
           </PlayerPanel>
         )}

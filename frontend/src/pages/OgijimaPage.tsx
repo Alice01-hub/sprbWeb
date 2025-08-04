@@ -829,7 +829,7 @@ const OgijimaPage: React.FC = () => {
       mapImage: "images/webps/男木岛/男木岛-灯塔地图-线路版.webp",
       description: '我正在找东西，找自己想要做的事情',
       iconPositions: [
-        { x: 23, y: 38, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
+        { x: 23, y: 36, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
         { x: 74, y: 35, icon: 'images/webps/男木岛/男木岛-紬的灯塔.webp', size: 200 },
       ]
     },
@@ -1078,7 +1078,7 @@ const OgijimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    男木岛是瀬戸内海中的一个宁静小岛，以其传统的渔村风貌而闻名。这里的居民世代以渔业为生，岛上的生活节奏缓慢而悠然。
+                    男木岛是一个在斜坡上有梯田村庄和历史灯塔的岛屿。
                   </Description>
                   <Description>
                     男木岛的猫咪特别多，被称为"猫岛"，巡礼之余可以去撸一下猫猫。
@@ -1102,10 +1102,13 @@ const OgijimaPage: React.FC = () => {
                     男木岛的巡礼路线主要分为南北两个方向，北边最远的位置是灯塔，南边最远的位置是和鸥相遇的海岸小路。
                   </Description>
                   <Description>
-                    男木岛共有10个巡礼点，其中，9个可拍照，8个可还原，巡礼推荐路线如下，点击🗺️可查看详情：
+                    男木岛共有10个巡礼点，巡礼推荐路线如下，点击🗺️可查看详情：
                   </Description>
                   <Description>
-                    北边：放送塔 → 静久神社 → 苍睡觉的小道 → 鬼姬神山识之墓 → 小紬的灯塔
+                    北边：放送塔 → 苍睡觉的小道 → 鬼姬神山识之墓 → 小紬的灯塔
+                  </Description>
+                  <Description>
+                    中部：放送塔 → 静久神社
                   </Description>
                   <Description>
                     南边：放送塔 → 鸟白岛役场 →  防波堤 → 秘密基地（泳池） → 鸥相遇的小路
@@ -1119,10 +1122,10 @@ const OgijimaPage: React.FC = () => {
                         2. 放送塔上岛即可看见，适合作为男木岛巡礼的起点。
                       </div>
                       <div style={{ textIndent: '2em' }}>
-                        3. 两个点无法还原，秘密基地由丰爷自建，泳池禁止拍照。
+                        3. 秘密基地由丰爷自建，泳池有人时不要拍照。
                       </div>
                       <div style={{ textIndent: '2em' }}>
-                        4. 有时间可以和丰爷聊天，丰爷人很好，也是SP粉。
+                        4. 有时间可以和丰爷聊天，丰爷人很好，一来就给你放bgm。
                       </div>
                   </Description>
                 </motion.div>

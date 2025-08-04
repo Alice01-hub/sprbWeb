@@ -1,11 +1,50 @@
 INFO:     Will watch for changes in these directories: ['/home/devbox/project/sprb-web/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [35362] using StatReload
-INFO:     Started server process [35383]
+INFO:     Started reloader process [56686] using StatReload
+INFO:     Started server process [56724]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 未找到中文字体，使用Helvetica
-INFO:     127.0.0.1:39380 - "GET / HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:39380 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:58772 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58784 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33682 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38484 - "GET /api/music/playlist HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'app.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [56724]
+INFO:     Started server process [58071]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+未找到中文字体，使用Helvetica
+INFO:     127.0.0.1:34754 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34770 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44884 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44890 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40632 - "GET /api/music/playlist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40642 - "GET /api/music/playlist HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'app.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58071]
+INFO:     Started server process [8946]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8946]
+未找到中文字体，使用Helvetica
+INFO:     Started server process [9999]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9999]
+未找到中文字体，使用Helvetica
+INFO:     Started server process [10081]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.

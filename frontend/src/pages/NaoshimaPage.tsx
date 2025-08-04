@@ -727,6 +727,13 @@ const NaoshimaPage: React.FC = () => {
       ]
     },
     {
+      title: '役场通路',
+      description: '通往鸟白岛役场',
+      images: [
+        { src: "images/webps/直岛/直岛-役场通路.webp", label: '役场通路' },
+      ]
+    },
+    {
       title: '八幡神社石阶',
       description: '美希穿和服。',
       images: [
@@ -887,7 +894,7 @@ const NaoshimaPage: React.FC = () => {
                     直岛是瀬户内海中著名的艺术岛屿，拥有丰富的自然与人文景观，是现代艺术与传统生活完美融合的代表。
                   </Description>
                   <Description>
-                    岛上分多个区，可以体验不同的艺术氛围。
+                    岛上巡礼点较为分散，建议租自行车前往。
                   </Description>
                 </motion.div>
               </ContentSection>
@@ -905,7 +912,7 @@ const NaoshimaPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <Description>
-                    直岛的主要巡礼方式为自行车，上岛后可以在Summer Pocket租车店租一辆胡子🐱自行车。
+                    直岛的建议巡礼方式为自行车，上岛后可以在Summer Pocket租车店租一辆胡子🐱自行车。
                   </Description>
                   <Description>
                     直岛巡礼主要分为4个区域，点击地图上的🗺️图标可查看详情。<br />
@@ -921,8 +928,8 @@ const NaoshimaPage: React.FC = () => {
                   </Description>
                   <Description>
                     其他说明：<br />
-                    <div style={{ textIndent: '2em' }}>1. 小卖部已停业，只能在门口拍照；</div>
-                    <div style={{ textIndent: '2em' }}>2. 鸣濑神社可能无法进入；</div>
+                    <div style={{ textIndent: '2em' }}>1. 小卖部和食堂已停业，只能在门口拍照；</div>
+                    <div style={{ textIndent: '2em' }}>2. 海狸家附近点位较多；</div>
                     <div style={{ textIndent: '2em' }}>3. 海狸家客厅和卧室需要预定石井商店民宿才可拍照；</div>
                     <div style={{ textIndent: '2em' }}>4. 白羽钓鱼点涨潮时无法到达；</div>
                   </Description>

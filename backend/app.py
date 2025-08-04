@@ -1,5 +1,23 @@
+#!/usr/bin/env python3
+"""
+Summer Pockets 巡礼网站后端API
+
+主要功能：
+- 用户认证和授权
+- 七影蝶系统管理
+- 文件上传和处理
+- 数据统计和监控
+- 备份和恢复
+
+环境支持：
+- development: 开发环境
+- staging: 测试环境  
+- production: 生产环境
+"""
+
 import sys
 import os
+from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 from fastapi import FastAPI, HTTPException, Response
@@ -43,6 +61,31 @@ DATA_FOLDER = 'data'
 DATABASE_PATH = 'data/traffic_cards.db'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DATA_FOLDER, exist_ok=True)
+
+# 加载环境变量
+def load_env_file():
+    """加载环境变量文件"""
+    env_file = Path(__file__).parent / '.env'
+    if env_file.exists():
+        with open(env_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key] = value
+
+# 在导入其他模块前加载环境变量
+load_env_file()
+
+# 设置环境变量默认值
+if 'ENVIRONMENT' not in os.environ:
+    os.environ['ENVIRONMENT'] = 'development'
+
+if 'DEBUG' not in os.environ:
+    os.environ['DEBUG'] = 'true' if os.environ['ENVIRONMENT'] == 'development' else 'false'
+
+if 'LOG_LEVEL' not in os.environ:
+    os.environ['LOG_LEVEL'] = 'DEBUG' if os.environ['ENVIRONMENT'] == 'development' else 'INFO'
 
 # Pydantic模型
 class TrafficCard(BaseModel):
@@ -507,12 +550,42 @@ async def get_music_playlist():
                 'artist': '水月陵',
                 'album': 'Summer Pockets OST',
                 'id': 'yoru-wa-mijikaku'
+            },
+            '嶺内ともみ - Departure!.flac': {
+                'name': 'Departure!',
+                'artist': '嶺内ともみ',
+                'album': 'Summer Pockets OST',
+                'id': 'departure'
+            },
+            '嶺内ともみ - with.flac': {
+                'name': 'with',
+                'artist': '嶺内ともみ',
+                'album': 'Summer Pockets OST',
+                'id': 'with'
+            },
+            '高森奈津美 - 比翼の蝶たち.flac': {
+                'name': '比翼の蝶たち',
+                'artist': '高森奈津美',
+                'album': 'Summer Pockets OST',
+                'id': 'hiyoku-no-chou'
+            },
+            '小原好美 - 夏に君を待ちながら.flac': {
+                'name': '夏に君を待ちながら',
+                'artist': '小原好美',
+                'album': 'Summer Pockets OST',
+                'id': 'natsu-ni-kimi-wo'
+            },
+            '岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac': {
+                'name': '紬の夏休み',
+                'artist': '岩井映美里',
+                'album': 'Summer Pockets OST',
+                'id': 'tsumugi-no-natsuyasumi'
             }
         }
         
         if os.path.exists(public_audio_path):
             for filename in os.listdir(public_audio_path):
-                if filename.endswith(('.mp3', '.wav', '.ogg')):
+                if filename.endswith(('.mp3', '.wav', '.ogg', '.flac', '.m4a')):
                     info = music_info.get(filename, {
                         'name': filename.rsplit('.', 1)[0],
                         'artist': 'Unknown Artist',
@@ -531,7 +604,10 @@ async def get_music_playlist():
                     })
         
         # 按照预定义顺序排序
-        order = ['summer-pockets', 'sea-you-me', 'alcatale', 'yoru-wa-mijikaku']
+        order = [
+            'summer-pockets', 'sea-you-me', 'alcatale', 'yoru-wa-mijikaku',
+            'departure', 'with', 'hiyoku-no-chou', 'natsu-ni-kimi-wo', 'tsumugi-no-natsuyasumi'
+        ]
         tracks.sort(key=lambda x: order.index(x['id']) if x['id'] in order else len(order))
         
         return {
