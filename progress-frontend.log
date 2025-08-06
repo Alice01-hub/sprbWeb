@@ -1,0 +1,14 @@
+npm warn cli npm v11.5.2 does not support Node.js v18.20.8. This version of npm supports the following node versions: `^20.17.0 || >=22.9.0`. You can find the latest version at https://nodejs.org/.
+
+> sprb-web@1.0.0 dev:progress
+> vite --config vite.progress.config.ts
+
+
+  VITE v4.5.14  ready in 572 ms
+
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://172.18.133.57:3002/
+3:03:37 PM [vite] hmr update /src/pages/ProgressPage.tsx
+3:03:37 PM [vite] hmr update /src/App.tsx
+3:03:37 PM [vite] vite.progress.config.ts changed, restarting server...
+3:03:37 PM [vite] server restarted.

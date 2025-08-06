@@ -9,6 +9,7 @@ import OtherPilgrimagePage from './pages/OtherPilgrimagePage'
 import MegijimaPage from './pages/MegijimaPage'
 import OgijimaPage from './pages/OgijimaPage'
 import NaoshimaPage from './pages/NaoshimaPage'
+import ProgressPage from './pages/ProgressPage'
 import MusicPlayer from './components/MusicPlayer'
 import ButterflyCustomCursor from './components/ButterflyCustomCursor'
 import './styles/global.css'
@@ -28,6 +29,7 @@ function App() {
             <Route path="/megijima" element={<MegijimaPage />} />
             <Route path="/ogijima" element={<OgijimaPage />} />
             <Route path="/naoshima" element={<NaoshimaPage />} />
+            <Route path="/progress" element={<ProgressPage />} />
           </Routes>
           <MusicPlayer />
           {/* 🦋 蝴蝶扇动翅膀自定义鼠标特效 */}

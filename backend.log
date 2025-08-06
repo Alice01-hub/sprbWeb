@@ -1,50 +1,38 @@
-INFO:     Will watch for changes in these directories: ['/home/devbox/project/sprb-web/backend']
+INFO:     Will watch for changes in these directories: ['/root/workspace/sprbWeb/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [56686] using StatReload
-INFO:     Started server process [56724]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-未找到中文字体，使用Helvetica
-INFO:     127.0.0.1:33682 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38484 - "GET /api/music/playlist HTTP/1.1" 200 OK
-WARNING:  StatReload detected changes in 'app.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [56724]
-INFO:     Started server process [58071]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-未找到中文字体，使用Helvetica
-INFO:     127.0.0.1:34754 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34770 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44884 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44890 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:40632 - "GET /api/music/playlist HTTP/1.1" 200 OK
-INFO:     127.0.0.1:40642 - "GET /api/music/playlist HTTP/1.1" 200 OK
-WARNING:  StatReload detected changes in 'app.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [58071]
-INFO:     Started server process [8946]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-WARNING:  StatReload detected changes in 'app.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [8946]
-未找到中文字体，使用Helvetica
-INFO:     Started server process [9999]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-WARNING:  StatReload detected changes in 'app.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [9999]
-未找到中文字体，使用Helvetica
-INFO:     Started server process [10081]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
+INFO:     Started reloader process [155551] using StatReload
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/importer.py", line 24, in import_from_string
+    raise exc from None
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/root/miniconda3/envs/sprb-web/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/root/workspace/sprbWeb/backend/app.py", line 41, in <module>
+    from api import auth
+  File "/root/workspace/sprbWeb/backend/api/auth.py", line 2, in <module>
+    from sqlalchemy.orm import Session
+ModuleNotFoundError: No module named 'sqlalchemy'

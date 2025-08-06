@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPRB 网站开发进度</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(
+                135deg, 
+                #87CEEB 0%,    /* 天蓝色 */
+                #98E4D6 20%,   /* 薄荷绿 */
+                #F4E285 40%,   /* 浅黄色 */
+                #FFB347 60%,   /* 金橙色 */
+                #FF8C69 80%,   /* 珊瑚色 */
+                #FFA07A 100%   /* 浅橙色 */
+            );
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333333;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #555555;
+            line-height: 1.6;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 3px;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 25px;
+            width: 50%;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: 1.1rem;
+            margin-top: 15px;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .status-text {
+            font-size: 1rem;
+            margin-top: 20px;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #888888;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 30px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">SPRB 网站开发进度</h1>
+        <p class="subtitle">
+            感谢您的关注！我们正在努力开发SPRB网站，为您提供更好的服务体验。
+        </p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="progress-text" id="progressText">50% 完成</div>
+        
+        <p class="status-text">
+            目前我们正在开发核心功能模块，包括用户界面优化、后端服务集成等。
+            <br>
+            预计将在不久的将来完成全部开发工作，敬请期待！
+        </p>
+        
+        <div class="footer">
+            © 2025 SPRB Development Team
+        </div>
+    </div>
+
+    <script>
+        // 简单的进度条动画
+        function animateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            let progress = 0;
+            const targetProgress = 50;
+            
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = progress + '% 完成';
+                
+                if (progress >= targetProgress) {
+                    clearInterval(interval);
+                }
+            }, 50);
+        }
+        
+        // 页面加载完成后开始动画
+        window.addEventListener('load', () => {
+            setTimeout(animateProgress, 500);
+        });
+    </script>
+</body>
+</html> 
