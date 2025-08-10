@@ -4,7 +4,7 @@ npm warn cli npm v11.5.2 does not support Node.js v18.20.8. This version of npm 
 > vite --host 0.0.0.0 --port 3001
 
 
-  VITE v4.5.14  ready in 2018 ms
+  VITE v4.5.14  ready in 1327 ms
 
   ➜  Local:   http://localhost:3001/
   ➜  Network: http://172.18.133.57:3001/

@@ -11,7 +11,21 @@ export default defineConfig(({ command, mode }) => {
   const isDevelopment = mode === 'development'
   
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      {
+        name: 'client-error-destroy',
+        configureServer(server) {
+          // 预先拦截 clientError，避免对已出错的 socket 再写入导致的 Node 警告
+          server.httpServer?.on('clientError', (err, socket) => {
+            // 检查 socket 是否已经销毁，避免重复处理
+            if (!socket.destroyed && socket.writable) {
+              socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+            }
+          })
+        },
+      },
+    ],
     server: {
       port: 3000,
       host: isDevelopment ? true : '0.0.0.0',

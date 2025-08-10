@@ -585,8 +585,6 @@ const NaoshimaPage: React.FC = () => {
       mapImage: "images/webps/直岛/直岛地图-小卖部-路线版.webp",
       description: '苍打工的零食店，已歇业。',
       iconPositions: [
-        { x: 24, y: 0, emoji: '🍧', size: 30 },
-        { x: 28, y: 69, emoji: '🚲', size: 30 },
         { x: 10, y: 0, icon: 'images/webps/直岛/直岛-小卖部.webp', size: 200 },
         { x: 20, y: 50, icon: 'images/webps/直岛/直岛-sprb租车店.webp', size: 200 },
       ]
@@ -595,9 +593,9 @@ const NaoshimaPage: React.FC = () => {
       mapImage: "images/webps/直岛/直岛地图-水塘海狸家-路线版.webp",
       description: '加藤家的住所，休憩之地。',
       iconPositions: [
-        { x: 11, y: 72, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 200 },
-        { x: 80, y: 3, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 150 },
-        { x: 74, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 200 },
+        { x: 11, y: 72, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 150 },
+        { x: 77, y: -2, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 150 },
+        { x: 74, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 150 },
       ]
     },
     '白羽钓点': {
@@ -606,17 +604,17 @@ const NaoshimaPage: React.FC = () => {
       iconPositions: [
         { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 200 },
         { x: 82, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 200 },
-        { x: 57, y: 0, icon: 'images/webps/直岛/直岛-白羽钓点.webp', size: 200 },
+        { x: 57, y: 0, icon: 'images/webps/直岛/直岛-白羽钓点.webp', size: 150 },
       ]
     },
     '蔷薇庄': {
       mapImage: "images/webps/直岛/直岛地图-蔷薇庄-路线版.webp",
       description: '充满回忆的住宿地，温馨舒适。',
       iconPositions: [
-        { x: 92, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
+        { x: 90, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
         { x: 71, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
-        { x: 85, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
-        { x: 12, y: -2, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 400 },
+        { x: 75, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
+        { x: 12, y: -2, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 200 },
       ]
     },
     '鸣濑神社': {

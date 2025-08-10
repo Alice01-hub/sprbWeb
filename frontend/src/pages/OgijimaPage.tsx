@@ -829,7 +829,7 @@ const OgijimaPage: React.FC = () => {
       mapImage: "images/webps/男木岛/男木岛-灯塔地图-线路版.webp",
       description: '我正在找东西，找自己想要做的事情',
       iconPositions: [
-        { x: 23, y: 36, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
+        { x: 21, y: 37, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
         { x: 74, y: 35, icon: 'images/webps/男木岛/男木岛-紬的灯塔.webp', size: 200 },
       ]
     },
@@ -837,9 +837,9 @@ const OgijimaPage: React.FC = () => {
       mapImage: "images/webps/男木岛/男木岛-苍睡觉小道地图-线路版.webp",
       description: '总之，就算我在睡觉也不必管啦',
       iconPositions: [
-        { x: 37, y: 76, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 200 },
-        { x: 65, y: 22, icon: 'images/webps/男木岛/男木岛-苍睡觉小道.webp', size: 200 },
-        { x: 76, y: 66, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
+        { x: 37, y: 80, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
+        { x: 63, y: 22, icon: 'images/webps/男木岛/男木岛-苍睡觉小道.webp', size: 200 },
+        { x: 74, y: 60, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
       ]
     },
     '白羽主视角': {
@@ -847,7 +847,7 @@ const OgijimaPage: React.FC = () => {
       description: '不用在意我就好',
       iconPositions: [
         { x: 33, y: 2, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
-        { x: 4, y: 53, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 200 },
+        { x: 4, y: 45, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 180 },
         { x: 42, y: 64, icon: 'images/webps/男木岛/男木岛-鸟白岛役场.webp', size: 150 },
         { x: 65, y: 70, icon: 'images/webps/男木岛/男木岛-秘密基地.webp', size: 100 },
         { x: 65, y: 76, icon: 'images/webps/男木岛/男木岛-泳池.webp', size: 100 },

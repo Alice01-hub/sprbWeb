@@ -4,11 +4,36 @@ npm warn cli npm v11.5.2 does not support Node.js v18.20.8. This version of npm 
 > vite --host 0.0.0.0 --port 3000
 
 
-  VITE v4.5.14  ready in 944 ms
+  VITE v4.5.14  ready in 637 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.18.133.57:3000/
-2:55:07 PM [vite] hmr update /src/App.tsx
-2:55:20 PM [vite] hmr update /src/App.tsx
-3:03:37 PM [vite] hmr update /src/pages/ProgressPage.tsx
-3:03:37 PM [vite] hmr update /src/App.tsx
+8:27:20 AM [vite] hmr update /src/components/MapDetailViewer.tsx
+8:27:54 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:28:49 AM [vite] hmr update /src/pages/MegijimaPage.tsx
+8:29:15 AM [vite] hmr update /src/pages/OgijimaPage.tsx
+8:32:00 AM [vite] hmr update /src/components/MapDetailViewer.tsx
+8:32:00 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:32:00 AM [vite] hmr update /src/pages/MegijimaPage.tsx
+8:32:00 AM [vite] hmr update /src/pages/OgijimaPage.tsx
+8:32:06 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:32:06 AM [vite] hmr update /src/pages/MegijimaPage.tsx
+8:34:01 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:34:14 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:35:06 AM [vite] hmr update /src/components/MapDetailViewer.tsx
+8:35:07 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:35:07 AM [vite] hmr update /src/pages/MegijimaPage.tsx
+8:35:07 AM [vite] hmr update /src/pages/OgijimaPage.tsx
+8:55:34 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:55:46 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:56:18 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:56:41 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:56:51 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:58:21 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:59:26 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+8:59:48 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+9:00:32 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+9:00:57 AM [vite] hmr update /src/pages/NaoshimaPage.tsx
+9:03:20 AM [vite] hmr update /src/pages/OgijimaPage.tsx
+9:03:36 AM [vite] hmr update /src/pages/OgijimaPage.tsx
+9:04:11 AM [vite] hmr update /src/pages/OgijimaPage.tsx

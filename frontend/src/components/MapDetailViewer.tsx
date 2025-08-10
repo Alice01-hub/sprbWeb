@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -70,8 +70,8 @@ const MapImage = styled.img`
 const MapIcon = styled(motion.div)<{ x: number; y: number; size?: number }>`
   position: absolute;
   font-size: ${props => props.size || 30}px;
-  left: ${props => props.x}%;
-  top: ${props => props.y}%;
+  left: ${props => props.x}px;
+  top: ${props => props.y}px;
   transform: translate(-50%, -50%);
   z-index: 5;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
@@ -126,6 +126,63 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
     ? iconPositions
     : []
 
+  // 计算图像在容器中的实际显示区域，用于像素级定位与尺寸缩放
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const imgRef = useRef<HTMLImageElement | null>(null)
+  const [naturalSize, setNaturalSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 })
+  const [containerSize, setContainerSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 })
+
+  const updateSizes = () => {
+    const c = containerRef.current
+    if (c) {
+      setContainerSize({ w: c.clientWidth, h: c.clientHeight })
+    }
+    const img = imgRef.current
+    if (img && img.naturalWidth && img.naturalHeight) {
+      setNaturalSize({ w: img.naturalWidth, h: img.naturalHeight })
+    }
+  }
+
+  useEffect(() => {
+    updateSizes()
+    const handler = () => updateSizes()
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  const displayed = useMemo(() => {
+    const cw = containerSize.w
+    const ch = containerSize.h
+    const iw = naturalSize.w
+    const ih = naturalSize.h
+    if (!cw || !ch || !iw || !ih) {
+      return { left: 0, top: 0, width: 0, height: 0, scale: 1 }
+    }
+    const containerRatio = cw / ch
+    const imageRatio = iw / ih
+    let width = 0
+    let height = 0
+    let left = 0
+    let top = 0
+    if (imageRatio > containerRatio) {
+      // 图片更“宽”，以宽度铺满
+      width = cw
+      height = cw / imageRatio
+      left = 0
+      top = (ch - height) / 2
+    } else {
+      // 图片更“高”，以高度铺满
+      height = ch
+      width = ch * imageRatio
+      left = (cw - width) / 2
+      top = 0
+    }
+    // 按照一个基准宽度来缩放图标尺寸
+    const BASE_WIDTH = 1000
+    const scale = width > 0 ? width / BASE_WIDTH : 1
+    return { left, top, width, height, scale }
+  }, [containerSize, naturalSize])
+
   return (
     <AnimatePresence>
       <ModalOverlay
@@ -150,25 +207,36 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
             </>
           ) : (
             <>
-              <MapContainer>
-                <MapImage src={mapImage} alt={title} />
-                {iconsToRender.map((pos, idx) => (
-                  <MapIcon
-                    key={idx}
-                    x={pos.x}
-                    y={pos.y}
-                    size={pos.size}
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.1, type: 'spring', stiffness: 300, damping: 20 }}
-                  >
-                    {pos.icon ? (
-                      <MapIconImage src={pos.icon} alt="icon" size={pos.size} />
-                    ) : (
-                      pos.emoji || iconEmoji
-                    )}
-                  </MapIcon>
-                ))}
+              <MapContainer ref={containerRef}>
+                <MapImage
+                  ref={imgRef as React.RefObject<HTMLImageElement>}
+                  src={mapImage}
+                  alt={title}
+                  onLoad={updateSizes}
+                />
+                {iconsToRender.map((pos, idx) => {
+                  const left = displayed.left + (displayed.width * (pos.x / 100))
+                  const top = displayed.top + (displayed.height * (pos.y / 100))
+                  const base = pos.size ?? 30
+                  const sizePx = Math.max(16, Math.round(base * (displayed.scale || 1)))
+                  return (
+                    <MapIcon
+                      key={idx}
+                      x={left}
+                      y={top}
+                      size={sizePx}
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.1, type: 'spring', stiffness: 300, damping: 20 }}
+                    >
+                      {pos.icon ? (
+                        <MapIconImage src={pos.icon} alt="icon" size={sizePx} />
+                      ) : (
+                        pos.emoji || iconEmoji
+                      )}
+                    </MapIcon>
+                  )
+                })}
               </MapContainer>
               <InfoSection>
                 <Title>{title}</Title>

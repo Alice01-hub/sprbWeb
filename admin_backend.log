@@ -1,4 +1,4 @@
-Traceback (most recent call last):
-  File "/root/workspace/sprbWeb/admin/backend/admin_api.py", line 3, in <module>
-    from sqlalchemy.orm import Session
-ModuleNotFoundError: No module named 'sqlalchemy'
+INFO:     Started server process [5967]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
