@@ -11,7 +11,7 @@ Summer Pockets 巡礼网站后端API
 
 环境支持：
 - development: 开发环境
-- staging: 测试环境  
+- staging: 测试环境 
 - production: 生产环境
 """
 
@@ -521,66 +521,90 @@ async def get_audio_files():
 @app.get("/api/music/playlist")
 async def get_music_playlist():
     """获取完整音乐播放列表"""
+    """格式
+    '水月陵 - Summer Pockets.mp3': {
+                'name': 'Summer Pockets',
+                'artist': '水月陵',
+                'album': 'Summer Pockets OST',
+                'id': 'summer-pockets'
+            },
+    """
     try:
         tracks = []
         public_audio_path = '../frontend/public/audio'
         
         # 音乐文件和艺术家信息的映射
         music_info = {
-            '水月陵 - Summer Pockets.mp3': {
+            '1-水月陵 - Summer Pockets.mp3': {
                 'name': 'Summer Pockets',
                 'artist': '水月陵',
                 'album': 'Summer Pockets OST',
-                'id': 'summer-pockets'
+                'id': 'summer-pockets',
+                'cover': 'images/covers/1-summerpockets.webp'
             },
-            '麻枝准 - Sea, You & Me.mp3': {
+            '2-麻枝准 - Sea, You & Me.mp3': {
                 'name': 'Sea, You & Me',
                 'artist': '麻枝准',
                 'album': 'Summer Pockets OST',
-                'id': 'sea-you-me'
+                'id': 'sea-you-me',
+                'cover': 'images/covers/2-sea-you-me.webp'
             },
-            '鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3': {
+            '3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3': {
                 'name': 'アルカテイル',
                 'artist': '鈴木このみ',
                 'album': 'Summer Pockets OST',
-                'id': 'alcatale'
+                'id': 'alcatale',
+                'cover': 'images/covers/3-op.webp'
             },
-            '水月陵 - 夜は短く、空は遠くて….wav': {
+            '4-水月陵 - 夜は短く、空は遠くて….wav': {
                 'name': '夜は短く、空は遠くて…',
                 'artist': '水月陵',
                 'album': 'Summer Pockets OST',
-                'id': 'yoru-wa-mijikaku'
+                'id': 'yoru-wa-mijikaku',
+                'cover': 'images/covers/4-saikai.webp'
             },
-            '嶺内ともみ - Departure!.flac': {
-                'name': 'Departure!',
-                'artist': '嶺内ともみ',
-                'album': 'Summer Pockets OST',
-                'id': 'departure'
-            },
-            '嶺内ともみ - with.flac': {
-                'name': 'with',
-                'artist': '嶺内ともみ',
-                'album': 'Summer Pockets OST',
-                'id': 'with'
-            },
-            '高森奈津美 - 比翼の蝶たち.flac': {
+            '5-高森奈津美 - 比翼の蝶たち.flac': {
                 'name': '比翼の蝶たち',
                 'artist': '高森奈津美',
                 'album': 'Summer Pockets OST',
-                'id': 'hiyoku-no-chou'
+                'id': 'hiyoku-no-chou',
+                'cover': 'images/covers/5-soragado-ao.webp'
             },
-            '小原好美 - 夏に君を待ちながら.flac': {
+            '6-嶺内ともみ - Departure!.flac': {
+                'name': 'Departure!',
+                'artist': '嶺内ともみ',
+                'album': 'Summer Pockets OST',
+                'id': 'departure',
+                'cover': 'images/covers/6-kushima-kamome.webp'
+            },
+            '7-嶺内ともみ - with.flac': {
+                'name': 'with',
+                'artist': '嶺内ともみ',
+                'album': 'Summer Pockets OST',
+                'id': 'with',
+                'cover': 'images/covers/7-with.webp'
+            },
+            '8-小原好美 - 夏に君を待ちながら.flac': {
                 'name': '夏に君を待ちながら',
                 'artist': '小原好美',
                 'album': 'Summer Pockets OST',
-                'id': 'natsu-ni-kimi-wo'
+                'id': 'natsu-ni-kimi-wo',
+                'cover': 'images/covers/8-shiroha.webp'
             },
-            '岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac': {
+            '9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac': {
                 'name': '紬の夏休み',
                 'artist': '岩井映美里',
                 'album': 'Summer Pockets OST',
-                'id': 'tsumugi-no-natsuyasumi'
-            }
+                'id': 'tsumugi-no-natsuyasumi',
+                'cover': 'images/covers/9-tsumugi-no-natsuyasumi.webp'
+            },
+            '10-岩井映美里 - Golden Hours.flac': {
+                'name': 'Golden Hours',
+                'artist': '岩井映美里',
+                'album': 'Summer Pockets OST',
+                'id': 'golden-hours',
+                'cover': 'images/covers/10-golden-hours.webp'
+            },
         }
         
         if os.path.exists(public_audio_path):
@@ -599,14 +623,22 @@ async def get_music_playlist():
                         'artist': info['artist'],
                         'album': info['album'],
                         'src': f'/audio/{filename}',
-                        'cover': None,  # 可以后续添加封面图片
+                        'cover': info.get('cover'),  # 可以后续添加封面图片
                         'duration': None  # 可以后续添加音频长度检测
                     })
         
         # 按照预定义顺序排序
         order = [
-            'summer-pockets', 'sea-you-me', 'alcatale', 'yoru-wa-mijikaku',
-            'departure', 'with', 'hiyoku-no-chou', 'natsu-ni-kimi-wo', 'tsumugi-no-natsuyasumi'
+            'summer-pockets', 
+            'sea-you-me', 
+            'alcatale', 
+            'yoru-wa-mijikaku',
+            'natsu-ni-kimi-wo',
+            'hiyoku-no-chou', 
+            'departure', 
+            'golden-hours',
+            'with', 
+            'tsumugi-no-natsuyasumi',
         ]
         tracks.sort(key=lambda x: order.index(x['id']) if x['id'] in order else len(order))
         

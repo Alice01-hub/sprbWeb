@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
+import GalleryViewer from '../components/GalleryViewer'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -581,103 +582,6 @@ const ContentSection = styled(motion.div)`
   width: 100%;
 `
 
-// 图片查看器组件
-interface ImageViewerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  images: Array<{ src: string; label: string }>;
-  currentIndex: number;
-  onPrevious: () => void;
-  onNext: () => void;
-  title: string;
-}
-
-const ImageViewer: React.FC<ImageViewerProps> = ({
-  isOpen,
-  onClose,
-  images,
-  currentIndex,
-  onPrevious,
-  onNext,
-  title
-}) => {
-  if (!isOpen || images.length === 0) return null;
-
-  return (
-    <AnimatePresence>
-      <ModalOverlay
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <ModalContent
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-        >
-
-          
-          {images.length > 1 && (
-            <>
-              <NavigationButton
-                direction="prev"
-                onClick={onPrevious}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ‹
-              </NavigationButton>
-              
-              <NavigationButton
-                direction="next"
-                onClick={onNext}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ›
-              </NavigationButton>
-            </>
-          )}
-          
-          <ModalImage
-            src={images[currentIndex]?.src}
-            alt={`${title} - ${images[currentIndex]?.label}`}
-          />
-          
-          <ModalInfo>
-            <ModalTitle>{title}</ModalTitle>
-            <ModalLabel>{images[currentIndex]?.label}</ModalLabel>
-          </ModalInfo>
-        </ModalContent>
-      </ModalOverlay>
-    </AnimatePresence>
-  );
-};
-
 const MegijimaPage: React.FC = () => {
   const navigate = useNavigate()
   
@@ -1193,15 +1097,16 @@ const MegijimaPage: React.FC = () => {
         </BackButton>
       </ButtonContainer>
 
-      {/* 图片查看器模态框 */}
-      <ImageViewer
+      {/* 统一样式的图片查看器 */}
+      <GalleryViewer
         isOpen={imageViewer.isOpen}
         onClose={closeImageViewer}
         images={imageViewer.images}
         currentIndex={imageViewer.currentIndex}
+        title={imageViewer.title}
         onPrevious={goToPreviousImage}
         onNext={goToNextImage}
-        title={imageViewer.title}
+        onIndexChange={(index) => setImageViewer(prev => ({ ...prev, currentIndex: index }))}
       />
     </Container>
   )

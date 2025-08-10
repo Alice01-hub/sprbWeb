@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { MapConfig, calculateResponsiveScale, getDeviceType } from '../utils/mapConfig';
+import { MapConfig, calculateResponsiveScale } from '../utils/mapConfig';
 import MapIconComponent from './MapIcon';
 import { MapIcon } from '../utils/mapConfig';
 
@@ -111,8 +111,8 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
   const baseWidth = config.scale * config.baseWidth;
   const scale = calculateResponsiveScale(containerWidth, baseWidth, config);
 
-  // 设备类型检测
-  const deviceType = getDeviceType();
+  // 设备类型检测 - 暂时未使用，但保留以备将来功能扩展
+  // const deviceType = getDeviceType();
 
   return (
     <motion.div

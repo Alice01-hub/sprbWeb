@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
+import GalleryViewer from '../components/GalleryViewer'
 import MapDetailViewer from '../components/MapDetailViewer'
 
 // 地图图标接口定义
@@ -365,17 +366,7 @@ const ContentSection = styled(motion.div)`
   width: 100%;
 `
 
-// 图片查看器组件
-interface ImageViewerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  images: Array<{ src: string; label: string }>;
-  currentIndex: number;
-  onPrevious: () => void;
-  onNext: () => void;
-  title: string;
-}
-
+// 地图详情查看器模态框
 const ModalOverlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -602,8 +593,8 @@ const NaoshimaPage: React.FC = () => {
       mapImage: "images/webps/直岛/直岛地图-白羽钓点-路线版.webp",
       description: '白羽钓鱼的地方，海风徐徐。',
       iconPositions: [
-        { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 200 },
-        { x: 82, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 200 },
+        { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 180 },
+        { x: 80, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 180 },
         { x: 57, y: 0, icon: 'images/webps/直岛/直岛-白羽钓点.webp', size: 150 },
       ]
     },
@@ -612,9 +603,9 @@ const NaoshimaPage: React.FC = () => {
       description: '充满回忆的住宿地，温馨舒适。',
       iconPositions: [
         { x: 90, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
-        { x: 71, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
-        { x: 75, y: 74, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
-        { x: 12, y: -2, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 200 },
+        { x: 70, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
+        { x: 77, y: 76, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
+        { x: 12, y: -5, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 250 },
       ]
     },
     '鸣濑神社': {
@@ -1051,15 +1042,16 @@ const NaoshimaPage: React.FC = () => {
           返回打卡篇
         </BackButton>
       </ButtonContainer>
-      {/* 图片查看器模态框 */}
-      <ImageViewer
+      {/* 统一样式的图片查看器 */}
+      <GalleryViewer
         isOpen={imageViewer.isOpen}
         onClose={closeImageViewer}
         images={imageViewer.images}
         currentIndex={imageViewer.currentIndex}
+        title={imageViewer.title}
         onPrevious={goToPreviousImage}
         onNext={goToNextImage}
-        title={imageViewer.title}
+        onIndexChange={(index) => setImageViewer(prev => ({ ...prev, currentIndex: index }))}
       />
       
       {/* 地图详情查看器模态框 */}
@@ -1073,88 +1065,6 @@ const NaoshimaPage: React.FC = () => {
         mode="full"
       />
     </Container>
-  )
-}
-
-// 图片查看器组件
-const ImageViewer: React.FC<ImageViewerProps> = ({
-  isOpen,
-  onClose,
-  images,
-  currentIndex,
-  onPrevious,
-  onNext,
-  title
-}) => {
-  if (!isOpen || images.length === 0) return null
-  return (
-    <AnimatePresence>
-      <ModalOverlay
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <ModalContent
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-        >
-
-          {images.length > 1 && (
-            <>
-              <NavigationButton
-                direction="prev"
-                onClick={onPrevious}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ‹
-              </NavigationButton>
-              <NavigationButton
-                direction="next"
-                onClick={onNext}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ›
-              </NavigationButton>
-            </>
-          )}
-          <ModalImage
-            src={images[currentIndex]?.src}
-            alt={`${title} - ${images[currentIndex]?.label}`}
-          />
-          <ModalInfo>
-            <ModalTitle>{title}</ModalTitle>
-            <ModalLabel>{images[currentIndex]?.label}</ModalLabel>
-          </ModalInfo>
-        </ModalContent>
-      </ModalOverlay>
-    </AnimatePresence>
   )
 }
 

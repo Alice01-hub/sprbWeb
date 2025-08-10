@@ -62,68 +62,85 @@ interface MusicProviderProps {
 // 默认播放列表
 const defaultPlaylist: Track[] = [
   {
-    id: 'summer-pockets',
-    name: 'Summer Pockets',
-    artist: '水月陵',
-    src: '/audio/水月陵 - Summer Pockets.mp3',
-    album: 'Summer Pockets OST'
+    id: 'summer-pockets', // 唯一标识，内部引用，id
+    name: 'Summer Pockets', // 歌曲名称（用户看到）
+    artist: '水月陵', // 艺术家
+    src: '/audio/1-水月陵 - Summer Pockets.mp3', // 音频文件路径
+    album: 'Summer Pockets OST', // 专辑名称
+    cover: 'images/covers/1-summerpockets.webp'
   },
   {
     id: 'sea-you-me',
     name: 'Sea, You & Me',
     artist: '麻枝准',
-    src: '/audio/麻枝准 - Sea, You & Me.mp3',
-    album: 'Summer Pockets OST'
+    src: '/audio/2-麻枝准 - Sea, You & Me.mp3',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/2-sea-you-me.webp'
   },
   {
     id: 'alcatale',
     name: 'アルカテイル',
     artist: '鈴木このみ',
-    src: '/audio/鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3',
-    album: 'Summer Pockets OST'
+    src: '/audio/3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/3-op.webp'
   },
   {
     id: 'yoru-wa-mijikaku',
     name: '夜は短く、空は遠くて…',
     artist: '水月陵',
-    src: '/audio/水月陵 - 夜は短く、空は遠くて….wav',
-    album: 'Summer Pockets OST'
-  },
-  {
-    id: 'departure',
-    name: 'Departure!',
-    artist: '嶺内ともみ',
-    src: '/audio/嶺内ともみ - Departure!.flac',
-    album: 'Summer Pockets OST'
-  },
-  {
-    id: 'with',
-    name: 'with',
-    artist: '嶺内ともみ',
-    src: '/audio/嶺内ともみ - with.flac',
-    album: 'Summer Pockets OST'
+    src: '/audio/4-水月陵 - 夜は短く、空は遠くて….wav',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/4-saikai.webp'
   },
   {
     id: 'hiyoku-no-chou',
     name: '比翼の蝶たち',
     artist: '高森奈津美',
-    src: '/audio/高森奈津美 - 比翼の蝶たち.flac',
-    album: 'Summer Pockets OST'
+    src: '/audio/5-高森奈津美 - 比翼の蝶たち.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/5-solagado-ao.webp'
+  },
+  {
+    id: 'departure',
+    name: 'Departure!',
+    artist: '嶺内ともみ',
+    src: '/audio/6-嶺内ともみ - Departure!.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/6-kushima-kamome.webp'
+  },
+  {
+    id: 'with',
+    name: 'with',
+    artist: '嶺内ともみ',
+    src: '/audio/7-嶺内ともみ - with.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/7-with.webp'
   },
   {
     id: 'natsu-ni-kimi-wo',
     name: '夏に君を待ちながら',
     artist: '小原好美',
-    src: '/audio/小原好美 - 夏に君を待ちながら.flac',
-    album: 'Summer Pockets OST'
+    src: '/audio/8-小原好美 - 夏に君を待ちながら.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/8-shiroha.webp'
   },
   {
     id: 'tsumugi-no-natsuyasumi',
     name: '紬の夏休み',
     artist: '岩井映美里',
-    src: '/audio/岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac',
-    album: 'Summer Pockets OST'
-  }
+    src: '/audio/9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/9-tsumugi-no-natsuyasumi.webp'
+  },
+  {
+    id: 'golden-hours',
+    name: 'Golden Hours',
+    artist: '岩井映美里',
+    src: '/audio/10-岩井映美里 - Golden Hours.flac',
+    album: 'Summer Pockets OST',
+    cover: 'images/covers/10-golden-hours.webp'
+  },
 ]
 
 export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {

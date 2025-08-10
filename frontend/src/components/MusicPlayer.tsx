@@ -75,11 +75,15 @@ const PlayerHeader = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `
 
-const AlbumCover = styled.div`
+// 修改 AlbumCover 组件，支持显示封面图
+const AlbumCover = styled.div<{ hasCover: boolean }>`
   width: 60px;
   height: 60px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #ff4757, #ff6b7a);
+  background: ${props => props.hasCover 
+    ? 'transparent' 
+    : 'linear-gradient(135deg, #ff4757, #ff6b7a)'
+  };
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +91,25 @@ const AlbumCover = styled.div`
   font-size: 24px;
   margin-right: 15px;
   box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+  overflow: hidden;
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .music-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    opacity: 0.8;
+    z-index: 1;
+  }
 `
 
 const TrackInfo = styled.div`
@@ -327,22 +350,6 @@ const PlaylistArtistName = styled.div`
   text-overflow: ellipsis;
 `
 
-// 滚动指示器
-const ScrollIndicator = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(transparent, rgba(255, 255, 255, 0.8));
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  color: #999;
-`
-
 // 工具函数
 const formatTime = (time: number): string => {
   const minutes = Math.floor(time / 60)
@@ -477,7 +484,26 @@ const MusicPlayer: React.FC = () => {
           >
             {/* 头部信息 */}
             <PlayerHeader>
-              <AlbumCover>🎵</AlbumCover>
+              <AlbumCover hasCover={!!currentTrack?.cover}>
+                {currentTrack?.cover ? (
+                  <>
+                    <img 
+                      src={currentTrack.cover} 
+                      alt={`${currentTrack.name} 封面`}
+                      onError={(e) => {
+                        // 图片加载失败时显示默认图标
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const icon = target.nextElementSibling as HTMLElement;
+                        if (icon) icon.style.display = 'block';
+                      }}
+                    />
+                    <span className="music-icon" style={{ display: 'none' }}>🎵</span>
+                  </>
+                ) : (
+                  '🎵'
+                )}
+              </AlbumCover>
               <TrackInfo>
                 <TrackName>{currentTrack?.name || '暂无歌曲'}</TrackName>
                 <ArtistName>{currentTrack?.artist || '未知艺术家'}</ArtistName>
@@ -541,16 +567,9 @@ const MusicPlayer: React.FC = () => {
 
             {/* 播放列表 */}
             <PlaylistHeader>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+              <span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
                   播放列表 ({playlist.length})
-                </span>
-                {playlist.length > 4 && (
-                  <span style={{ fontSize: '11px', color: '#999' }}>
-                    显示前4首，滚动查看更多
-                  </span>
-                )}
-              </div>
+              </span>
               <motion.button
                 onClick={togglePlayMode}
                 style={{
@@ -592,11 +611,6 @@ const MusicPlayer: React.FC = () => {
                   </PlaylistTrackInfo>
                 </PlaylistItem>
               ))}
-              {playlist.length > 4 && !isScrolled && (
-                <ScrollIndicator>
-                  ↓ 滚动查看更多
-                </ScrollIndicator>
-              )}
             </PlaylistContainer>
           </PlayerPanel>
         )}

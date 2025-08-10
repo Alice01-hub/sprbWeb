@@ -97,13 +97,13 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
   interval = 3000,
   onImageClick, // 新增：点击回调
   isPlaying: externalIsPlaying, // 新增：外部播放状态
-  onPlayPauseChange // 新增：播放状态变化回调
+  // onPlayPauseChange // 新增：播放状态变化回调 - 暂时未使用
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [internalIsPlaying, setInternalIsPlaying] = useState(autoPlay)
+  // const [internalIsPlaying, setInternalIsPlaying] = useState(autoPlay) // 暂时未使用
   
-  // 使用外部播放状态或内部播放状态
-  const isPlaying = externalIsPlaying !== undefined ? externalIsPlaying : internalIsPlaying
+  // 使用外部播放状态或默认值
+  const isPlaying = externalIsPlaying !== undefined ? externalIsPlaying : autoPlay
 
   // 自动播放逻辑
   useEffect(() => {
@@ -116,22 +116,23 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
     return () => clearInterval(timer)
   }, [isPlaying, images.length, interval])
 
-  const handlePrevious = () => {
-    setCurrentIndex(prev => (prev - 1 + images.length) % images.length)
-  }
+  // 这些函数暂时未使用，但保留以备将来扩展功能
+  // const handlePrevious = () => {
+  //   setCurrentIndex(prev => (prev - 1 + images.length) % images.length)
+  // }
 
-  const handleNext = () => {
-    setCurrentIndex(prev => (prev + 1) % images.length)
-  }
+  // const handleNext = () => {
+  //   setCurrentIndex(prev => (prev + 1) % images.length)
+  // }
 
-  const handlePlayPause = () => {
-    const newIsPlaying = !isPlaying
-    if (onPlayPauseChange) {
-      onPlayPauseChange(newIsPlaying)
-    } else {
-      setInternalIsPlaying(newIsPlaying)
-    }
-  }
+  // const handlePlayPause = () => {
+  //   const newIsPlaying = !isPlaying
+  //   if (onPlayPauseChange) {
+  //     onPlayPauseChange(newIsPlaying)
+  //   } else {
+  //     setInternalIsPlaying(newIsPlaying)
+  //   }
+  // }
 
   // 新增：处理图片点击
   const handleImageClick = () => {

@@ -115,7 +115,7 @@ const MapDetailViewer: React.FC<MapDetailViewerProps> = ({
   title,
   description,
   iconEmoji = '🤭',
-  iconPosition = { x: 50, y: 50 },
+  // iconPosition = { x: 50, y: 50 }, // 暂时未使用，但保留以备将来功能扩展
   iconPositions, // 新增
   mode
 }) => {

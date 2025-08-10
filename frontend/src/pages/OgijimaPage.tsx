@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
+import GalleryViewer from '../components/GalleryViewer'
 import MapDetailViewer from '../components/MapDetailViewer'
 
 // 地图图标接口定义
@@ -520,30 +521,7 @@ const ModalLabel = styled.p`
 
 
 
-const NavigationButton = styled(motion.button)<{ direction: 'prev' | 'next' }>`
-  position: absolute;
-  top: 50%;
-  ${props => props.direction === 'prev' ? 'left: -70px;' : 'right: -70px;'}
-  transform: translateY(-50%);
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: none; /* 🔧 移除CSS transition，避免与framer-motion冲突 */
-  
-  @media (max-width: 768px) {
-    ${props => props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
-    top: auto;
-    bottom: 20px;
-  }
-`
+// 移除重复的NavigationButton定义，使用下面定义的版本
 
 // 标签切换组件样式
 const TabContainer = styled.div`
@@ -646,104 +624,7 @@ const ContentSection = styled(motion.div)`
   width: 100%;
 `
 
-// 图片查看器组件
-interface ImageViewerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  images: Array<{ src: string; label: string }>;
-  currentIndex: number;
-  onPrevious: () => void;
-  onNext: () => void;
-  title: string;
-}
-
-const ImageViewer: React.FC<ImageViewerProps> = ({
-  isOpen,
-  onClose,
-  images,
-  currentIndex,
-  onPrevious,
-  onNext,
-  title
-}) => {
-  if (!isOpen || images.length === 0) return null;
-
-  return (
-    <AnimatePresence>
-      <ModalOverlay
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <ModalContent
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-        >
-
-          
-          {images.length > 1 && (
-            <>
-              <NavigationButton
-                direction="prev"
-                onClick={onPrevious}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ‹
-              </NavigationButton>
-              
-              <NavigationButton
-                direction="next"
-                onClick={onNext}
-                whileHover={{ 
-                  scale: 1.05,
-                  background: "rgba(255, 255, 255, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                  duration: 0.15
-                }}
-                style={{ transformOrigin: 'center' }}
-              >
-                ›
-              </NavigationButton>
-            </>
-          )}
-          
-          <ModalImage
-            src={images[currentIndex]?.src}
-            alt={`${title} - ${images[currentIndex]?.label}`}
-          />
-          
-          <ModalInfo>
-            <ModalTitle>{title}</ModalTitle>
-            <ModalLabel>{images[currentIndex]?.label}</ModalLabel>
-          </ModalInfo>
-        </ModalContent>
-      </ModalOverlay>
-    </AnimatePresence>
-  );
-};
-
-
+// 左右切换按钮样式暂时移除
 
 const OgijimaPage: React.FC = () => {
   const navigate = useNavigate()
@@ -837,9 +718,9 @@ const OgijimaPage: React.FC = () => {
       mapImage: "images/webps/男木岛/男木岛-苍睡觉小道地图-线路版.webp",
       description: '总之，就算我在睡觉也不必管啦',
       iconPositions: [
-        { x: 37, y: 80, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
+        { x: 38, y: 82, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
         { x: 63, y: 22, icon: 'images/webps/男木岛/男木岛-苍睡觉小道.webp', size: 200 },
-        { x: 74, y: 60, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
+        { x: 76, y: 62, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
       ]
     },
     '白羽主视角': {
@@ -847,7 +728,7 @@ const OgijimaPage: React.FC = () => {
       description: '不用在意我就好',
       iconPositions: [
         { x: 33, y: 2, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
-        { x: 4, y: 45, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 180 },
+        { x: 5, y: 55, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 180 },
         { x: 42, y: 64, icon: 'images/webps/男木岛/男木岛-鸟白岛役场.webp', size: 150 },
         { x: 65, y: 70, icon: 'images/webps/男木岛/男木岛-秘密基地.webp', size: 100 },
         { x: 65, y: 76, icon: 'images/webps/男木岛/男木岛-泳池.webp', size: 100 },
@@ -1260,15 +1141,16 @@ const OgijimaPage: React.FC = () => {
         </BackButton>
       </ButtonContainer>
 
-      {/* 图片查看器模态框 */}
-      <ImageViewer
+      {/* 统一样式的图片查看器 */}
+      <GalleryViewer
         isOpen={imageViewer.isOpen}
         onClose={closeImageViewer}
         images={imageViewer.images}
         currentIndex={imageViewer.currentIndex}
+        title={imageViewer.title}
         onPrevious={goToPreviousImage}
         onNext={goToNextImage}
-        title={imageViewer.title}
+        onIndexChange={(index) => setImageViewer(prev => ({ ...prev, currentIndex: index }))}
       />
       
       {/* 地图详情查看器模态框 */}
