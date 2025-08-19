@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
+import OSS_CONFIG from '../config/ossConfig';
 
 interface ButterflyAnimationProps {
   isHovered: boolean
@@ -36,10 +37,12 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(1) // 默认显示第二张图片（七影碟-4.png）
   const intervalRef = useRef<number | null>(null)
 
+  // 蝴蝶图片路径
   const butterflyImages = [
-    "images/webps/七影蝶-3.webp",  // 翅膀闪动状态1
-    "images/webps/七影蝶-4.webp"   // 翅膀闪动状态2（默认显示）
-  ]
+    OSS_CONFIG.getImageUrl('/webps/七影蝶.webp'),      // 默认状态
+    OSS_CONFIG.getImageUrl('/webps/七影蝶-3.webp'),   // 翅膀闪动状态1
+    OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')    // 翅膀闪动状态2（默认显示）
+  ];
 
   useEffect(() => {
     if (isHovered) {

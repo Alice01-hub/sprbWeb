@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react'; 
+import OSS_CONFIG from '../config/ossConfig';  // 添加这行导入
+
 
 const ButterflyCustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -11,8 +13,8 @@ const ButterflyCustomCursor = () => {
 
   // 蝴蝶翅膀的两个状态图片
   const butterflyFrames = [
-    "images/webps/七影蝶-3.webp",
-    "images/webps/七影蝶-4.webp"
+    OSS_CONFIG.getImageUrl('/webps/七影蝶-3.webp'),
+    OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')
   ];
 
   // 预加载图片

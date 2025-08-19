@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频加载测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .audio-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { border-color: #4CAF50; background-color: #f1f8e9; }
+        .error { border-color: #f44336; background-color: #ffebee; }
+        .loading { border-color: #ff9800; background-color: #fff3e0; }
+        audio { width: 100%; margin: 10px 0; }
+        .status { font-weight: bold; margin: 5px 0; }
+        .url { font-size: 12px; color: #666; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>音频加载测试</h1>
+    <p>测试OSS中的音频文件是否能够正确加载</p>
+    
+    <div id="audioContainer"></div>
+    
+    <script>
+        // 测试音频文件列表
+        const testAudioFiles = [
+            '1-水月陵 - Summer Pockets.mp3',
+            '2-麻枝准 - Sea, You & Me.mp3',
+            '3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3',
+            '4-水月陵 - 夜は短く、空は遠くて….mp3',
+            '5-高森奈津美 - 比翼の蝶たち.mp3',
+            '6-嶺内ともみ - Departure!.mp3',
+            '7-嶺内ともみ - with.mp3',
+            '8-小原好美 - 夏に君を待ちながら.mp3',
+            '9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.mp3',
+            '10-岩井映美里 - Golden Hours.mp3',
+            '11-鳴瀬しろは(CV.小原好美),加藤うみ(CV.田中あいみ),VISUAL ARTS  Key - 魔法の絵日記.mp3',
+            '12-神山識(CV.ファイルーズあい),VISUAL ARTS  Key - Don\'t Cry Red.mp3',
+            '13-水織静久(CV.小山さほみ),VISUAL ARTS  Key - 柔らかい記憶.mp3',
+            '14-小原好美,VISUAL ARTS  Key - しろはの子守歌.mp3',
+            '15-野村美樹(CV.一宮朔),VISUAL ARTS  Key - Dear Familiar.mp3',
+            '16-鈴木このみ,VISUAL ARTS  Key - フィニステラー.mp3'
+        ];
+        
+        const baseUrl = 'https://oss.sprb.love';
+        const audioPath = '/public/audios';
+        
+        function createAudioElement(filename) {
+            const container = document.createElement('div');
+            container.className = 'audio-item loading';
+            
+            const title = document.createElement('h3');
+            title.textContent = filename;
+            
+            const status = document.createElement('div');
+            status.className = 'status';
+            status.textContent = '加载中...';
+            
+            const url = document.createElement('div');
+            url.className = 'url';
+            const fullUrl = `${baseUrl}${audioPath}/${filename}`;
+            url.textContent = `URL: ${fullUrl}`;
+            
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.preload = 'metadata';
+            
+            container.appendChild(title);
+            container.appendChild(status);
+            container.appendChild(url);
+            container.appendChild(audio);
+            
+            // 测试音频加载
+            audio.src = fullUrl;
+            
+            audio.addEventListener('loadstart', () => {
+                status.textContent = '开始加载...';
+            });
+            
+            audio.addEventListener('loadedmetadata', () => {
+                status.textContent = `加载成功! 时长: ${Math.round(audio.duration)}秒`;
+                container.className = 'audio-item success';
+            });
+            
+            audio.addEventListener('canplay', () => {
+                status.textContent = `可以播放! 时长: ${Math.round(audio.duration)}秒`;
+                container.className = 'audio-item success';
+            });
+            
+            audio.addEventListener('error', (e) => {
+                status.textContent = `加载失败: ${e.target.error ? e.target.error.message : '未知错误'}`;
+                container.className = 'audio-item error';
+                console.error(`音频加载失败 ${filename}:`, e.target.error);
+            });
+            
+            return container;
+        }
+        
+        // 创建所有音频测试元素
+        const container = document.getElementById('audioContainer');
+        testAudioFiles.forEach(filename => {
+            const audioElement = createAudioElement(filename);
+            container.appendChild(audioElement);
+        });
+        
+        // 添加测试结果统计
+        setTimeout(() => {
+            const successCount = document.querySelectorAll('.success').length;
+            const errorCount = document.querySelectorAll('.error').length;
+            const loadingCount = document.querySelectorAll('.loading').length;
+            
+            const summary = document.createElement('div');
+            summary.style.cssText = 'margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;';
+            summary.innerHTML = `
+                <h2>测试结果统计</h2>
+                <p>成功加载: <strong style="color: #4CAF50;">${successCount}</strong></p>
+                <p>加载失败: <strong style="color: #f44336;">${errorCount}</strong></p>
+                <p>仍在加载: <strong style="color: #ff9800;">${loadingCount}</strong></p>
+                <p>总计: <strong>${testAudioFiles.length}</strong></p>
+            `;
+            
+            container.insertBefore(summary, container.firstChild);
+        }, 5000);
+    </script>
+</body>
+</html>

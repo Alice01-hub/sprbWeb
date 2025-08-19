@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
+import OSS_CONFIG from '../config/ossConfig';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -509,7 +510,7 @@ const islands: Island[] = [
   {
     id: 'ogijima',
     name: '男木岛',
-    icon: "images/webps/男木岛/男木岛-灯塔图标.webp",
+    icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-灯塔图标.webp'),
     iconType: 'image',
     iconSize: 80, // 设置灯塔图标大小为80px
     description: '宁静的渔村小岛，与主角团相遇的主要地点。',
@@ -655,7 +656,7 @@ const CheckinPage: React.FC = () => {
       >
         <MapFrame>
           <MapContainer>
-            <MapImage src="images/webps/打卡篇地图-航线版.webp" alt="瀬戸内海地图" />
+            <MapImage src={OSS_CONFIG.getImageUrl('/webps/打卡篇地图-航线版.webp')} alt="瀬戸内海地图" />
             <MapOverlay>
               {/* 高松港起点 */}
               <LocationIcon
@@ -796,7 +797,7 @@ const CheckinPage: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <ModalImage 
-                src="images/webps/鸟白岛总览.webp" 
+                src={OSS_CONFIG.getImageUrl('/webps/鸟白岛总览.webp')} 
                 alt="鸟白岛总览"
                 onError={(e) => {
                   console.error('图片加载失败:', e)
@@ -825,7 +826,7 @@ const CheckinPage: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <QRCodeImage 
-                src="images/webps/打卡地点合集.webp" 
+                src={OSS_CONFIG.getImageUrl('/webps/打卡地点合集.webp')} 
                 alt="打卡地点合集二维码"
                 onError={(e) => {
                   console.error('二维码图片加载失败:', e)
@@ -865,7 +866,7 @@ const CheckinPage: React.FC = () => {
             >
               <CloseButton onClick={closeScheduleModal}>×</CloseButton>
               <ModalImage 
-                src="images/webps/高松发船时刻表.webp" 
+                src={OSS_CONFIG.getImageUrl('/webps/高松发船时刻表.webp')} 
                 alt="高松发船时刻表"
                 onError={(e) => {
                   console.error('时刻表图片加载失败:', e)

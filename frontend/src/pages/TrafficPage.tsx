@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import TrafficInfoGrid from '../components/TrafficInfoGrid'
 import axios from 'axios'
+import OSS_CONFIG from '../config/ossConfig';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -474,7 +475,7 @@ const TrafficPage: React.FC = () => {
     setIsDownloading(true)
     try {
       // 直接下载public/files目录下的PDF文件
-      const response = await fetch('/files/鸟白岛巡礼list.pdf')
+      const response = await fetch(OSS_CONFIG.getFileUrl('/鸟白岛巡礼list.pdf'))
       
       if (!response.ok) {
         throw new Error('下载失败')

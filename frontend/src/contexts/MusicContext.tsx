@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useRef, useEffect, ReactNode, useCallback } from 'react'
+import OSS_CONFIG from '../config/ossConfig';
 
 export interface Track {
   id: string
@@ -59,89 +60,137 @@ interface MusicProviderProps {
   children: ReactNode
 }
 
-// 默认播放列表
-const defaultPlaylist: Track[] = [
+// 音乐数据
+const musicData = [
   {
-    id: 'summer-pockets', // 唯一标识，内部引用，id
-    name: 'Summer Pockets', // 歌曲名称（用户看到）
-    artist: '水月陵', // 艺术家
-    src: '/audio/1-水月陵 - Summer Pockets.mp3', // 音频文件路径
-    album: 'Summer Pockets OST', // 专辑名称
-    cover: 'images/covers/1-summerpockets.webp'
-  },
-  {
-    id: 'sea-you-me',
-    name: 'Sea, You & Me',
-    artist: '麻枝准',
-    src: '/audio/2-麻枝准 - Sea, You & Me.mp3',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/2-sea-you-me.webp'
-  },
-  {
-    id: 'alcatale',
-    name: 'アルカテイル',
-    artist: '鈴木このみ',
-    src: '/audio/3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/3-op.webp'
-  },
-  {
-    id: 'yoru-wa-mijikaku',
-    name: '夜は短く、空は遠くて…',
+    id: 1,
+    title: 'Summer Pockets',
     artist: '水月陵',
-    src: '/audio/4-水月陵 - 夜は短く、空は遠くて….wav',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/4-saikai.webp'
+    src: OSS_CONFIG.getAudioUrl('/1-水月陵 - Summer Pockets.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/1-summerpockets.webp'),
+    duration: 0
   },
   {
-    id: 'hiyoku-no-chou',
-    name: '比翼の蝶たち',
+    id: 2,
+    title: 'Sea, You & Me',
+    artist: '麻枝准',
+    src: OSS_CONFIG.getAudioUrl('/2-麻枝准 - Sea, You & Me.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/2-sea-you-me.webp'),
+    duration: 0
+  },
+  {
+    id: 3,
+    title: 'アルカテイル',
+    artist: '鈴木このみ',
+    src: OSS_CONFIG.getAudioUrl('/3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/3-op.webp'),
+    duration: 0
+  },
+  {
+    id: 4,
+    title: '夜は短く、空は遠くて…',
+    artist: '水月陵',
+    src: OSS_CONFIG.getAudioUrl('/4-水月陵 - 夜は短く、空は遠くて….mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/4-saikai.webp'),
+    duration: 0
+  },
+  {
+    id: 5,
+    title: '比翼の蝶たち',
     artist: '高森奈津美',
-    src: '/audio/5-高森奈津美 - 比翼の蝶たち.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/5-solagado-ao.webp'
+    src: OSS_CONFIG.getAudioUrl('/5-高森奈津美 - 比翼の蝶たち.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/5-空门苍.webp'),
+    duration: 0
   },
   {
-    id: 'departure',
-    name: 'Departure!',
+    id: 6,
+    title: 'Departure!',
     artist: '嶺内ともみ',
-    src: '/audio/6-嶺内ともみ - Departure!.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/6-kushima-kamome.webp'
+    src: OSS_CONFIG.getAudioUrl('/6-嶺内ともみ - Departure!.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/6-久岛鸥.webp'),
+    duration: 0
   },
   {
-    id: 'with',
-    name: 'with',
+    id: 7,
+    title: 'with',
     artist: '嶺内ともみ',
-    src: '/audio/7-嶺内ともみ - with.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/7-with.webp'
+    src: OSS_CONFIG.getAudioUrl('/7-嶺内ともみ - with.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/7-with.webp'),
+    duration: 0
   },
   {
-    id: 'natsu-ni-kimi-wo',
-    name: '夏に君を待ちながら',
+    id: 8,
+    title: '夏に君を待ちながら',
     artist: '小原好美',
-    src: '/audio/8-小原好美 - 夏に君を待ちながら.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/8-shiroha.webp'
+    src: OSS_CONFIG.getAudioUrl('/8-小原好美 - 夏に君を待ちながら.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/8-白羽.webp'),
+    duration: 0
   },
   {
-    id: 'tsumugi-no-natsuyasumi',
-    name: '紬の夏休み',
+    id: 9,
+    title: '紬の夏休み',
     artist: '岩井映美里',
-    src: '/audio/9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/9-tsumugi-no-natsuyasumi.webp'
+    src: OSS_CONFIG.getAudioUrl('/9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/9-紬的暑假.webp'),
+    duration: 0
   },
   {
-    id: 'golden-hours',
-    name: 'Golden Hours',
+    id: 10,
+    title: 'Golden Hours',
     artist: '岩井映美里',
-    src: '/audio/10-岩井映美里 - Golden Hours.flac',
-    album: 'Summer Pockets OST',
-    cover: 'images/covers/10-golden-hours.webp'
+    src: OSS_CONFIG.getAudioUrl('/10-岩井映美里 - Golden Hours.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/10-golden-hours.webp'),
+    duration: 0
   },
-]
+  {
+    id: 11,
+    title: '魔法の絵日記',
+    artist: '小原好美',
+    src: OSS_CONFIG.getAudioUrl('/11-鳴瀬しろは(CV.小原好美),加藤うみ(CV.田中あいみ),VISUAL ARTS  Key - 魔法の絵日記.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/11-魔法日记本.webp'),
+    duration: 0
+  },
+  {
+    id: 12,
+    title: 'Don\'t Cry Red',
+    artist: 'Fairouz Ai',
+    src: OSS_CONFIG.getAudioUrl('/12-神山識(CV.ファイルーズあい),VISUAL ARTS  Key - Don\'t Cry Red.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/12-神山识.webp'),
+    duration: 0
+  },
+  {
+    id: 13,
+    title: '柔らかい記憶',
+    artist: '小山さほみ',
+    src: OSS_CONFIG.getAudioUrl('/13-水織静久(CV.小山さほみ),VISUAL ARTS  Key - 柔らかい記憶.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/13-水织静久.webp'),
+    duration: 0
+  },
+  {
+    id: 14,
+    title: 'しろはの子守歌',
+    artist: '小原好美',
+    src: OSS_CONFIG.getAudioUrl('/14-小原好美,VISUAL ARTS  Key - しろはの子守歌.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/14-白羽的摇篮曲.webp'),
+    duration: 0
+  },
+  {
+    id: 15,
+    title: 'Dear Familiar',
+    artist: '一宮朔',
+    src: OSS_CONFIG.getAudioUrl('/15-野村美樹(CV.一宮朔),VISUAL ARTS  Key - Dear Familiar.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/15-野美希.webp'),
+    duration: 0
+  },
+  {
+    id: 16,
+    title: 'フィニステラー',
+    artist: '鈴木このみ',
+    src: OSS_CONFIG.getAudioUrl('/16-鈴木このみ,VISUAL ARTS  Key - フィニステラー.mp3'),
+    cover: OSS_CONFIG.getImageUrl('/covers/16-加藤羽未.webp'),
+    duration: 0
+  }
+];
 
 export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -157,7 +206,15 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const [volume, setVolumeState] = useState(0.7)
   
   // 播放列表状态
-  const [playlist, setPlaylist] = useState<Track[]>(defaultPlaylist)
+  const [playlist, setPlaylist] = useState<Track[]>(musicData.map(item => ({
+    id: item.id.toString(),
+    name: item.title,
+    artist: item.artist,
+    src: item.src,
+    duration: item.duration,
+    album: 'Summer Pockets OST', // 专辑名称
+    cover: item.cover
+  })))
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playMode, setPlayMode] = useState<PlayMode>('list')
   
@@ -166,26 +223,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   
   const currentTrack = playlist[currentIndex] || null
 
-  // 从后端加载播放列表
-  const loadPlaylistFromAPI = useCallback(async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/music/playlist')
-      if (response.ok) {
-        const data = await response.json()
-        if (data.tracks && data.tracks.length > 0) {
-          setPlaylist(data.tracks)
-          console.log('从API加载播放列表成功:', data.tracks)
-        } else {
-          console.log('API返回空播放列表，使用默认播放列表')
-        }
-      } else {
-        console.log('API请求失败，使用默认播放列表')
-      }
-    } catch (error) {
-      console.error('加载播放列表失败:', error)
-      console.log('使用默认播放列表')
-    }
-  }, [])
+
 
   // 同步playMode到ref
   useEffect(() => {
@@ -193,19 +231,35 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   }, [playMode])
 
   // 初始化音频
+  const checkAudioSupport = (filename: string) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    const supportedFormats = ['mp3', 'wav', 'ogg', 'flac', 'm4a'];
+    
+    if (!extension || !supportedFormats.includes(extension)) {
+      console.warn(`音频格式可能不支持: ${filename}`);
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio || !currentTrack) return
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    // 检查音频格式支持
+    if (!checkAudioSupport(currentTrack.src)) {
+      console.warn('音频格式可能不被浏览器支持');
+    }
 
     // 只有在音频源不同或未初始化时才重新加载
-    if (!isInitializedRef.current || audio.src !== location.origin + currentTrack.src) {
-      audio.src = currentTrack.src
-      audio.volume = volume
-      audio.load()
-      isInitializedRef.current = true
-      console.log('音频初始化完成:', currentTrack.name)
+    if (!isInitializedRef.current || audio.src !== currentTrack.src) {
+      audio.src = currentTrack.src;
+      audio.volume = volume;
+      audio.load();
+      isInitializedRef.current = true;
+      console.log('音频初始化完成:', currentTrack.name);
     }
-  }, [currentTrack])  // 移除play依赖
+  }, [currentTrack]);
 
   // 单独处理音量设置
   useEffect(() => {
@@ -217,46 +271,53 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
 
   // 播放控制函数
   const play = useCallback(async () => {
-    const audio = audioRef.current
-    if (!audio || !currentTrack) return
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
 
     try {
-      // 仅在真正切换歌曲时才重新加载，避免因 URL 编码差异导致每次播放都重新加载
-      const normalizedAudioSrc = decodeURI(audio.src)
-      const expectedSrc = location.origin + currentTrack.src
-
-      if (!normalizedAudioSrc.endsWith(currentTrack.src)) {
-        // 实际源与期望源不一致，说明切换了歌曲
-        audio.src = currentTrack.src
-        audio.load()
-        console.log('加载新音频:', currentTrack.name)
-        
-        // 等待音频加载完成
-        await new Promise((resolve) => {
+      // 检查音频是否已加载
+      if (audio.readyState < 2) { // HAVE_CURRENT_DATA
+        console.log('音频未完全加载，等待加载完成...');
+        await new Promise((resolve, reject) => {
           const handleCanPlay = () => {
-            audio.removeEventListener('canplay', handleCanPlay)
-            resolve(undefined)
-          }
-          audio.addEventListener('canplay', handleCanPlay)
-        })
+            audio.removeEventListener('canplay', handleCanPlay);
+            audio.removeEventListener('error', handleError);
+            resolve(undefined);
+          };
+          
+          const handleError = (e: any) => {
+            audio.removeEventListener('canplay', handleCanPlay);
+            audio.removeEventListener('error', handleError);
+            reject(new Error('音频加载失败'));
+          };
+          
+          audio.addEventListener('canplay', handleCanPlay);
+          audio.addEventListener('error', handleError);
+          
+          // 设置超时
+          setTimeout(() => {
+            audio.removeEventListener('canplay', handleCanPlay);
+            audio.removeEventListener('error', handleError);
+            reject(new Error('音频加载超时'));
+          }, 10000);
+        });
       }
       
-      await audio.play()
-      setIsPlaying(true)
-      setIsPaused(false)
-      console.log('开始播放:', currentTrack.name, '从位置:', audio.currentTime)
+      await audio.play();
+      setIsPlaying(true);
+      setIsPaused(false);
+      console.log('开始播放:', currentTrack.name, '从位置:', audio.currentTime);
     } catch (error: any) {
-      console.error('播放失败:', error.message)
+      console.error('播放失败:', error.message);
       if (error.name === 'NotAllowedError') {
-        console.log('浏览器阻止自动播放，需要用户交互')
-        // 不设置错误状态，保持当前状态
+        console.log('浏览器阻止自动播放，需要用户交互');
       } else {
-        console.error('其他播放错误:', error)
-        setIsPlaying(false)
-        setIsPaused(true)
+        console.error('其他播放错误:', error);
+        setIsPlaying(false);
+        setIsPaused(true);
       }
     }
-  }, [currentTrack])
+  }, [currentTrack]);
 
   const pause = useCallback(() => {
     const audio = audioRef.current
@@ -415,9 +476,51 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     }
 
     const handleError = (e: any) => {
-      console.error('音频加载错误:', e)
-      setIsPlaying(false)
-      setIsPaused(true)
+      const audio = e.target;
+      const error = audio.error;
+      
+      console.error('音频加载错误:', {
+        error: error,
+        errorCode: error ? error.code : 'unknown',
+        errorMessage: error ? error.message : 'unknown',
+        src: audio.src,
+        currentTrack: currentTrack?.name,
+        networkState: audio.networkState,
+        readyState: audio.readyState
+      });
+      
+      // 根据错误类型提供具体的错误信息
+      let errorMessage = '音频加载失败';
+      if (error) {
+        switch (error.code) {
+          case MediaError.MEDIA_ERR_ABORTED:
+            errorMessage = '音频加载被用户中止';
+            break;
+          case MediaError.MEDIA_ERR_NETWORK:
+            errorMessage = '网络错误，无法加载音频';
+            break;
+          case MediaError.MEDIA_ERR_DECODE:
+            errorMessage = '音频解码失败，格式可能不支持';
+            break;
+          case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = '音频格式不支持或文件不存在';
+            break;
+          default:
+            errorMessage = `音频加载错误: ${error.message}`;
+        }
+      }
+      
+      console.error(errorMessage);
+      
+      // 尝试重新加载音频
+      if (currentTrack && audio.src !== currentTrack.src) {
+        console.log('尝试重新加载音频:', currentTrack.src);
+        audio.src = currentTrack.src;
+        audio.load();
+      }
+      
+      setIsPlaying(false);
+      setIsPaused(true);
     }
 
     // 添加事件监听
@@ -436,18 +539,11 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('error', handleError)
     }
-  }, [play, next])
+  }, [play, next, currentTrack])
 
-  // 组件初始化时加载播放列表
-  useEffect(() => {
-    loadPlaylistFromAPI()
-  }, [loadPlaylistFromAPI])
 
-  // 移除自动播放，改为等待用户交互
-  // 现代浏览器阻止自动播放，需要用户交互才能播放音频
 
-  // 移除全局用户交互监听，改为在播放器组件内部处理
-  // 这样可以避免不必要的播放尝试
+
 
   const value = {
     // 播放状态
@@ -489,6 +585,8 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
         ref={audioRef}
         style={{ display: 'none' }}
         preload="metadata"
+        crossOrigin="anonymous"
+        onError={(e) => console.error('Audio element error:', e)}
       />
     </MusicContext.Provider>
   )

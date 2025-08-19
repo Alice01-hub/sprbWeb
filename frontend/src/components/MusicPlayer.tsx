@@ -76,7 +76,9 @@ const PlayerHeader = styled.div`
 `
 
 // 修改 AlbumCover 组件，支持显示封面图
-const AlbumCover = styled.div<{ hasCover: boolean }>`
+const AlbumCover = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'hasCover'
+})<{ hasCover: boolean }>`
   width: 60px;
   height: 60px;
   border-radius: 10px;

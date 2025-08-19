@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
 import GalleryViewer from '../components/GalleryViewer'
 import MapDetailViewer from '../components/MapDetailViewer'
+import OSS_CONFIG from '../config/ossConfig';
 
 // 地图图标接口定义
 interface CheckInIcon {
@@ -909,9 +910,9 @@ const OgijimaPage: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <Title>
-            <Icon><img src="images/webps/男木岛/男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
+            <Icon><img src={OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-灯塔图标.webp')} alt="灯塔" /></Icon>
             男木岛
-            <Icon><img src="images/webps/男木岛/男木岛-灯塔图标.webp" alt="灯塔" /></Icon>
+            <Icon><img src={OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-灯塔图标.webp')} alt="灯塔" /></Icon>
           </Title>
           <Subtitle>宁静的猫岛渔村</Subtitle>
         </motion.div>
@@ -1022,7 +1023,7 @@ const OgijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="images/webps/男木岛/男木岛地图-线路版.webp" alt="男木岛地图" />
+              <MapImage scale={mapScale} src={OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛地图-线路版.webp')} alt="男木岛地图" />
               <MapOverlay>
                 {checkInIcons.map((icon, index) => (
                 <LocationIcon

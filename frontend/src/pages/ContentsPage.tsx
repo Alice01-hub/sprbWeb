@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
-import { motion, AnimatePresence } from 'framer-motion'
-import ButterflyAnimation from '../components/ButterflyAnimation'
-import StarryBackground from '../components/StarryBackground'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import OSS_CONFIG from '../config/ossConfig';
+import ButterflyAnimation from '../components/ButterflyAnimation';
+import StarryBackground from '../components/StarryBackground';
 
 
 const Container = styled.div`
@@ -345,15 +346,15 @@ interface SummaryData {
 
 const summaryData: Record<Exclude<ChapterType, null>, SummaryData> = {
   traffic: {
-    image: '/images/webps/交通篇摘要图.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/交通篇摘要图.webp'),
     text: '🚌 国内各地到高松的完整交通攻略'
   },
   checkin: {
-    image: '/images/webps/打卡篇摘要图.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/打卡篇摘要图.webp'),
     text: '📍 女木岛、男木岛、直岛圣地巡礼'
   },
   other: {
-    image: '/images/webps/神域摘要图.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/神域摘要图.webp'),
     text: '记得来神域寄存和领取自己的七影碟哦！🦋'
   }
 }
@@ -376,6 +377,30 @@ const ContentsPage: React.FC = () => {
   const handleBack = () => {
     navigate('/')
   }
+
+  const contentSections = [
+    {
+      id: 'traffic',
+      title: '交通篇',
+      description: '探索前往鸟白岛的交通方式，包括渡轮时刻表、路线规划等实用信息。',
+      image: OSS_CONFIG.getImageUrl('/webps/交通篇摘要图.webp'),
+      link: '/traffic'
+    },
+    {
+      id: 'checkin',
+      title: '打卡篇',
+      description: '圣地巡礼打卡指南，包含各个地点的详细信息和打卡建议。',
+      image: OSS_CONFIG.getImageUrl('/webps/打卡篇摘要图.webp'),
+      link: '/checkin'
+    },
+    {
+      id: 'shenyu',
+      title: '神域篇',
+      description: '深入探索鸟白岛的神秘传说和神域文化。',
+      image: OSS_CONFIG.getImageUrl('/webps/神域摘要图.webp'),
+      link: '/shenyu'
+    }
+  ];
 
   return (
     <Container>

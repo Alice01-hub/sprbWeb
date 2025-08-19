@@ -1,0 +1,68 @@
+{
+  "project": {
+    "name": "Summer Pockets 巡礼网站",
+    "version": "2.0.0",
+    "description": "Summer Pockets圣地巡礼网站 - 重构版本",
+    "author": "Agent_小苍",
+    "created_date": "2025-08-19",
+    "last_updated": "2025-08-19"
+  },
+  "environments": {
+    "development": {
+      "backend": {
+        "host": "127.0.0.1",
+        "port": 8000,
+        "reload": true,
+        "workers": 1,
+        "log_level": "DEBUG"
+      },
+      "frontend": {
+        "host": "127.0.0.1",
+        "port": 3000,
+        "dev_mode": true
+      },
+      "database": {
+        "type": "sqlite",
+        "path": "./data/traffic_cards.db"
+      }
+    },
+    "production": {
+      "backend": {
+        "host": "0.0.0.0",
+        "port": 8000,
+        "reload": false,
+        "workers": 4,
+        "log_level": "WARNING"
+      },
+      "frontend": {
+        "host": "0.0.0.0",
+        "port": 3000,
+        "dev_mode": false
+      },
+      "database": {
+        "type": "sqlite",
+        "path": "./data/traffic_cards.db"
+      }
+    }
+  },
+  "features": {
+    "authentication": true,
+    "music_player": true,
+    "map_integration": true,
+    "checkin_system": true,
+    "gallery_viewer": true,
+    "responsive_design": true
+  },
+  "oss": {
+    "enabled": true,
+    "base_url": "https://oss.sprb.love",
+    "bucket": "sprbweb-src",
+    "region": "oss-cn-guangzhou"
+  },
+  "security": {
+    "cors_enabled": true,
+    "rate_limiting": true,
+    "jwt_expiration": 3600,
+    "max_file_size": 10485760
+  }
+}

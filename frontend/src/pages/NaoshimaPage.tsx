@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
 import GalleryViewer from '../components/GalleryViewer'
 import MapDetailViewer from '../components/MapDetailViewer'
+import OSS_CONFIG from '../config/ossConfig';
 
 // 地图图标接口定义
 interface CheckInIcon {
@@ -934,7 +935,7 @@ const NaoshimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapScale} src="images/webps/直岛/直岛地图-路线版.webp" alt="直岛地图" />
+              <MapImage scale={mapScale} src={OSS_CONFIG.getImageUrl('/webps/直岛/直岛地图-路线版.webp')} alt="直岛地图" />
               <MapOverlay>
                 {checkInIcons.map((icon, index) => (
                   <LocationIcon

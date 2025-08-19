@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlider from '../components/ImageSlider'
 import GalleryViewer from '../components/GalleryViewer'
+import OSS_CONFIG from '../config/ossConfig';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -860,7 +861,7 @@ const MegijimaPage: React.FC = () => {
         >
           <MapFrame>
             <MapContainer>
-              <MapImage scale={mapConfig.scale} src="images/webps/女木岛/女木岛地图-线路版.webp" alt="女木岛地图" />
+              <MapImage scale={mapConfig.scale} src={OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛地图-线路版.webp')} alt="女木岛地图" />
               <MapOverlay>
                 {/* 山洞地标 */}
                 <LocationIcon
@@ -889,7 +890,7 @@ const MegijimaPage: React.FC = () => {
                   style={{ zIndex: 15, cursor: 'pointer' }}
                 >
                   <img 
-                    src="images/webps/女木岛/女木岛-山洞.webp" 
+                    src={OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-山洞.webp')} 
                     alt="山洞"
                     style={{ 
                       width: `${mapConfig.sizes.cave}px`, 
@@ -969,7 +970,7 @@ const MegijimaPage: React.FC = () => {
                   style={{ zIndex: 10, cursor: 'pointer' }}
                 >
                   <img 
-                    src="images/webps/女木岛/女木岛-山路地标.webp" 
+                    src={OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-山路地标.webp')} 
                     alt="秘密基地山路"
                     style={{ 
                       width: `${mapConfig.sizes.mountainUP}px`, 
@@ -1015,7 +1016,7 @@ const MegijimaPage: React.FC = () => {
                   style={{ zIndex: 20 }}
                 >
                   <img 
-                    src="images/webps/女木岛/女木岛-山路地标.webp" 
+                    src={OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-山路地标.webp')} 
                     alt="山道"
                     style={{ 
                       width: `${mapConfig.sizes.mountainDOWN}px`, 

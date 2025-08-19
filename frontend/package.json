@@ -17,6 +17,7 @@
     "test": "vitest",
     "test:run": "vitest --run",
     "test:coverage": "vitest --coverage",
+    "test:oss": "tsc && node --loader ts-node/esm src/utils/testOssPaths.ts",
     "analyze": "npx vite-bundle-analyzer dist",
     "clean": "rm -rf dist node_modules/.vite",
     "type-check": "tsc --noEmit"

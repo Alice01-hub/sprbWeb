@@ -1,7 +1,8 @@
-import React from 'react'
-import styled from 'styled-components'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import TouchOptimizedTooltip, { TooltipContent } from '../components/TouchOptimizedTooltip'
+import OSS_CONFIG from '../config/ossConfig';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -92,7 +93,7 @@ const TooltipTestPage: React.FC = () => {
           <TouchOptimizedTooltip 
             content={
               <TooltipContent
-                image="images/webps/直岛/直岛-小卖部.webp"
+                image={OSS_CONFIG.getImageUrl('/webps/直岛/直岛-小卖部.webp')}
                 title="直岛小卖部"
                 description="这里是直岛的小卖部，可以购买各种纪念品和日用品。"
               />
@@ -142,7 +143,7 @@ const TooltipTestPage: React.FC = () => {
           <TouchOptimizedTooltip 
             content={
               <TooltipContent
-                image="images/webps/男木岛/男木岛-灯塔.webp"
+                image={OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-灯塔.webp')}
                 title="男木岛灯塔"
                 description="这是男木岛的标志性灯塔，是岛上最重要的地标之一。"
               />

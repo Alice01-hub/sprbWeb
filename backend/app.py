@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """
-Summer Pockets 巡礼网站后端API
+Summer Pockets 巡礼网站后端API - 简化版本
 
 主要功能：
-- 用户认证和授权
-- 七影蝶系统管理
-- 文件上传和处理
-- 数据统计和监控
-- 备份和恢复
+- 旅游攻略数据管理
+- 音乐播放服务
+- PDF生成服务
+- 基础健康检查
 
 环境支持：
 - development: 开发环境
-- staging: 测试环境 
 - production: 生产环境
 """
 
@@ -38,13 +36,11 @@ import io
 import sqlite3
 from datetime import datetime
 import tempfile
-from api import auth
-from api import butterfly
 from performance_monitor import get_monitor
 from config_loader import ConfigLoader
 import psutil
 
-app = FastAPI(title="Summer Pockets API", version="1.0.0")
+app = FastAPI(title="Summer Pockets 巡礼网站 API", version="2.0.0", description="简化版本 - 专注于旅游攻略和音乐服务")
 
 # CORS中间件
 app.add_middleware(
@@ -398,52 +394,52 @@ def create_pilgrimage_checklist_pdf():
                     "Flight booking platform comparison",
                     "Understand baggage check-in regulations",
                     "Familiar with check-in and boarding process",
-                    "Understand Japan entry process",
+                    "Understand Japanese entry process",
                     "Prepare transportation card purchase",
-                    "Check airport transfer information"
+                    "Query airport transfer information"
                 ]
             },
             {
-                "title": "Japan Domestic Itinerary",
+                "title": "Domestic Travel in Japan",
                 "items": [
-                    "Determine airport to Takamatsu transportation",
-                    "Check detailed transfer process",
-                    "Learn ticket machine usage",
+                    "Determine transportation from airport to Takamatsu",
+                    "Query detailed transfer process",
+                    "Learn how to use ticket machines",
                     "Plan scenic spot transportation routes",
-                    "Prepare various route plans",
-                    "Download relevant transportation apps",
+                    "Prepare various route options",
+                    "Download relevant transportation APPs",
                     "Bookmark useful website links"
                 ]
             },
             {
-                "title": "Schedule & Budget",
+                "title": "Itinerary Planning & Budget",
                 "items": [
-                    "Make daily itinerary plans",
+                    "Make daily itinerary plan",
                     "Budget allocation (transportation, accommodation, dining, etc.)",
                     "Book popular attraction tickets",
                     "Arrange shopping time and location",
-                    "Make emergency plans",
+                    "Develop emergency plan",
                     "Prepare departure arrangements"
                 ]
             },
             {
-                "title": "Useful Tools",
+                "title": "Practical Tools Recommendation",
                 "items": [
                     "Google Maps (route planning)",
-                    "Yahoo! Transit (transfer query)",
+                    "Yahoo!乗換案内 (transfer query)",
                     "Google Translate (language translation)",
-                    "Japan tourism app download",
+                    "Japanese travel APP download",
                     "Weather forecast query",
-                    "Exchange rate query tools",
+                    "Exchange rate query tool",
                     "Emergency contact record"
                 ]
             },
             {
-                "title": "Pilgrimage Specific",
+                "title": "Sacred Site Pilgrimage Special",
                 "items": [
-                    "Megijima transportation and attraction info",
-                    "Ogijima transportation and attraction info",
-                    "Naoshima transportation and attraction info",
+                    "Megijima transportation and attraction information",
+                    "Ogijima transportation and attraction information",
+                    "Naoshima transportation and attraction information",
                     "Photo location marking",
                     "Opening hours confirmation",
                     "Ticket or reservation information",
@@ -452,394 +448,213 @@ def create_pilgrimage_checklist_pdf():
             }
         ]
     
-    # 添加各个分节
+    # 生成清单内容
     for section in checklist_sections:
         story.append(Paragraph(section["title"], heading_style))
-        story.append(Spacer(1, 10))
-        
-        # 创建复选框列表
         for item in section["items"]:
-            checkbox_text = f"☐ {item}"
-            story.append(Paragraph(checkbox_text, normal_style))
-            story.append(Spacer(1, 5))
-        
+            checkbox = "☐ " if FONT_NAME == 'ChineseFont' else "☐ "
+            story.append(Paragraph(checkbox + item, normal_style))
         story.append(Spacer(1, 15))
     
-    # 添加页脚
-    footer_text = "祝您的 Summer Pockets 圣地巡礼之旅愉快！" if FONT_NAME == 'ChineseFont' else "Wish you a pleasant Summer Pockets pilgrimage journey!"
-    story.append(Spacer(1, 20))
-    story.append(Paragraph(footer_text, normal_style))
-    
-    try:
-        # 构建PDF
-        doc.build(story)
-        buffer.seek(0)
-        return buffer
-    except Exception as e:
-        print(f"PDF生成失败: {e}")
-        # 如果PDF生成失败，创建一个简单的错误PDF
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4)
-        story = []
-        error_style = ParagraphStyle(
-            'ErrorStyle',
-            parent=styles['Normal'],
-            fontSize=14,
-            fontName='Helvetica',
-            alignment=1
-        )
-        story.append(Paragraph("PDF Generation Error", error_style))
-        story.append(Spacer(1, 20))
-        story.append(Paragraph("Sorry, the PDF could not be generated properly.", error_style))
-        story.append(Paragraph("Please try again later or contact support.", error_style))
-        doc.build(story)
-        buffer.seek(0)
-        return buffer
+    # 生成PDF
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
 
-# API路由
+# API端点
+
 @app.get("/api/health")
 async def health_check():
-    """健康检查"""
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    """健康检查端点"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "2.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "description": "Summer Pockets 巡礼网站 API - 简化版本"
+    }
 
 @app.get("/api/audio-files")
 async def get_audio_files():
     """获取音频文件列表"""
+    audio_dir = Path("frontend/public/audio")
+    if not audio_dir.exists():
+        return {"files": []}
+    
     audio_files = []
-    public_audio_path = '../frontend/public/audio'
+    for file_path in audio_dir.glob("*"):
+        if file_path.is_file() and file_path.suffix.lower() in ['.mp3', '.flac', '.wav', '.ogg']:
+            audio_files.append({
+                "name": file_path.name,
+                "path": f"/audio/{file_path.name}",
+                "size": file_path.stat().st_size,
+                "type": file_path.suffix.lower()
+            })
     
-    if os.path.exists(public_audio_path):
-        for filename in os.listdir(public_audio_path):
-            if filename.endswith(('.mp3', '.wav', '.ogg')):
-                audio_files.append({
-                    'name': filename,
-                    'path': f'/audio/{filename}'
-                })
-    
-    return audio_files
+    return {"files": audio_files}
 
 @app.get("/api/music/playlist")
 async def get_music_playlist():
-    """获取完整音乐播放列表"""
-    """格式
-    '水月陵 - Summer Pockets.mp3': {
-                'name': 'Summer Pockets',
-                'artist': '水月陵',
-                'album': 'Summer Pockets OST',
-                'id': 'summer-pockets'
-            },
-    """
+    """获取音乐播放列表"""
     try:
-        tracks = []
-        public_audio_path = '../frontend/public/audio'
-        
-        # 音乐文件和艺术家信息的映射
-        music_info = {
-            '1-水月陵 - Summer Pockets.mp3': {
-                'name': 'Summer Pockets',
-                'artist': '水月陵',
-                'album': 'Summer Pockets OST',
-                'id': 'summer-pockets',
-                'cover': 'images/covers/1-summerpockets.webp'
+        # 从OSS配置获取音乐列表
+        music_data = [
+            {
+                "id": "1",
+                "name": "Summer Pockets",
+                "artist": "水月陵",
+                "album": "Summer Pockets Original Soundtrack",
+                "duration": 0,
+                "src": "https://oss.sprb.love/audio/1-水月陵 - Summer Pockets.mp3",
+                "cover": "https://oss.sprb.love/images/covers/1-summerpockets.webp"
             },
-            '2-麻枝准 - Sea, You & Me.mp3': {
-                'name': 'Sea, You & Me',
-                'artist': '麻枝准',
-                'album': 'Summer Pockets OST',
-                'id': 'sea-you-me',
-                'cover': 'images/covers/2-sea-you-me.webp'
+            {
+                "id": "2",
+                "name": "Sea, You & Me",
+                "artist": "麻枝准",
+                "album": "Summer Pockets Original Soundtrack",
+                "duration": 0,
+                "src": "https://oss.sprb.love/audio/2-麻枝准 - Sea, You & Me.mp3",
+                "cover": "https://oss.sprb.love/images/covers/2-sea-you-me.webp"
             },
-            '3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3': {
-                'name': 'アルカテイル',
-                'artist': '鈴木このみ',
-                'album': 'Summer Pockets OST',
-                'id': 'alcatale',
-                'cover': 'images/covers/3-op.webp'
-            },
-            '4-水月陵 - 夜は短く、空は遠くて….wav': {
-                'name': '夜は短く、空は遠くて…',
-                'artist': '水月陵',
-                'album': 'Summer Pockets OST',
-                'id': 'yoru-wa-mijikaku',
-                'cover': 'images/covers/4-saikai.webp'
-            },
-            '5-高森奈津美 - 比翼の蝶たち.flac': {
-                'name': '比翼の蝶たち',
-                'artist': '高森奈津美',
-                'album': 'Summer Pockets OST',
-                'id': 'hiyoku-no-chou',
-                'cover': 'images/covers/5-soragado-ao.webp'
-            },
-            '6-嶺内ともみ - Departure!.flac': {
-                'name': 'Departure!',
-                'artist': '嶺内ともみ',
-                'album': 'Summer Pockets OST',
-                'id': 'departure',
-                'cover': 'images/covers/6-kushima-kamome.webp'
-            },
-            '7-嶺内ともみ - with.flac': {
-                'name': 'with',
-                'artist': '嶺内ともみ',
-                'album': 'Summer Pockets OST',
-                'id': 'with',
-                'cover': 'images/covers/7-with.webp'
-            },
-            '8-小原好美 - 夏に君を待ちながら.flac': {
-                'name': '夏に君を待ちながら',
-                'artist': '小原好美',
-                'album': 'Summer Pockets OST',
-                'id': 'natsu-ni-kimi-wo',
-                'cover': 'images/covers/8-shiroha.webp'
-            },
-            '9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.flac': {
-                'name': '紬の夏休み',
-                'artist': '岩井映美里',
-                'album': 'Summer Pockets OST',
-                'id': 'tsumugi-no-natsuyasumi',
-                'cover': 'images/covers/9-tsumugi-no-natsuyasumi.webp'
-            },
-            '10-岩井映美里 - Golden Hours.flac': {
-                'name': 'Golden Hours',
-                'artist': '岩井映美里',
-                'album': 'Summer Pockets OST',
-                'id': 'golden-hours',
-                'cover': 'images/covers/10-golden-hours.webp'
-            },
-        }
-        
-        if os.path.exists(public_audio_path):
-            for filename in os.listdir(public_audio_path):
-                if filename.endswith(('.mp3', '.wav', '.ogg', '.flac', '.m4a')):
-                    info = music_info.get(filename, {
-                        'name': filename.rsplit('.', 1)[0],
-                        'artist': 'Unknown Artist',
-                        'album': 'Unknown Album',
-                        'id': filename.lower().replace(' ', '-').replace('.', '-')
-                    })
-                    
-                    tracks.append({
-                        'id': info['id'],
-                        'name': info['name'],
-                        'artist': info['artist'],
-                        'album': info['album'],
-                        'src': f'/audio/{filename}',
-                        'cover': info.get('cover'),  # 可以后续添加封面图片
-                        'duration': None  # 可以后续添加音频长度检测
-                    })
-        
-        # 按照预定义顺序排序
-        order = [
-            'summer-pockets', 
-            'sea-you-me', 
-            'alcatale', 
-            'yoru-wa-mijikaku',
-            'natsu-ni-kimi-wo',
-            'hiyoku-no-chou', 
-            'departure', 
-            'golden-hours',
-            'with', 
-            'tsumugi-no-natsuyasumi',
+            {
+                "id": "3",
+                "name": "アルカテイル",
+                "artist": "折戸伸治,水月陵",
+                "album": "Summer Pockets Original Soundtrack",
+                "duration": 0,
+                "src": "https://oss.sprb.love/audio/3-折戸伸治,水月陵 - アルカテイル -story-.mp3",
+                "cover": "https://oss.sprb.love/images/covers/3-op.webp"
+            }
         ]
-        tracks.sort(key=lambda x: order.index(x['id']) if x['id'] in order else len(order))
         
-        return {
-            'total': len(tracks),
-            'tracks': tracks
-        }
-        
+        return PlaylistInfo(
+            total=len(music_data),
+            tracks=music_data
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取播放列表失败: {str(e)}")
 
 @app.get("/api/music/track/{track_id}")
-async def get_track_info(track_id: str):
-    """获取单个音轨信息"""
+async def get_music_track(track_id: str):
+    """获取特定音轨信息"""
     try:
-        playlist = await get_music_playlist()
-        
-        for track in playlist['tracks']:
-            if track['id'] == track_id:
-                return track
-        
-        raise HTTPException(status_code=404, detail="音轨未找到")
-        
-    except HTTPException:
-        raise
+        # 这里可以根据track_id返回特定音轨信息
+        # 简化版本直接返回成功状态
+        return {
+            "id": track_id,
+            "status": "success",
+            "message": "音轨信息获取成功"
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取音轨信息失败: {str(e)}")
 
 @app.post("/api/music/play-stats")
-async def log_play_stats(data: dict):
-    """记录播放统计数据"""
-    try:
-        # 这里可以记录播放统计，比如播放次数、播放时长等
-        # 现在先简单返回成功
-        return {"message": "播放统计记录成功", "data": data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"记录播放统计失败: {str(e)}")
+async def record_play_stats():
+    """记录播放统计（简化版本）"""
+    return {
+        "status": "success",
+        "message": "播放统计记录成功",
+        "timestamp": datetime.now().isoformat()
+    }
 
 @app.get("/api/traffic-cards")
 async def get_traffic_cards():
-    """获取交通卡片数据"""
+    """获取交通攻略卡片"""
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
-        
         cursor.execute('''
-            SELECT id, title, icon, content, category, subcategory, order_index, 
-                   created_at, updated_at 
-            FROM traffic_cards 
-            ORDER BY order_index ASC, created_at ASC
+            SELECT id, title, icon, content, category, subcategory, order_index, created_at, updated_at
+            FROM traffic_cards
+            ORDER BY order_index, created_at
         ''')
+        rows = cursor.fetchall()
+        conn.close()
         
         cards = []
-        for row in cursor.fetchall():
+        for row in rows:
             cards.append({
-                'id': row[0],
-                'title': row[1],
-                'icon': row[2],
-                'content': row[3],
-                'category': row[4],
-                'subcategory': row[5],
-                'order_index': row[6],
-                'created_at': row[7],
-                'updated_at': row[8]
+                "id": row[0],
+                "title": row[1],
+                "icon": row[2],
+                "content": row[3],
+                "category": row[4],
+                "subcategory": row[5],
+                "order_index": row[6],
+                "created_at": row[7],
+                "updated_at": row[8]
             })
         
-        conn.close()
-        return cards
+        return {"cards": cards}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"获取交通攻略卡片失败: {str(e)}")
 
 @app.post("/api/traffic-cards")
 async def create_traffic_card(card: TrafficCard):
-    """创建交通卡片"""
+    """创建交通攻略卡片"""
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
-        
         cursor.execute('''
             INSERT INTO traffic_cards (title, icon, content, category, subcategory, order_index)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (card.title, card.icon, card.content, card.category, card.subcategory, card.order_index))
-        
-        card_id = cursor.lastrowid
         conn.commit()
+        card_id = cursor.lastrowid
         conn.close()
         
-        return {"id": card_id, "message": "卡片创建成功"}
+        return {"id": card_id, "message": "交通攻略卡片创建成功"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"创建交通攻略卡片失败: {str(e)}")
 
 @app.put("/api/traffic-cards/{card_id}")
 async def update_traffic_card(card_id: int, card: TrafficCard):
-    """更新交通卡片"""
+    """更新交通攻略卡片"""
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
-        
         cursor.execute('''
             UPDATE traffic_cards 
-            SET title=?, icon=?, content=?, category=?, subcategory=?, order_index=?, updated_at=?
+            SET title=?, icon=?, content=?, category=?, subcategory=?, order_index=?, updated_at=CURRENT_TIMESTAMP
             WHERE id=?
-        ''', (card.title, card.icon, card.content, card.category, card.subcategory, card.order_index, 
-              datetime.now().isoformat(), card_id))
-        
+        ''', (card.title, card.icon, card.content, card.category, card.subcategory, card.order_index, card_id))
         conn.commit()
         conn.close()
         
-        return {"message": "卡片更新成功"}
+        return {"message": "交通攻略卡片更新成功"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"更新交通攻略卡片失败: {str(e)}")
 
 @app.delete("/api/traffic-cards/{card_id}")
 async def delete_traffic_card(card_id: int):
-    """删除交通卡片"""
+    """删除交通攻略卡片"""
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
-        
-        cursor.execute('DELETE FROM traffic_cards WHERE id = ?', (card_id,))
+        cursor.execute('DELETE FROM traffic_cards WHERE id=?', (card_id,))
         conn.commit()
         conn.close()
         
-        return {"message": "卡片删除成功"}
+        return {"message": "交通攻略卡片删除成功"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/traffic-data")
-async def get_traffic_data():
-    """获取交通数据"""
-    try:
-        with open(os.path.join(DATA_FOLDER, 'traffic_guides.json'), 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {"message": "数据文件不存在"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/traffic-data")
-async def save_traffic_data(data: dict):
-    """保存交通数据"""
-    try:
-        with open(os.path.join(DATA_FOLDER, 'traffic_guides.json'), 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        return {"message": "数据保存成功"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/traffic-guides")
-async def get_traffic_guides():
-    """获取交通指引"""
-    try:
-        with open(os.path.join(DATA_FOLDER, 'traffic_guides.json'), 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {"message": "数据文件不存在"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/traffic-guides")
-async def save_traffic_guides(data: dict):
-    """保存交通指引"""
-    try:
-        with open(os.path.join(DATA_FOLDER, 'traffic_guides.json'), 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        return {"message": "指引保存成功"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"删除交通攻略卡片失败: {str(e)}")
 
 @app.get("/api/download-checklist")
 async def download_checklist():
-    """下载巡礼清单markdown文件"""
+    """下载巡礼任务清单PDF"""
     try:
-        print("开始下载巡礼清单...")
+        buffer = create_pilgrimage_checklist_pdf()
+        filename = f"Summer_Pockets_巡礼任务清单_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         
-        # 巡礼清单文件路径
-        checklist_path = '../素材/巡礼清单.md'
-        
-        # 检查文件是否存在
-        if not os.path.exists(checklist_path):
-            raise HTTPException(status_code=404, detail="巡礼清单文件不存在")
-        
-        # 验证文件是否有内容
-        if os.path.getsize(checklist_path) == 0:
-            raise HTTPException(status_code=500, detail="巡礼清单文件为空")
-        
-        print(f"巡礼清单文件找到: {checklist_path}")
-        print(f"文件大小: {os.path.getsize(checklist_path)} bytes")
-        
-        # 设置正确的中文文件名
-        filename = 'Summer_Pockets_巡礼任务清单.md'
-        
-        # 返回文件响应
-        return FileResponse(
-            checklist_path,
-            media_type='text/markdown; charset=utf-8',
+        return Response(
+            content=buffer.getvalue(),
+            media_type="application/pdf",
             filename=filename,
             headers={
                 "Content-Disposition": f"attachment; filename*=UTF-8''{filename}",
                 "Cache-Control": "no-cache",
-                "Content-Type": "text/markdown; charset=utf-8"
+                "Content-Type": "application/pdf; charset=utf-8"
             }
         )
         
@@ -847,91 +662,26 @@ async def download_checklist():
         print(f"下载失败: {str(e)}")
         raise HTTPException(status_code=500, detail=f"下载失败: {str(e)}")
 
-app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-app.include_router(butterfly.router, prefix="/api/butterfly", tags=["butterfly"])
-
-# 监控和健康检查端点
+# 基础健康检查端点
 @app.get("/health")
 async def health_check():
     """健康检查端点"""
     try:
         # 检查数据库连接
-        from api.database import get_db
-        db = next(get_db())
-        db.execute("SELECT 1").fetchone()
-        db.close()
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1").fetchone()
+        conn.close()
         
         return {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "version": "1.0.0",
-            "environment": os.getenv("ENVIRONMENT", "development")
+            "version": "2.0.0",
+            "environment": os.getenv("ENVIRONMENT", "development"),
+            "description": "Summer Pockets 巡礼网站 API - 简化版本"
         }
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
 
-@app.get("/metrics")
-async def get_metrics():
-    """获取性能指标"""
-    try:
-        monitor = get_monitor()
-        metrics = monitor.get_current_metrics()
-        return metrics
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get metrics: {str(e)}")
-
-@app.get("/metrics/report")
-async def get_performance_report(hours: int = 24):
-    """获取性能报告"""
-    try:
-        monitor = get_monitor()
-        report = monitor.get_performance_report(hours)
-        return report
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(e)}")
-
-@app.get("/system/info")
-async def get_system_info():
-    """获取系统信息"""
-    try:
-        config = ConfigLoader.load()
-        
-        # 系统信息
-        cpu_count = psutil.cpu_count()
-        memory = psutil.virtual_memory()
-        disk = psutil.disk_usage('.')
-        boot_time = datetime.fromtimestamp(psutil.boot_time())
-        
-        # 进程信息
-        current_process = psutil.Process()
-        process_info = {
-            "pid": current_process.pid,
-            "cpu_percent": current_process.cpu_percent(),
-            "memory_percent": current_process.memory_percent(),
-            "memory_info": current_process.memory_info()._asdict(),
-            "create_time": datetime.fromtimestamp(current_process.create_time()).isoformat(),
-            "num_threads": current_process.num_threads()
-        }
-        
-        return {
-            "system": {
-                "cpu_count": cpu_count,
-                "memory_total": memory.total,
-                "memory_available": memory.available,
-                "disk_total": disk.total,
-                "disk_free": disk.free,
-                "boot_time": boot_time.isoformat(),
-                "platform": os.name
-            },
-            "process": process_info,
-            "config": {
-                "environment": config.get("environment"),
-                "database_path": config.get("database", {}).get("path"),
-                "log_level": config.get("logging", {}).get("level")
-            },
-            "timestamp": datetime.now().isoformat()
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get system info: {str(e)}")
-
+# 静态文件服务
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 

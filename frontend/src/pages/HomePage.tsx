@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
+import OSS_CONFIG from '../config/ossConfig';
 
 const sparkle = keyframes`
   0%, 100% { opacity: 0.3; }
@@ -358,7 +359,7 @@ const HomePage: React.FC = () => {
               <Title>Summer Pockets巡礼日记</Title>
               <CoverImageContainer>
                 <CoverImage 
-                  src="images/webps/sprb封面图.webp" 
+                  src={OSS_CONFIG.getImageUrl('/webps/sprb封面图.webp')}
                   alt="Summer Pockets 封面"
                   onClick={() => setIsModalOpen(true)} // 新增：点击弹出大图
                 />
@@ -386,7 +387,7 @@ const HomePage: React.FC = () => {
           >
             {/* 🔧 根据悬停状态切换图片 */}
             <LockImage
-              src={isLockHovered ? "/images/webps/七影蝶-3.webp" : "/images/webps/七影蝶-4.webp"}
+              src={isLockHovered ? OSS_CONFIG.getImageUrl('/webps/七影蝶-3.webp') : OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')}
               alt="蝴蝶锁图标"
             />
           </Lock>
@@ -404,7 +405,7 @@ const HomePage: React.FC = () => {
           >
             <CloseButton onClick={e => { e.stopPropagation(); setIsModalOpen(false); }} title="关闭">×</CloseButton>
             <ModalImage 
-              src="images/webps/sprb封面图.webp" 
+              src={OSS_CONFIG.getImageUrl('/webps/sprb封面图.webp')}
               alt="Summer Pockets 封面大图"
               onClick={e => e.stopPropagation()} // 阻止冒泡，点击图片不关闭
             />
