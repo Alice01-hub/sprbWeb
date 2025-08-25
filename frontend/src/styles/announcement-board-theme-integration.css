@@ -1,0 +1,442 @@
+/**
+ * 公告栏主题集成样式
+ * Announcement Board Theme Integration
+ * 
+ * 确保公告栏与现有网站主题协调统一
+ */
+
+/* ========================================
+   与现有网站主题的颜色协调
+   Color Coordination with Existing Theme
+   ======================================== */
+
+/* 继承网站主色调，与夏日主题协调 */
+:root {
+  /* 从全局主题继承的颜色变量 */
+  --announcement-primary-orange: var(--primary-orange, #ff9a6b);
+  --announcement-primary-yellow: var(--primary-yellow, #ffd06b);
+  --announcement-sky-blue: var(--sky-blue, #87ceeb);
+  --announcement-warm-white: var(--warm-white, #faf8f3);
+  --announcement-diary-brown: var(--diary-brown, #8b4513);
+  --announcement-text-brown: var(--text-brown, #5d4037);
+  
+  /* 公告栏专用协调色彩 */
+  --announcement-accent-orange: rgba(255, 154, 107, 0.15);
+  --announcement-accent-yellow: rgba(255, 208, 107, 0.12);
+  --announcement-accent-blue: rgba(135, 206, 235, 0.1);
+  
+  /* 木质色彩与夏日主题的融合 */
+  --wood-summer-blend: linear-gradient(135deg, 
+    var(--announcement-primary-orange) 0%, 
+    var(--wood-light) 25%, 
+    var(--announcement-primary-yellow) 50%, 
+    var(--wood-secondary) 75%, 
+    var(--announcement-sky-blue) 100%
+  );
+}
+
+/* ========================================
+   字体系统集成
+   Font System Integration
+   ======================================== */
+
+/* 继承网站主要字体，同时保持日式风格 */
+.hanging-announcement-board,
+.hanging-announcement-board * {
+  font-family: 'KaiTi', '楷体', 'STKaiti', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif !important;
+}
+
+/* 标题使用更加突出的字体层级 */
+.wooden-panel__title,
+.hanging-wooden-sign__text {
+  font-family: 'KaiTi', '楷体', 'STKaiti', serif !important;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* 正文内容使用网站标准字体 */
+.announcement-item__content-body,
+.announcement-content__body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif !important;
+  line-height: 1.7;
+}
+
+/* 小标签和辅助文字 */
+.announcement-item__meta,
+.announcement-panel__filter-label,
+.announcement-content__meta {
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif !important;
+  font-size: 12px;
+}
+
+/* ========================================
+   间距规范集成
+   Spacing Standards Integration
+   ======================================== */
+
+/* 使用网站标准间距系统 */
+.wooden-panel__content {
+  padding: 24px;
+  gap: 16px;
+}
+
+.announcement-panel__controls {
+  padding: 20px 0;
+  margin-bottom: 16px;
+}
+
+.announcement-item {
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.announcement-item__header {
+  padding: 16px 16px 12px 28px;
+  gap: 16px;
+}
+
+.announcement-item__content,
+.announcement-item__preview {
+  padding: 12px 16px 16px 28px;
+  margin-top: 12px;
+}
+
+/* 响应式间距 */
+@media (max-width: 768px) {
+  .wooden-panel__content {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .announcement-item {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+  
+  .announcement-item__header {
+    padding: 12px 12px 8px 20px;
+    gap: 12px;
+  }
+  
+  .announcement-item__content,
+  .announcement-item__preview {
+    padding: 8px 12px 12px 20px;
+    margin-top: 8px;
+  }
+}
+
+/* ========================================
+   蝴蝶鼠标特效系统适配
+   Butterfly Mouse Effect System Adaptation
+   ======================================== */
+
+/* 确保公告栏所有可交互元素都支持蝴蝶鼠标特效 */
+.hanging-wooden-sign,
+.wooden-panel__close,
+.announcement-item,
+.announcement-panel__search-input,
+.announcement-panel__filter-select,
+.announcement-panel__load-more-button,
+.announcement-content__expand-button,
+.announcement-content__collapse-button,
+.wooden-panel__search-clear {
+  cursor: none !important;
+  pointer-events: auto !important;
+}
+
+/* 为蝴蝶鼠标特效添加特殊的悬停状态 */
+.hanging-wooden-sign:hover,
+.announcement-item:hover,
+.wooden-panel__close:hover,
+.announcement-panel__load-more-button:hover,
+.announcement-content__expand-button:hover,
+.announcement-content__collapse-button:hover {
+  /* 增强悬停效果，配合蝴蝶动画 */
+  transition: all 0.3s ease;
+  transform: translateY(-2px);
+}
+
+/* 可点击区域的视觉反馈 */
+.hanging-wooden-sign:hover .hanging-wooden-sign__board {
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.35),
+    0 3px 8px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 var(--wood-shadow-light),
+    inset 0 -2px 0 var(--wood-shadow-dark),
+    0 0 0 2px rgba(255, 154, 107, 0.3) !important;
+}
+
+.announcement-item:hover {
+  border-color: rgba(255, 154, 107, 0.4) !important;
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(255, 154, 107, 0.2) !important;
+}
+
+/* ========================================
+   夏日主题色彩融合
+   Summer Theme Color Integration
+   ======================================== */
+
+/* 公告栏背景与网站背景的协调 */
+.wooden-panel__backdrop {
+  background: linear-gradient(135deg, 
+    rgba(255, 154, 107, 0.15) 0%, 
+    rgba(47, 27, 20, 0.7) 50%, 
+    rgba(135, 206, 235, 0.1) 100%) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* 重要程度颜色与网站主题的协调 */
+.announcement-item--urgent .announcement-item__priority-bar {
+  background: linear-gradient(to bottom, 
+    #DC3545, 
+    var(--announcement-primary-orange)) !important;
+}
+
+.announcement-item--important .announcement-item__priority-bar {
+  background: linear-gradient(to bottom, 
+    var(--announcement-primary-yellow), 
+    #E0A800) !important;
+}
+
+.announcement-item--normal .announcement-item__priority-bar {
+  background: linear-gradient(to bottom, 
+    var(--announcement-sky-blue), 
+    #0056B3) !important;
+}
+
+.announcement-item--info .announcement-item__priority-bar {
+  background: linear-gradient(to bottom, 
+    #28A745, 
+    var(--announcement-diary-brown)) !important;
+}
+
+/* 搜索框与网站输入框样式统一 */
+.announcement-panel__search-input,
+.wooden-panel__search-input {
+  background: var(--announcement-warm-white) !important;
+  border: 2px solid rgba(139, 69, 19, 0.3) !important;
+  border-radius: 24px !important;
+  transition: all 0.3s ease !important;
+}
+
+.announcement-panel__search-input:focus,
+.wooden-panel__search-input:focus {
+  border-color: var(--announcement-primary-orange) !important;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 0 0 3px rgba(255, 154, 107, 0.2) !important;
+}
+
+/* 按钮样式与网站夏日按钮协调 */
+.announcement-panel__load-more-button,
+.announcement-content__expand-button,
+.announcement-content__collapse-button {
+  background: linear-gradient(45deg, 
+    rgba(255, 154, 107, 0.1), 
+    rgba(255, 208, 107, 0.1)) !important;
+  border: 2px solid rgba(255, 154, 107, 0.3) !important;
+  color: var(--announcement-diary-brown) !important;
+  border-radius: 24px !important;
+  transition: all 0.3s ease !important;
+}
+
+.announcement-panel__load-more-button:hover,
+.announcement-content__expand-button:hover,
+.announcement-content__collapse-button:hover {
+  background: linear-gradient(45deg, 
+    rgba(255, 154, 107, 0.2), 
+    rgba(255, 208, 107, 0.2)) !important;
+  border-color: var(--announcement-primary-orange) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(255, 154, 107, 0.3) !important;
+}
+
+/* ========================================
+   日记本样式元素集成
+   Diary Paper Style Integration
+   ======================================== */
+
+/* 公告项采用日记本纸张效果 */
+.announcement-item {
+  background: var(--announcement-warm-white) !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  border-radius: 8px !important;
+}
+
+.announcement-item:hover {
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(255, 154, 107, 0.2) !important;
+}
+
+/* 木质面板内容区域采用日记本效果 */
+.wooden-panel__content-wrapper {
+  background: var(--announcement-warm-white) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ========================================
+   动画效果协调
+   Animation Effect Coordination
+   ======================================== */
+
+/* 与网站现有动画保持一致的缓动函数 */
+.hanging-wooden-sign,
+.wooden-panel,
+.announcement-item,
+.announcement-content__expanded {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 悬挂摆动动画与网站整体动感协调 */
+@keyframes gentleSwingHarmony {
+  0%, 100% { 
+    transform: rotate(-0.8deg) translateY(0px);
+  }
+  25% { 
+    transform: rotate(0.5deg) translateY(-1px);
+  }
+  50% { 
+    transform: rotate(0.8deg) translateY(0px);
+  }
+  75% { 
+    transform: rotate(-0.5deg) translateY(-1px);
+  }
+}
+
+.hanging-wooden-sign {
+  animation: gentleSwingHarmony 8s ease-in-out infinite !important;
+}
+
+/* 新公告提示动画与网站活力协调 */
+@keyframes newAnnouncementHarmony {
+  0%, 100% { 
+    transform: rotate(-1.2deg) translateY(0px) scale(1);
+  }
+  25% { 
+    transform: rotate(0.8deg) translateY(-2px) scale(1.02);
+  }
+  50% { 
+    transform: rotate(1.2deg) translateY(0px) scale(1);
+  }
+  75% { 
+    transform: rotate(-0.8deg) translateY(-2px) scale(1.02);
+  }
+}
+
+.hanging-wooden-sign--has-new {
+  animation: newAnnouncementHarmony 3s ease-in-out infinite !important;
+}
+
+/* ========================================
+   响应式设计协调
+   Responsive Design Coordination
+   ======================================== */
+
+/* 与网站响应式断点保持一致 */
+@media (max-width: 768px) {
+  /* 移动端优化，保持与网站一致的体验 */
+  .hanging-wooden-sign__board {
+    width: 100px;
+    height: 70px;
+  }
+  
+  .hanging-wooden-sign__text {
+    font-size: 20px;
+  }
+  
+  .wooden-panel__content {
+    max-width: 95vw;
+    max-height: 85vh;
+    border-radius: 12px;
+  }
+  
+  /* 移动端按钮尺寸与网站标准一致 */
+  .announcement-panel__load-more-button,
+  .announcement-content__expand-button,
+  .announcement-content__collapse-button {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px; /* 符合移动端触摸标准 */
+  }
+}
+
+/* 平板端适配 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .wooden-panel__content {
+    max-width: 600px;
+    max-height: 70vh;
+  }
+}
+
+/* ========================================
+   可访问性增强
+   Accessibility Enhancement
+   ======================================== */
+
+/* 确保颜色对比度符合网站标准 */
+.announcement-item__title,
+.wooden-panel__title,
+.hanging-wooden-sign__text {
+  color: var(--announcement-text-brown) !important;
+  /* 确保与背景有足够对比度 */
+}
+
+.announcement-item__content-body,
+.announcement-content__body {
+  color: rgba(93, 64, 55, 0.9) !important;
+  /* 保持良好的阅读体验 */
+}
+
+/* 焦点状态与网站一致 */
+.hanging-wooden-sign:focus,
+.announcement-item:focus,
+.wooden-panel__close:focus,
+.announcement-panel__search-input:focus,
+.announcement-panel__load-more-button:focus {
+  outline: 2px solid var(--announcement-primary-orange) !important;
+  outline-offset: 2px !important;
+}
+
+/* ========================================
+   性能优化协调
+   Performance Optimization Coordination
+   ======================================== */
+
+/* 与网站性能优化策略保持一致 */
+.hanging-wooden-sign,
+.wooden-panel,
+.announcement-item {
+  will-change: transform !important;
+  backface-visibility: hidden !important;
+  transform: translateZ(0) !important;
+}
+
+/* 减少重绘重排 */
+.hanging-wooden-sign__wood-texture,
+.wooden-panel__wood-texture {
+  contain: layout style paint !important;
+}
+
+/* 优化动画性能 */
+@media (prefers-reduced-motion: reduce) {
+  .hanging-wooden-sign,
+  .hanging-wooden-sign--has-new,
+  .hanging-wooden-sign--new-alert {
+    animation: none !important;
+  }
+  
+  .wooden-panel,
+  .announcement-item,
+  .announcement-content__expanded {
+    transition: none !important;
+  }
+}

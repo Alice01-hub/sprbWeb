@@ -1,0 +1,565 @@
+/**
+ * 优化的公告栏动画样式
+ * Optimized Announcement Board Animations
+ * 
+ * 使用硬件加速和性能优化的动画实现
+ * Hardware-accelerated and performance-optimized animations
+ */
+
+/* ========================================
+   性能优化动画基础设置
+   Performance Optimized Animation Base
+   ======================================== */
+
+/* 启用硬件加速的元素 */
+.hanging-wooden-sign,
+.hanging-wooden-sign__board,
+.rope-connector,
+.rope-connector__line,
+.announcement-panel,
+.announcement-item,
+.hanging-wooden-sign__new-dot,
+.hanging-wooden-sign__new-pulse {
+  /* 启用硬件加速 */
+  will-change: transform, opacity;
+  /* 创建新的合成层 */
+  transform: translateZ(0);
+  /* 启用GPU加速 */
+  backface-visibility: hidden;
+  /* 优化渲染性能 */
+  perspective: 1000px;
+}
+
+/* 动画性能优化基类 */
+.performance-optimized-animation {
+  /* 使用transform和opacity进行动画，避免重排和重绘 */
+  transition-property: transform, opacity;
+  /* 使用硬件加速的缓动函数 */
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  /* 合理的动画时长 */
+  transition-duration: 0.3s;
+}
+
+/* ========================================
+   优化的悬挂摆动动画
+   Optimized Hanging Swing Animations
+   ======================================== */
+
+/* 基础摆动动画 - 使用transform优化 */
+@keyframes optimizedGentleSwing {
+  0%, 100% { 
+    transform: translateZ(0) rotate(-0.8deg);
+  }
+  25% { 
+    transform: translateZ(0) rotate(0.4deg);
+  }
+  50% { 
+    transform: translateZ(0) rotate(0.8deg);
+  }
+  75% { 
+    transform: translateZ(0) rotate(-0.4deg);
+  }
+}
+
+/* 悬停摆动动画 - 增强但保持性能 */
+@keyframes optimizedHoverSwing {
+  0%, 100% { 
+    transform: translateZ(0) rotate(-1.2deg) scale(1);
+  }
+  25% { 
+    transform: translateZ(0) rotate(0.6deg) scale(1.02);
+  }
+  50% { 
+    transform: translateZ(0) rotate(1.2deg) scale(1.04);
+  }
+  75% { 
+    transform: translateZ(0) rotate(-0.6deg) scale(1.02);
+  }
+}
+
+/* 新公告摆动动画 - 更明显的摆动 */
+@keyframes optimizedNewAnnouncementSwing {
+  0%, 100% { 
+    transform: translateZ(0) rotate(-2deg) scale(1);
+  }
+  20% { 
+    transform: translateZ(0) rotate(1.5deg) scale(1.05);
+  }
+  40% { 
+    transform: translateZ(0) rotate(-1.5deg) scale(1.03);
+  }
+  60% { 
+    transform: translateZ(0) rotate(2deg) scale(1.05);
+  }
+  80% { 
+    transform: translateZ(0) rotate(-1deg) scale(1.02);
+  }
+}
+
+/* 新公告特殊提醒动画 */
+@keyframes optimizedNewAnnouncementAlert {
+  0% { 
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+  10% { 
+    transform: translateZ(0) rotate(-3deg) scale(1.1);
+  }
+  20% { 
+    transform: translateZ(0) rotate(3deg) scale(1.08);
+  }
+  30% { 
+    transform: translateZ(0) rotate(-2deg) scale(1.06);
+  }
+  40% { 
+    transform: translateZ(0) rotate(2deg) scale(1.04);
+  }
+  50% { 
+    transform: translateZ(0) rotate(-1deg) scale(1.02);
+  }
+  60% { 
+    transform: translateZ(0) rotate(1deg) scale(1.01);
+  }
+  70% { 
+    transform: translateZ(0) rotate(-0.5deg) scale(1.005);
+  }
+  80% { 
+    transform: translateZ(0) rotate(0.5deg) scale(1.002);
+  }
+  90% { 
+    transform: translateZ(0) rotate(-0.2deg) scale(1.001);
+  }
+  100% { 
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+}
+
+/* 木牌展开翻转动画 */
+@keyframes optimizedSignFlipExpand {
+  0% { 
+    transform: translateZ(0) rotateY(0deg) scale(1);
+  }
+  25% { 
+    transform: translateZ(0) rotateY(-15deg) scale(1.05);
+  }
+  50% { 
+    transform: translateZ(0) rotateY(-30deg) scale(1.1);
+  }
+  75% { 
+    transform: translateZ(0) rotateY(-15deg) scale(1.05);
+  }
+  100% { 
+    transform: translateZ(0) rotateY(0deg) scale(1);
+  }
+}
+
+/* ========================================
+   优化的绳索动画
+   Optimized Rope Animations
+   ======================================== */
+
+/* 绳索摆动动画 */
+@keyframes optimizedRopeSwing {
+  0%, 100% { 
+    transform: translateZ(0) rotate(-0.5deg);
+  }
+  50% { 
+    transform: translateZ(0) rotate(0.5deg);
+  }
+}
+
+/* 绳索拉伸动画 */
+@keyframes optimizedRopeStretch {
+  0% { 
+    transform: translateZ(0) scaleY(1);
+  }
+  50% { 
+    transform: translateZ(0) scaleY(1.1);
+  }
+  100% { 
+    transform: translateZ(0) scaleY(1);
+  }
+}
+
+/* ========================================
+   优化的面板动画
+   Optimized Panel Animations
+   ======================================== */
+
+/* 面板下拉展开动画 */
+@keyframes optimizedPanelDropDown {
+  0% {
+    transform: translateZ(0) translateY(-100%) scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: translateZ(0) translateY(5%) scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateZ(0) translateY(0%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* 面板收起动画 */
+@keyframes optimizedPanelSlideUp {
+  0% {
+    transform: translateZ(0) translateY(0%) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translateZ(0) translateY(-5%) scale(0.98);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateZ(0) translateY(-100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   优化的红点提示动画
+   Optimized Red Dot Animations
+   ======================================== */
+
+/* 红点脉冲动画 */
+@keyframes optimizedNewDotPulse {
+  0%, 100% { 
+    transform: translateZ(0) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: translateZ(0) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* 脉冲环动画 */
+@keyframes optimizedPulseRing {
+  0% {
+    transform: translateZ(0) translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateZ(0) translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   优化的内容动画
+   Optimized Content Animations
+   ======================================== */
+
+/* 内容展开动画 */
+@keyframes optimizedContentExpand {
+  0% {
+    transform: translateZ(0) translateY(-10px);
+    opacity: 0;
+    max-height: 0;
+  }
+  100% {
+    transform: translateZ(0) translateY(0px);
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+/* 手风琴展开动画 */
+@keyframes optimizedAccordionExpand {
+  0% {
+    transform: translateZ(0) scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateZ(0) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   优化的加载动画
+   Optimized Loading Animations
+   ======================================== */
+
+/* 旋转加载动画 */
+@keyframes optimizedSpin {
+  0% { 
+    transform: translateZ(0) rotate(0deg);
+  }
+  100% { 
+    transform: translateZ(0) rotate(360deg);
+  }
+}
+
+/* 脉冲加载动画 */
+@keyframes optimizedPulse {
+  0%, 100% { 
+    transform: translateZ(0) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: translateZ(0) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+/* ========================================
+   应用优化动画到组件
+   Apply Optimized Animations to Components
+   ======================================== */
+
+/* 悬挂木牌动画应用 */
+.hanging-wooden-sign {
+  animation: optimizedGentleSwing 6s ease-in-out infinite;
+}
+
+.hanging-wooden-sign:hover {
+  animation: optimizedHoverSwing 2.5s ease-in-out infinite;
+}
+
+.hanging-wooden-sign--has-new {
+  animation: optimizedNewAnnouncementSwing 4s ease-in-out infinite;
+}
+
+.hanging-wooden-sign--new-alert {
+  animation: optimizedNewAnnouncementAlert 5s ease-out;
+}
+
+.hanging-wooden-sign--expanded {
+  animation: optimizedSignFlipExpand 0.6s ease-out forwards;
+}
+
+/* 绳索动画应用 */
+.rope-connector__line {
+  animation: optimizedRopeSwing 4s ease-in-out infinite;
+}
+
+.rope-connector__line:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.rope-connector--swinging .rope-connector__line {
+  animation: optimizedRopeSwing 2s ease-in-out infinite;
+}
+
+.rope-connector--stretching .rope-connector__line {
+  animation: optimizedRopeStretch 0.6s ease-out;
+}
+
+/* 面板动画应用 */
+.announcement-panel--visible {
+  animation: optimizedPanelDropDown 0.6s ease-out forwards;
+}
+
+.announcement-panel--hiding {
+  animation: optimizedPanelSlideUp 0.4s ease-in forwards;
+}
+
+/* 红点动画应用 */
+.hanging-wooden-sign__new-dot {
+  animation: optimizedNewDotPulse 2s ease-in-out infinite;
+}
+
+.hanging-wooden-sign__new-pulse {
+  animation: optimizedPulseRing 2s ease-out infinite;
+}
+
+/* 内容动画应用 */
+.announcement-item__content {
+  animation: optimizedContentExpand 0.3s ease-out;
+}
+
+.announcement-content__expanded {
+  animation: optimizedAccordionExpand 0.4s ease-out;
+}
+
+/* 加载动画应用 */
+.hanging-announcement-board__loading-spinner,
+.announcement-panel__loading-spinner {
+  animation: optimizedSpin 1s linear infinite;
+}
+
+/* ========================================
+   动画性能优化设置
+   Animation Performance Optimization Settings
+   ======================================== */
+
+/* 减少动画在低性能设备上的影响 */
+@media (prefers-reduced-motion: reduce) {
+  .hanging-wooden-sign,
+  .rope-connector__line,
+  .hanging-wooden-sign__new-dot,
+  .hanging-wooden-sign__new-pulse {
+    animation: none !important;
+  }
+  
+  .hanging-wooden-sign {
+    transform: translateZ(0) rotate(-0.5deg);
+  }
+  
+  .rope-connector__line {
+    transform: translateZ(0) rotate(0deg);
+  }
+}
+
+/* 在低性能设备上简化动画 */
+@media (max-width: 768px) {
+  .hanging-wooden-sign {
+    animation-duration: 8s; /* 延长动画时间，减少频率 */
+  }
+  
+  .hanging-wooden-sign:hover {
+    animation-duration: 3s;
+  }
+  
+  .rope-connector__line {
+    animation-duration: 6s;
+  }
+}
+
+/* 电池电量低时的优化 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   动画节流和防抖
+   Animation Throttling and Debouncing
+   ======================================== */
+
+/* 使用CSS containment优化性能 */
+.hanging-announcement-board {
+  contain: layout style paint;
+}
+
+.announcement-panel {
+  contain: layout style;
+}
+
+.announcement-item {
+  contain: layout style;
+}
+
+/* 优化重绘区域 */
+.hanging-wooden-sign,
+.rope-connector,
+.announcement-panel {
+  isolation: isolate;
+}
+
+/* ========================================
+   响应式动画优化
+   Responsive Animation Optimization
+   ======================================== */
+
+/* 桌面端 - 完整动画效果 */
+@media (min-width: 1024px) {
+  .hanging-wooden-sign {
+    animation-duration: 6s;
+  }
+  
+  .hanging-wooden-sign:hover {
+    animation-duration: 2.5s;
+  }
+}
+
+/* 平板端 - 适中动画效果 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hanging-wooden-sign {
+    animation-duration: 7s;
+  }
+  
+  .hanging-wooden-sign:hover {
+    animation-duration: 3s;
+  }
+}
+
+/* 移动端 - 简化动画效果 */
+@media (max-width: 767px) {
+  .hanging-wooden-sign {
+    animation-duration: 8s;
+  }
+  
+  .hanging-wooden-sign:hover {
+    animation-duration: 4s;
+  }
+  
+  /* 移动端减少复杂动画 */
+  .hanging-wooden-sign--new-alert {
+    animation-duration: 3s;
+  }
+  
+  .announcement-panel--visible {
+    animation-duration: 0.4s;
+  }
+  
+  .announcement-panel--hiding {
+    animation-duration: 0.3s;
+  }
+}
+
+/* ========================================
+   动画调试和监控
+   Animation Debugging and Monitoring
+   ======================================== */
+
+/* 开发环境下的动画调试 */
+.debug-animations .hanging-wooden-sign,
+.debug-animations .rope-connector__line,
+.debug-animations .announcement-panel {
+  outline: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.debug-animations .hanging-wooden-sign::before {
+  content: 'ANIMATING';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-size: 10px;
+  color: red;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* 性能监控标记 */
+.performance-monitor .hanging-wooden-sign {
+  --animation-start-time: 0;
+  --animation-end-time: 0;
+}
+
+/* ========================================
+   浏览器兼容性优化
+   Browser Compatibility Optimization
+   ======================================== */
+
+/* Safari 优化 */
+@supports (-webkit-appearance: none) {
+  .hanging-wooden-sign,
+  .rope-connector__line {
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* Firefox 优化 */
+@supports (-moz-appearance: none) {
+  .hanging-wooden-sign,
+  .rope-connector__line {
+    -moz-transform: translateZ(0);
+    -moz-backface-visibility: hidden;
+  }
+}
+
+/* Edge 优化 */
+@supports (-ms-ime-align: auto) {
+  .hanging-wooden-sign,
+  .rope-connector__line {
+    -ms-transform: translateZ(0);
+  }
+}

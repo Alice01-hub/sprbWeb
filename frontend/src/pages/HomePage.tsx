@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import OSS_CONFIG from '../config/ossConfig';
+import AnnouncementBoard from '../components/AnnouncementBoard';
 
 const sparkle = keyframes`
   0%, 100% { opacity: 0.3; }
@@ -326,6 +327,9 @@ const HomePage: React.FC = () => {
 
   return (
     <Container>
+      {/* 公告栏系统 */}
+      <AnnouncementBoard />
+      
       <StarsContainer>
         {stars.map((star: any) => (
           <Star

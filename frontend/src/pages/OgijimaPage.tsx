@@ -682,25 +682,25 @@ const OgijimaPage: React.FC = () => {
     { x: 61, y: 2, emoji: '🗺️', title: '紬的灯塔', iconType: 'emoji', size: iconSizeConfig['紬的灯塔'] || iconSize },
     { x: 28, y: 53, emoji: '🗺️', title: '苍睡觉的小道', iconType: 'emoji', size: iconSizeConfig['苍睡觉的小道'] || iconSize },
     { x: 23, y: 74, emoji: '🗺️', title: '白羽主视角', iconType: 'emoji', size: iconSizeConfig['白羽主视角'] || iconSize },
-    { x: 49, y: 78, icon: 'images/webps/男木岛/男木岛-鸥相遇小道图标.webp', title: '鸥相遇小道', iconType: 'image', size: iconSizeConfig['鸥相遇小道'] || iconSize },
+    { x: 49, y: 78, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-鸥相遇小道图标.webp'), title: '鸥相遇小道', iconType: 'image', size: iconSizeConfig['鸥相遇小道'] || iconSize },
   ]
 
   // 地标tooltip内容配置
   const iconTooltips: Record<string, { image: string; desc: string }> = {
     '紬的灯塔': {
-      image: 'images/webps/男木岛/男木岛-灯塔.webp',
+      image: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-灯塔.webp'),
       desc: '与小紬相遇的地点',
     },
     '苍睡觉的小道': {
-      image: 'images/webps/男木岛/男木岛-苍睡觉小道.webp',
+      image: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-苍睡觉小道.webp'),
       desc: '与苍相遇的地点',
     },
     '白羽主视角': {
-      image: 'images/webps/男木岛/男木岛-防波堤.webp',
+      image: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-防波堤.webp'),
       desc: '第一次见白羽的地点',
     },
     '鸥相遇小道': {
-      image: 'images/webps/男木岛/男木岛-鸥相遇小道.webp',
+      image: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-鸥相遇小道.webp'),
       desc: '与鸥相遇的地点',
     },
   }
@@ -708,35 +708,35 @@ const OgijimaPage: React.FC = () => {
   // 地图详情数据
   const mapDetails = {
     '紬的灯塔': {
-      mapImage: "images/webps/男木岛/男木岛-灯塔地图-线路版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-灯塔地图-线路版.webp"),
       description: '我正在找东西，找自己想要做的事情',
       iconPositions: [
-        { x: 21, y: 37, icon: 'images/webps/男木岛/男木岛-鬼姬神山识之墓.webp', size: 200 },
-        { x: 74, y: 35, icon: 'images/webps/男木岛/男木岛-紬的灯塔.webp', size: 200 },
+        { x: 21, y: 37, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-鬼姬神山识之墓.webp'), size: 200 },
+        { x: 74, y: 35, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-紬的灯塔.webp'), size: 200 },
       ]
     },
     '苍睡觉的小道': {
-      mapImage: "images/webps/男木岛/男木岛-苍睡觉小道地图-线路版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-苍睡觉小道地图-线路版.webp"),
       description: '总之，就算我在睡觉也不必管啦',
       iconPositions: [
-        { x: 38, y: 82, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
-        { x: 63, y: 22, icon: 'images/webps/男木岛/男木岛-苍睡觉小道.webp', size: 200 },
-        { x: 76, y: 62, icon: 'images/webps/男木岛/男木岛-静久神社.webp', size: 200 },
+        { x: 38, y: 82, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-放送塔.webp'), size: 150 },
+        { x: 63, y: 22, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-苍睡觉小道.webp'), size: 200 },
+        { x: 76, y: 62, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-静久神社.webp'), size: 200 },
       ]
     },
     '白羽主视角': {
-      mapImage: "images/webps/男木岛/男木岛-鸟白岛役场地图-线路版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸟白岛役场地图-线路版.webp"),
       description: '不用在意我就好',
       iconPositions: [
-        { x: 33, y: 2, icon: 'images/webps/男木岛/男木岛-放送塔.webp', size: 150 },
-        { x: 5, y: 55, icon: 'images/webps/男木岛/男木岛-防波堤.webp', size: 180 },
-        { x: 42, y: 64, icon: 'images/webps/男木岛/男木岛-鸟白岛役场.webp', size: 150 },
-        { x: 65, y: 70, icon: 'images/webps/男木岛/男木岛-秘密基地.webp', size: 100 },
-        { x: 65, y: 76, icon: 'images/webps/男木岛/男木岛-泳池.webp', size: 100 },
+        { x: 33, y: 2, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-放送塔.webp'), size: 150 },
+        { x: 5, y: 55, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-防波堤.webp'), size: 180 },
+        { x: 42, y: 64, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-鸟白岛役场.webp'), size: 150 },
+        { x: 65, y: 70, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-秘密基地.webp'), size: 100 },
+        { x: 65, y: 76, icon: OSS_CONFIG.getImageUrl('/webps/男木岛/男木岛-泳池.webp'), size: 100 },
       ]
     },
     '鸥相遇小道': {
-      mapImage: "images/webps/男木岛/男木岛-鸥相遇小道.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸥相遇小道.webp"),
       description: '出发吧~再一次，向着那有海盗船的地方',
       iconPositions: []
     }
@@ -748,83 +748,83 @@ const OgijimaPage: React.FC = () => {
       title: "放送塔",
       description: "美希等爸爸妈妈的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-放送塔.webp", label: "放送塔" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-放送塔.webp"), label: "放送塔" }
       ]
     },
     {
       title: "苍睡觉的小道",
       description: "与苍相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-苍睡觉小道.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-苍睡觉小道-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-苍睡觉小道-夜晚.webp"), label: "夜晚" }
       ]
     },
     {
       title: "鬼姬神山识之墓",
       description: "与小识。。。",
       images: [
-        { src: "images/webps/男木岛/男木岛-鬼姬神山识之墓.webp", label: "鬼姬神山识之墓" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鬼姬神山识之墓.webp"), label: "鬼姬神山识之墓" }
       ]
     },
     {
       title: "紬的灯塔",
       description: "与小紬相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-灯塔.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-灯塔-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp", label: "夜晚-亮灯" },
-        { src: "images/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp", label: "夜晚-熄灯" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-灯塔.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-灯塔-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-灯塔-夜晚-亮灯.webp"), label: "夜晚-亮灯" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-灯塔-夜晚-熄灯.webp"), label: "夜晚-熄灯" }
       ]
     },
     {
       title: "静久神社",
       description: "与静久路过的鸟居",
       images: [
-        { src: "images/webps/男木岛/男木岛-静久神社.webp", label: "静久神社" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-静久神社.webp"), label: "静久神社" }
       ]
     },
     {
       title: "鸟白岛役场",
       description: "岛上重要的行政场所",
       images: [
-        { src: "images/webps/男木岛/男木岛-鸟白岛役场.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-鸟白岛役场-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-鸟白岛役场-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸟白岛役场.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸟白岛役场-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸟白岛役场-夜晚.webp"), label: "夜晚" }
       ]
     },
     {
       title: "防波堤",
       description: "白羽主视觉",
       images: [
-        { src: "images/webps/男木岛/男木岛-防波堤.webp", label: "防波堤" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-防波堤.webp"), label: "防波堤" }
       ]
     },
     {
       title: "秘密基地",
       description: "与天善打乒乓球的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-秘密基地.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-秘密基地-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-秘密基地-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-秘密基地.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-秘密基地-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-秘密基地-夜晚.webp"), label: "夜晚" }
       ]
     },
     {
       title: "泳池",
       description: "与白羽相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-泳池.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-泳池-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-泳池-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-泳池.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-泳池-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-泳池-夜晚.webp"), label: "夜晚" }
       ]
     },
     {
       title: "缺口栏杆",
       description: "与鸥相遇的地点",
       images: [
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道.webp", label: "白天" },
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸥相遇小道.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸥相遇小道-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/男木岛/男木岛-鸥相遇小道-夜晚.webp"), label: "夜晚" }
       ]
     },
   ]

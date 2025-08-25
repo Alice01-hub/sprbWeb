@@ -507,23 +507,23 @@ const TooltipDesc = styled.div`
 // 地标tooltip内容配置
 const iconTooltips: Record<string, { image: string; desc: string }> = {
   '小卖部': {
-    image: 'images/webps/直岛/直岛-小卖部.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-小卖部.webp'),
     desc: '苍打工的地点',
   },
   '海狸家': {
-    image: 'images/webps/直岛/直岛-海狸家院子.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-海狸家院子.webp'),
     desc: '加藤家的住所',
   },
   '白羽钓点': {
-    image: 'images/webps/直岛/直岛-白羽钓鱼.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-白羽钓鱼.webp'),
     desc: '白羽钓鱼的地方',
   },
   '蔷薇庄': {
-    image: 'images/webps/直岛/直岛-蔷薇庄.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-蔷薇庄.webp'),
     desc: '静久的饭店',
   },
   '鸣濑神社': {
-    image: 'images/webps/直岛/直岛-神社.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-神社.webp'),
     desc: '白羽家的神社',
   },
 }
@@ -574,43 +574,43 @@ const NaoshimaPage: React.FC = () => {
   // 地图详情数据
   const mapDetails = {
     '小卖部': {
-      mapImage: "images/webps/直岛/直岛地图-小卖部-路线版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/直岛/直岛地图-小卖部-路线版.webp"),
       description: '苍打工的零食店，已歇业。',
       iconPositions: [
-        { x: 10, y: 0, icon: 'images/webps/直岛/直岛-小卖部.webp', size: 200 },
-        { x: 20, y: 50, icon: 'images/webps/直岛/直岛-sprb租车店.webp', size: 200 },
+        { x: 10, y: 0, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-小卖部.webp'), size: 200 },
+        { x: 20, y: 50, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-sprb租车店.webp'), size: 200 },
       ]
     },
     '海狸家': {
-      mapImage: "images/webps/直岛/直岛地图-水塘海狸家-路线版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/直岛/直岛地图-水塘海狸家-路线版.webp"),
       description: '加藤家的住所，休憩之地。',
       iconPositions: [
-        { x: 11, y: 72, icon: 'images/webps/直岛/直岛-灵弹.webp', size: 150 },
-        { x: 77, y: -2, icon: 'images/webps/直岛/直岛-海狸家院子.webp', size: 150 },
-        { x: 74, y: 40, icon: 'images/webps/直岛/直岛-八幡神社石阶.webp', size: 150 },
+        { x: 11, y: 72, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-灵弹.webp'), size: 150 },
+        { x: 77, y: -2, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-海狸家院子.webp'), size: 150 },
+        { x: 74, y: 40, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-八幡神社石阶.webp'), size: 150 },
       ]
     },
     '白羽钓点': {
-      mapImage: "images/webps/直岛/直岛地图-白羽钓点-路线版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/直岛/直岛地图-白羽钓点-路线版.webp"),
       description: '白羽钓鱼的地方，海风徐徐。',
       iconPositions: [
-        { x: 5, y: 75, icon: 'images/webps/直岛/直岛-积浦海岸.webp', size: 180 },
-        { x: 80, y: 35, icon: 'images/webps/直岛/直岛-白羽钓鱼.webp', size: 180 },
-        { x: 57, y: 0, icon: 'images/webps/直岛/直岛-白羽钓点.webp', size: 150 },
+        { x: 5, y: 75, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-积浦海岸.webp'), size: 180 },
+        { x: 80, y: 35, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-白羽钓鱼.webp'), size: 180 },
+        { x: 57, y: 0, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-白羽钓点.webp'), size: 150 },
       ]
     },
     '蔷薇庄': {
-      mapImage: "images/webps/直岛/直岛地图-蔷薇庄-路线版.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/直岛/直岛地图-蔷薇庄-路线版.webp"),
       description: '充满回忆的住宿地，温馨舒适。',
       iconPositions: [
-        { x: 90, y: 58, icon: 'images/webps/直岛/直岛-蔷薇庄图标.webp', size: 50 },
-        { x: 70, y: 53, icon: 'images/webps/直岛/直岛-惠美须神社鸟居.webp', size: 100 },
-        { x: 77, y: 76, icon: 'images/webps/直岛/直岛-海水浴场.webp', size: 150 },
-        { x: 12, y: -5, icon: 'images/webps/直岛/直岛-游戏主界面图标.webp', size: 250 },
+        { x: 90, y: 58, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-蔷薇庄图标.webp'), size: 50 },
+        { x: 70, y: 53, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-惠美须神社鸟居.webp'), size: 100 },
+        { x: 77, y: 76, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-海水浴场.webp'), size: 150 },
+        { x: 12, y: -5, icon: OSS_CONFIG.getImageUrl('/webps/直岛/直岛-游戏主界面图标.webp'), size: 250 },
       ]
     },
     '鸣濑神社': {
-      mapImage: "images/webps/直岛/直岛-神社.webp",
+      mapImage: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-神社.webp"),
       description: '白羽出嫁的地点。',
       iconPositions: []
     }
@@ -621,160 +621,160 @@ const NaoshimaPage: React.FC = () => {
       title: '港口',
       description: '直岛的主要交通枢纽，旅程的起点。',
       images: [
-        { src: "images/webps/直岛/直岛-港口-无船.webp", label: '白天-无船' },
-        { src: "images/webps/直岛/直岛-港口-无船-黄昏.webp", label: '黄昏-无船' },
-        { src: "images/webps/直岛/直岛-港口-无船-夜晚.webp", label: '夜晚-无船' },
-        { src: "images/webps/直岛/直岛-港口-有船.webp", label: '白天-有船' },
-        { src: "images/webps/直岛/直岛-港口-有船-黄昏.webp", label: '黄昏-有船' },
-        { src: "images/webps/直岛/直岛-港口-有船-夜晚.webp", label: '夜晚-有船' },
-        { src: "images/webps/直岛/直岛-港口-下雨.webp", label: '下雨' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-无船.webp"), label: '白天-无船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-无船-黄昏.webp"), label: '黄昏-无船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-无船-夜晚.webp"), label: '夜晚-无船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-有船.webp"), label: '白天-有船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-有船-黄昏.webp"), label: '黄昏-有船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-有船-夜晚.webp"), label: '夜晚-有船' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-港口-下雨.webp"), label: '下雨' },
       ]
     },
     {
       title: '小卖部',
       description: '苍打工的零食店。',
       images: [
-        { src: "images/webps/直岛/直岛-小卖部.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-小卖部-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-小卖部-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-小卖部.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-小卖部-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-小卖部-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '鸣濑神社',
       description: '白羽出嫁的地点。',
       images: [
-        { src: "images/webps/直岛/直岛-神社.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-神社-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-神社-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-神社.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-神社-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-神社-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '灵弹',
       description: '灵弹~灵弹~。',
       images: [
-        { src: "images/webps/直岛/直岛-灵弹.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-灵弹-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-灵弹-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-灵弹.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-灵弹-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-灵弹-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '海狸家门前',
       description: '加藤家门口。',
       images: [
-        { src: "images/webps/直岛/直岛-海狸家门前.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-海狸家门前-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-海狸家门前-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家门前.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家门前-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家门前-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '海狸家院子',
       description: '加藤家院子。',
       images: [
-        { src: "images/webps/直岛/直岛-海狸家院子.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-海狸家院子-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-海狸家院子-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家院子.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家院子-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家院子-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '海狸家客厅',
       description: '加藤家客厅。',
       images: [
-        { src: "images/webps/直岛/直岛-海狸家客厅.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-海狸家客厅-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-海狸家客厅-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家客厅.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家客厅-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家客厅-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '海狸家厨房',
       description: '加藤家厨房。',
       images: [
-        { src: "images/webps/直岛/直岛-海狸家厨房.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-海狸家厨房-中午.webp", label: '中午' },
-        { src: "images/webps/直岛/直岛-海狸家厨房-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家厨房.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家厨房-中午.webp"), label: '中午' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家厨房-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '海狸家卧室',
       description: '加藤家卧室。',
       images: [
-        { src: "images/webps/直岛/直岛-海狸家卧室-无床.webp", label: '白天-无床' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-无床-黄昏.webp", label: '黄昏-无床' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-无床-开灯-夜晚.webp", label: '夜晚-无床-开灯' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-无床-关灯-夜晚.webp", label: '夜晚-无床-关灯' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-有床.webp", label: '白天-有床' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-有床-黄昏.webp", label: '黄昏-有床' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-有床-开灯-夜晚.webp", label: '夜晚-有床-开灯' },
-        { src: "images/webps/直岛/直岛-海狸家卧室-有床-关灯-夜晚.webp", label: '夜晚-有床-关灯' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-无床.webp"), label: '白天-无床' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-无床-黄昏.webp"), label: '黄昏-无床' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-无床-开灯-夜晚.webp"), label: '夜晚-无床-开灯' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-无床-关灯-夜晚.webp"), label: '夜晚-无床-关灯' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-有床.webp"), label: '白天-有床' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-有床-黄昏.webp"), label: '黄昏-有床' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-有床-开灯-夜晚.webp"), label: '夜晚-有床-开灯' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海狸家卧室-有床-关灯-夜晚.webp"), label: '夜晚-有床-关灯' },
       ]
     },
     {
       title: '食堂',
       description: '白羽家的食堂。',
       images: [
-        { src: "images/webps/直岛/直岛-食堂.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-食堂-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-食堂-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-食堂.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-食堂-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-食堂-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '役场通路',
       description: '通往鸟白岛役场',
       images: [
-        { src: "images/webps/直岛/直岛-役场通路.webp", label: '役场通路' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-役场通路.webp"), label: '役场通路' },
       ]
     },
     {
       title: '八幡神社石阶',
       description: '美希穿和服。',
       images: [
-        { src: "images/webps/直岛/直岛-八幡神社石阶.webp", label: '八幡神社石阶' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-八幡神社石阶.webp"), label: '八幡神社石阶' },
       ]
     },
     {
       title: '积浦海岸',
       description: '羽未的日出打卡点',
       images: [
-        { src: "images/webps/直岛/直岛-积浦海岸.webp", label: '积浦海岸' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-积浦海岸.webp"), label: '积浦海岸' },
       ]
     },
     {
       title: '白羽钓鱼点',
       description: '白羽钓鱼的地方',
       images: [
-        { src: "images/webps/直岛/直岛-白羽钓鱼.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-白羽钓点.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-白羽钓点-黄昏.webp", label: '黄昏' },
-        { src: "images/webps/直岛/直岛-白羽钓点-夜晚.webp", label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-白羽钓鱼.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-白羽钓点.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-白羽钓点-黄昏.webp"), label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-白羽钓点-夜晚.webp"), label: '夜晚' },
       ]
     },
     {
       title: '惠美须神社鸟居',
       description: '独特的鸟居景观。',
       images: [
-        { src: "images/webps/直岛/直岛-惠美须神社鸟居.webp", label: '惠美须神社鸟居' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-惠美须神社鸟居.webp"), label: '惠美须神社鸟居' },
       ]
     },
     {
       title: '蔷薇庄',
       description: '静久加饭的地方。',
       images: [
-        { src: "images/webps/直岛/直岛-蔷薇庄.webp", label: '蔷薇庄' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-蔷薇庄.webp"), label: '蔷薇庄' },
       ]
     },
     {
       title: '海水浴场',
       description: '良一脱衣服的地方。',
       images: [
-        { src: "images/webps/直岛/直岛-海水浴场.webp", label: '白天' },
-        { src: "images/webps/直岛/直岛-海水浴场-夜晚.webp", label: '夜晚' },
-        { src: "images/webps/直岛/直岛-海水浴场-黄昏.webp", label: '黄昏' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海水浴场.webp"), label: '白天' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海水浴场-夜晚.webp"), label: '夜晚' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-海水浴场-黄昏.webp"), label: '黄昏' },
       ]
     },
     {
       title: '游戏主界面',
       description: '全部女主的合照',
       images: [
-        { src: "images/webps/直岛/直岛-游戏主界面.webp", label: '游戏主界面' },
+        { src: OSS_CONFIG.getImageUrl("/webps/直岛/直岛-游戏主界面.webp"), label: '游戏主界面' },
       ]
     },
   ]

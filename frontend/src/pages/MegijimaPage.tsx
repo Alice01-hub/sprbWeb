@@ -258,15 +258,15 @@ const TooltipDesc = styled.div`
 // 地标tooltip内容配置
 const iconTooltips: Record<string, { image: string; desc: string }> = {
   'mountainUP': {
-    image: 'images/webps/女木岛/女木岛-秘密基地山路.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-秘密基地山路.webp'),
     desc: '通往秘密基地的山路',
   },
   'mountainDOWN': {
-    image: 'images/webps/女木岛/女木岛-山道.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-山道.webp'),
     desc: '和苍引导七影碟的山道',
   },
   'cave': {
-    image: 'images/webps/女木岛/女木岛-采石场入口.webp',
+    image: OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-采石场入口.webp'),
     desc: '与鸥冒险的采石场入口',
   },
 }
@@ -639,45 +639,45 @@ const MegijimaPage: React.FC = () => {
       title: "秘密基地山路",
       description: "通往秘密基地的山路",
       images: [
-        { src: "images/webps/女木岛/女木岛-秘密基地山路.webp", label: "白天" },
-        { src: "images/webps/女木岛/女木岛-秘密基地山路-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/女木岛/女木岛-秘密基地山路-夜晚.webp", label: "夜晚" },
-        { src: "images/webps/女木岛/女木岛-秘密基地山路-深夜.webp", label: "深夜" }
+          { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-秘密基地山路.webp"), label: "白天" },
+  { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-秘密基地山路-黄昏.webp"), label: "黄昏" },
+  { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-秘密基地山路-夜晚.webp"), label: "夜晚" },
+  { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-秘密基地山路-深夜.webp"), label: "深夜" }
       ]
     },
     {
       title: "山道",
       description: "苍捕捉七影碟的地点",
       images: [
-        { src: "images/webps/女木岛/女木岛-山道.webp", label: "白天" },
-        { src: "images/webps/女木岛/女木岛-山道-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/女木岛/女木岛-山道-夜晚.webp", label: "夜晚" },
-        { src: "images/webps/女木岛/女木岛-山道-深夜.webp", label: "深夜" }
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-山道.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-山道-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-山道-夜晚.webp"), label: "夜晚" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-山道-深夜.webp"), label: "深夜" }
       ]
     },
     {
       title: "采石场入口",
       description: "欧线的重要场所",
       images: [
-        { src: "images/webps/女木岛/女木岛-采石场入口.webp", label: "白天" },
-        { src: "images/webps/女木岛/女木岛-采石场入口-黄昏.webp", label: "黄昏" },
-        { src: "images/webps/女木岛/女木岛-采石场入口-夜晚.webp", label: "夜晚" }
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场入口.webp"), label: "白天" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场入口-黄昏.webp"), label: "黄昏" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场入口-夜晚.webp"), label: "夜晚" }
       ]
     },
     {
       title: "采石场分岔路",
       description: "采石场内部第一站",
       images: [
-        { src: "images/webps/女木岛/女木岛-采石场-分岔路-有光.webp", label: "有光" },
-        { src: "images/webps/女木岛/女木岛-采石场-分岔路-无光.webp", label: "无光" }
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场-分岔路-有光.webp"), label: "有光" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场-分岔路-无光.webp"), label: "无光" }
       ]
     },
     {
       title: "窄路",
       description: "采石场的一条窄路",
       images: [
-        { src: "images/webps/女木岛/女木岛-窄路-有光.webp", label: "有光" },
-        { src: "images/webps/女木岛/女木岛-窄路-无光.webp", label: "无光" }
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-窄路-有光.webp"), label: "有光" },
+        { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-窄路-无光.webp"), label: "无光" }
       ]
     }
   ]
@@ -726,25 +726,25 @@ const MegijimaPage: React.FC = () => {
       case 'cave':
         locationTitle = '采石场入口';
         locationImages = [
-          { src: "images/webps/女木岛/女木岛-采石场入口.webp", label: "与鸥冒险的采石场入口" }
+          { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-采石场入口.webp"), label: "与鸥冒险的采石场入口" }
         ];
         break;
       case 'mountainUP':
         locationTitle = '秘密基地山路';
         locationImages = [
-          { src: "images/webps/女木岛/女木岛-秘密基地山路.webp", label: "通往秘密基地的山路" }
+          { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-秘密基地山路.webp"), label: "通往秘密基地的山路" }
         ];
         break;
       case 'mountainDOWN':
         locationTitle = '山道';
         locationImages = [
-          { src: "images/webps/女木岛/女木岛-山道.webp", label: "苍引导七影碟的山道" }
+          { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-山道.webp"), label: "苍引导七影碟的山道" }
         ];
         break;
       case 'bus':
         locationTitle = '公交时刻表';
         locationImages = [
-          { src: "images/webps/女木岛/女木岛-公交时间表.webp", label: "女木岛公交时刻表" }
+          { src: OSS_CONFIG.getImageUrl("/webps/女木岛/女木岛-公交时间表.webp"), label: "女木岛公交时刻表" }
         ];
         break;
     }
@@ -924,7 +924,7 @@ const MegijimaPage: React.FC = () => {
                       x: mapConfig.icons.bus.x,
                       y: mapConfig.icons.bus.y,
                       title: '公交/渡轮站',
-                      image: 'images/webps/女木岛/女木岛-公交时间表.webp',
+                      image: OSS_CONFIG.getImageUrl('/webps/女木岛/女木岛-公交时间表.webp'),
                       desc: '前往女木岛的交通枢纽',
                     });
                   }}

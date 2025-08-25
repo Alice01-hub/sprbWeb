@@ -1,197 +1,124 @@
-# 🏝️ Summer Pockets 巡礼网站
+# 🏝️ 鸟白岛巡礼网站 (Summer Pockets 圣地巡礼网站)
 
-> 一个专注于 Summer Pockets 圣地巡礼的现代化网站，提供交通指南、打卡攻略和神域探索功能。
-
-## 🚀 项目概述
-
-本项目是一个基于 React + TypeScript + FastAPI 的现代化网站，专门为 Summer Pockets 圣地巡礼爱好者设计。网站集成了音乐播放器、地图导航、打卡系统等核心功能，并采用 OSS 云存储来管理静态资源。
+一个专为《Summer Pockets》游戏粉丝打造的圣地巡礼网站，帮助玩家规划前往鸟白岛的旅行路线。
 
 ## ✨ 主要功能
 
-### 🎵 音乐播放器
-- 支持多种音频格式（MP3、FLAC、WAV）
-- 16首 Summer Pockets 原声带
-- 循环播放、随机播放、单曲循环
-- 响应式设计，支持移动端操作
-
 ### 🗺️ 地图导航
-- 瀬戸内海地区详细地图
-- 女木岛、男木岛、直岛打卡点标注
+- **直岛地图**: 详细的直岛巡礼点标注
+- **女木岛地图**: 女木岛巡礼点信息
+- **男木岛地图**: 男木岛巡礼点指南
+- **总览地图**: 三岛整体布局和航线信息
+
+### 🚌 交通信息
+- 高松港出发时刻表
+- 岛间航线信息
 - 交通路线规划
-- 实时位置显示
 
-### 📸 打卡系统
-- 详细的打卡点信息
-- 时间、天气、光线条件记录
-- 照片对比功能
+### 📍 打卡系统
+- 巡礼点打卡记录
 - 打卡进度追踪
+- 打卡点照片展示
 
-### 🎨 图片画廊
-- 高质量巡礼照片展示
-- 分类浏览（女木岛、男木岛、直岛）
-- 响应式图片加载
-- 支持多种图片格式
+### 🎵 音乐播放器
+- 游戏原声音乐播放
+- 背景音乐控制
+- 音乐列表管理
 
-## 🏗️ 技术架构
+### 🦋 特效系统
+- 蝴蝶扇动翅膀自定义鼠标特效
+- 流畅的动画过渡效果
 
-### 前端技术栈
-- **框架**: React 18 + TypeScript
-- **构建工具**: Vite
-- **样式**: Styled Components
-- **动画**: Framer Motion
-- **路由**: React Router DOM
-- **状态管理**: React Context + Hooks
 
-### 后端技术栈
-- **框架**: FastAPI (Python) - 简化版本
-- **数据库**: SQLite
-- **API文档**: OpenAPI/Swagger
-
-### 云服务
-- **静态资源**: 阿里云 OSS
-- **CDN**: 阿里云 CDN
-- **域名**: sprb.love
-
-## 📁 项目结构
-
-```
-sprbWeb/
-├── frontend/                 # 前端代码
-│   ├── src/
-│   │   ├── components/      # 组件
-│   │   ├── pages/          # 页面
-│   │   ├── contexts/       # 上下文
-│   │   ├── hooks/          # 自定义钩子
-│   │   ├── utils/          # 工具函数
-│   │   └── config/         # 配置文件
-│   ├── public/             # 静态资源
-│   └── package.json        # 前端依赖
-├── backend/                 # 后端代码（简化版本）
-│   ├── api/                # API模块
-│   ├── data/               # 数据库文件
-│   ├── app.py              # 主应用
-│   ├── run.py              # 启动脚本
-│   └── requirements.txt    # Python依赖
-└── README.md               # 项目说明
-```
-
-## 🔧 后端服务（简化版本）
-
-### 核心API
-- **健康检查**: `/health` - 服务状态检查
-- **音乐服务**: `/api/music/*` - 音乐播放列表
-- **交通攻略**: `/api/traffic-cards/*` - 交通信息管理
-- **PDF下载**: `/api/download-checklist` - 巡礼清单下载
-
-### 静态资源配置
-- **OSS基础URL**: https://oss.sprb.love
-- **图片路径**: `/public/images/webps/` 和 `/public/images/covers/`
-- **音频路径**: `/public/audio/`
-- **文件路径**: `/public/files/`
-- **交通数据**: `/public/trafficdata/`
-
-**注意**: 已修复静态资源路径配置问题，确保所有图片、音频等资源能正确加载。
-
-### 已移除功能
-- ❌ 用户认证系统
-- ❌ 七影蝶系统
-- ❌ 复杂监控系统
-- ❌ 文件上传管理
-
-### 保留功能
-- ✅ 音乐播放服务
-- ✅ 交通攻略数据
-- ✅ PDF生成服务
-- ✅ 基础健康检查
 
 ## 🚀 快速开始
 
 ### 环境要求
-- **Python**: 3.11+
-- **Node.js**: 18+
-- **conda** (推荐)
+- Node.js 16.0 或更高版本
+- npm 或 yarn 包管理器
 
-### 安装步骤
-
-1. **克隆项目**
-```bash
-git clone <repository-url>
-cd sprbWeb
-```
-
-2. **创建conda环境**
-```bash
-conda create -n sprb-web python=3.11
-conda activate sprb-web
-```
-
-3. **安装后端依赖**
-```bash
-cd backend
-pip install -r requirements.txt
-cd ..
-```
-
-4. **安装前端依赖**
+### 安装依赖
 ```bash
 cd frontend
 npm install
-cd ..
 ```
 
-5. **启动服务**
+### 启动开发服务器
 ```bash
-# Windows
-.\start.bat
-
-# 或手动启动 (已修复编码问题)
-.\start_services.ps1
+npm run dev
 ```
 
-## 🌐 访问地址
+应用将在 http://localhost:3000 启动
 
-- **前端**: http://localhost:3000
-- **后端**: http://localhost:8000
-- **API文档**: http://localhost:8000/docs
 
-## 📝 开发说明
 
-### 后端开发
-- 使用 `python run.py` 启动后端服务
-- 支持热重载开发模式
-- 自动生成API文档
+## 🏗️ 项目结构
 
-### 前端开发
-- 使用 `npm run dev` 启动开发服务器
-- 支持热重载和快速刷新
-- TypeScript类型检查
+```
+sprbWeb/
+├── frontend/                 # 前端应用
+│   ├── src/
+│   │   ├── components/      # React组件
+│   │   │   └── ...          # 其他组件
+│   │   ├── pages/           # 页面组件
+│   │   │   └── ...          # 其他页面
+│   │   ├── styles/          # 样式文件
+│   │   │   └── ...          # 其他样式
+│   │   ├── types/           # TypeScript类型定义
+│   │   │   └── ...          # 其他类型
+│   │   └── config/          # 配置文件
+│   │       └── ...          # 其他配置
+│   ├── package.json
+│   └── tsconfig.json
+├── backend/                  # 后端服务
+├── README.md                 # 项目说明
+├── 公告栏系统使用说明.md      # 公告栏系统详细说明
+└── 公告栏参考.txt            # 公告栏系统参考文档
+```
 
-## 🔄 部署说明
 
-### 开发环境 (Windows)
-- 本地开发，热重载
-- SQLite数据库
-- 调试模式
 
-### 生产环境 (Linux)
-- 云服务器部署
-- 性能优化
-- 生产配置
+## 🎨 自定义配置
 
-## 📚 相关资源
+可以通过修改相应的样式文件来自定义网站外观和功能。
 
-- [Summer Pockets 官网](https://key.visualarts.gr.jp/summerpockets/)
-- [FastAPI 文档](https://fastapi.tiangolo.com/)
-- [React 文档](https://react.dev/)
+## 📱 响应式设计
 
-## 🤝 贡献指南
+系统支持多种设备尺寸，适配桌面端、平板端和移动端。
 
-欢迎提交 Issue 和 Pull Request！
+## ⌨️ 键盘操作
+
+系统支持键盘导航和快捷键操作。
+
+## 🔧 构建和部署
+
+### 构建生产版本
+```bash
+npm run build
+```
+
+### 预览生产版本
+```bash
+npm run preview
+```
+
+### 类型检查
+```bash
+npm run type-check
+```
+
+## 📚 相关文档
+
+请参考项目中的其他文档了解具体功能使用方法。
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request！
 
 ## 📄 许可证
 
-本项目仅供学习和个人使用。
+MIT License
 
 ---
 
-**注意**: 这是一个简化版本的后端服务，专注于核心功能。如需完整功能，请参考原始版本或联系开发者。
+**让圣地巡礼更加便捷，让回忆更加珍贵** 🏝️✨

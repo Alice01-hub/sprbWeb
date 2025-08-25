@@ -1,0 +1,454 @@
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { supabase } from '../config/supabaseClient'
+import './AnnouncementBoard.css'
+
+// 公告项组件
+const AnimatedAnnouncementItem = ({ 
+  announcement, 
+  index, 
+  isSelected, 
+  onSelect, 
+  onMouseEnter 
+}: {
+  announcement: any
+  index: number
+  isSelected: boolean
+  onSelect: (announcement: any, index: number) => void
+  onMouseEnter: (index: number) => void
+}) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { amount: 0.5, once: false })
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'urgent':
+      case 'high':  // 向后兼容旧值
+        return '#ff4757'  // 红色 - 紧急通知
+      case 'important':
+      case 'medium':  // 向后兼容旧值
+        return '#ffa502'  // 黄色 - 重要通知
+      case 'normal':
+      case 'low':  // 向后兼容旧值
+        return '#2ed573'  // 绿色 - 一般通知
+      default:
+        return '#747d8c'  // 默认灰色
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      data-index={index}
+      onMouseEnter={() => onMouseEnter(index)}
+      onClick={() => onSelect(announcement, index)}
+      initial={{ scale: 0.7, opacity: 0, y: 20 }}
+      animate={inView ? { scale: 1, opacity: 1, y: 0 } : { scale: 0.7, opacity: 0, y: 20 }}
+      transition={{ 
+        duration: 0.4, 
+        delay: index * 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
+      style={{ marginBottom: "0.5rem", cursor: "pointer" }}
+      whileHover={{ 
+        scale: 1.02,
+        y: -2,
+        transition: { duration: 0.2 }
+      }}
+      whileTap={{ 
+        scale: 0.98,
+        transition: { duration: 0.1 }
+      }}
+    >
+      <div 
+        className="announcement-item"
+        style={{ 
+          backgroundColor: getPriorityColor(announcement.priority),
+          borderColor: getPriorityColor(announcement.priority)
+        }}
+      >
+        <div className="announcement-content">
+          <h3 className="announcement-title">{announcement.title}</h3>
+          <span className="announcement-date">{formatDate(announcement.created_at)}</span>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// 公告栏组件
+const AnnouncementBoard = () => {
+  const [announcements, setAnnouncements] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [keyboardNav, setKeyboardNav] = useState(false)
+  const [isListExpanded, setIsListExpanded] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [showImageModal, setShowImageModal] = useState(false)
+
+  const listRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetchAnnouncements()
+  }, [])
+
+  const fetchAnnouncements = async () => {
+    try {
+      setLoading(true)
+      
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('❌ 获取公告失败:', error)
+        setError(error.message)
+        return
+      }
+
+      setAnnouncements(data || [])
+      
+    } catch (err: any) {
+      console.error('❌ 获取公告过程中发生错误:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAnnouncementSelect = (announcement: any, index: number) => {
+    setSelectedAnnouncement(announcement)
+    setSelectedIndex(index)
+    setShowModal(true)
+  }
+
+  const handleMouseEnter = (index: number) => {
+    setSelectedIndex(index)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setSelectedAnnouncement(null)
+  }
+
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl)
+    setShowImageModal(true)
+  }
+
+  const closeImageModal = () => {
+    setShowImageModal(false)
+    setSelectedImage(null)
+  }
+
+  const toggleList = () => {
+    setIsListExpanded(!isListExpanded)
+  }
+
+  // 键盘导航
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)) {
+        e.preventDefault()
+        setKeyboardNav(true)
+        setSelectedIndex((prev) => Math.min(prev + 1, announcements.length - 1))
+      } else if (e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)) {
+        e.preventDefault()
+        setKeyboardNav(true)
+        setSelectedIndex((prev) => Math.max(prev - 1, 0))
+      } else if (e.key === "Enter") {
+        if (selectedIndex >= 0 && selectedIndex < announcements.length) {
+          e.preventDefault()
+          handleAnnouncementSelect(announcements[selectedIndex], selectedIndex)
+        }
+      } else if (e.key === "Escape") {
+        closeModal()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [announcements, selectedIndex])
+
+  // 自动滚动到选中项
+  useEffect(() => {
+    if (!keyboardNav || selectedIndex < 0 || !listRef.current) return
+    
+    const container = listRef.current
+    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`) as HTMLElement | null
+    
+    if (selectedItem) {
+      const extraMargin = 50
+      const containerScrollTop = container.scrollTop
+      const containerHeight = container.clientHeight
+      const itemTop = selectedItem.offsetTop
+      const itemBottom = itemTop + selectedItem.offsetHeight
+      
+      if (itemTop < containerScrollTop + extraMargin) {
+        container.scrollTo({ top: itemTop - extraMargin, behavior: "smooth" })
+      } else if (itemBottom > containerScrollTop + containerHeight - extraMargin) {
+        container.scrollTo({
+          top: itemBottom - containerHeight + extraMargin,
+          behavior: "smooth",
+        })
+      }
+    }
+    setKeyboardNav(false)
+  }, [selectedIndex, keyboardNav])
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>正在加载公告...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>加载失败</h2>
+        <p>{error}</p>
+        <button onClick={fetchAnnouncements} className="retry-btn">
+          重试
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="announcement-board-container">
+      <main className="announcement-main-content">
+        {announcements.length === 0 ? (
+          <div className="no-announcements">
+            <p>暂无公告</p>
+          </div>
+        ) : (
+          <div className="announcements-container">
+            {/* 下拉/收起区域 */}
+            <div className="toggle-area" onClick={toggleList}>
+              <div className="wood-knot"></div>
+              <div className="wood-knot"></div>
+              <div className="wood-ring"></div>
+              <div className="wood-ring"></div>
+              <span className="toggle-text">
+                {isListExpanded ? '关闭公告栏' : '打开公告栏'}
+              </span>
+            </div>
+
+            {/* 公告列表 */}
+            <AnimatePresence>
+              {isListExpanded && (
+                <motion.div 
+                  className="scroll-list-container"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  {/* 木制纹理装饰 */}
+                  <div className="wood-ring"></div>
+                  <div className="wood-ring"></div>
+                  
+                  <div
+                    ref={listRef}
+                    className="scroll-list"
+                  >
+                    {announcements.map((announcement, index) => (
+                      <AnimatedAnnouncementItem
+                        key={announcement.id}
+                        announcement={announcement}
+                        index={index}
+                        isSelected={selectedIndex === index}
+                        onSelect={handleAnnouncementSelect}
+                        onMouseEnter={handleMouseEnter}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+      </main>
+
+      {/* 模态框 */}
+      {showModal && selectedAnnouncement && (
+        <motion.div 
+          className="modal-overlay" 
+          onClick={closeModal}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div 
+            className="modal-content" 
+            onClick={(e) => e.stopPropagation()}
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <div className="modal-header">
+              <h2>{selectedAnnouncement.title}</h2>
+              <button className="modal-close" onClick={closeModal}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="modal-meta">
+                <span 
+                  className="priority-badge"
+                  style={{ 
+                    backgroundColor: (selectedAnnouncement.priority === 'urgent' || selectedAnnouncement.priority === 'high') ? '#ff4757' : 
+                                   (selectedAnnouncement.priority === 'important' || selectedAnnouncement.priority === 'medium') ? '#ffa502' : '#2ed573'
+                  }}
+                >
+                  {(selectedAnnouncement.priority === 'urgent' || selectedAnnouncement.priority === 'high') ? '紧急通知' : 
+                   (selectedAnnouncement.priority === 'important' || selectedAnnouncement.priority === 'medium') ? '重要通知' : '一般通知'}
+                </span>
+                <span className="author">发布人: {selectedAnnouncement.author}</span>
+                <span className="date">
+                  {new Date(selectedAnnouncement.created_at).toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+              
+              <div className="modal-content-text">
+                <p>{selectedAnnouncement.content}</p>
+                
+                {/* 多图九宫格显示区域 */}
+                {selectedAnnouncement.img_url && (
+                  <div className="modal-images-container">
+                    <h4 className="images-title">📷 相关图片</h4>
+                    <div className="images-grid">
+                      {(() => {
+                        let imageUrls: string[] = [];
+                        try {
+                          // 尝试解析img_url，可能是JSON字符串或数组
+                          if (typeof selectedAnnouncement.img_url === 'string') {
+                            imageUrls = JSON.parse(selectedAnnouncement.img_url);
+                          } else if (Array.isArray(selectedAnnouncement.img_url)) {
+                            imageUrls = selectedAnnouncement.img_url;
+                          }
+                        } catch (e) {
+                          // 如果解析失败，尝试按逗号分割
+                          if (typeof selectedAnnouncement.img_url === 'string') {
+                            imageUrls = selectedAnnouncement.img_url.split(',').map((url: string) => url.trim());
+                          }
+                        }
+                        
+                        // 限制最多显示9张图片
+                        const displayImages = imageUrls.slice(0, 9);
+                        
+                        return displayImages.map((url, index) => (
+                          <div 
+                            key={index} 
+                            className="grid-image-item"
+                            onClick={() => handleImageClick(url)}
+                          >
+                            <img 
+                              src={url} 
+                              alt={`图片 ${index + 1}`}
+                              className="grid-image"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const nextSibling = target.nextSibling as HTMLElement;
+                                if (nextSibling) {
+                                  nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                            <div className="image-error-placeholder" style={{ display: 'none' }}>
+                              <span>❌</span>
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                    {(() => {
+                      let imageUrls: string[] = [];
+                      try {
+                        if (typeof selectedAnnouncement.img_url === 'string') {
+                          imageUrls = JSON.parse(selectedAnnouncement.img_url);
+                        } else if (Array.isArray(selectedAnnouncement.img_url)) {
+                          imageUrls = selectedAnnouncement.img_url;
+                        }
+                      } catch (e) {
+                        if (typeof selectedAnnouncement.img_url === 'string') {
+                          imageUrls = selectedAnnouncement.img_url.split(',').map((url: string) => url.trim());
+                        }
+                      }
+                      
+                      if (imageUrls.length > 9) {
+                        return (
+                          <p className="images-limit-note">
+                            共 {imageUrls.length} 张图片，仅显示前 9 张
+                          </p>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* 图片模态框 */}
+      {showImageModal && selectedImage && (
+        <motion.div 
+          className="modal-overlay" 
+          onClick={closeImageModal}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div 
+            className="modal-content" 
+            onClick={(e) => e.stopPropagation()}
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <div className="modal-header">
+              <h2>图片预览</h2>
+              <button className="modal-close" onClick={closeImageModal}>×</button>
+            </div>
+            <div className="modal-body">
+              <img src={selectedImage} alt="图片预览" className="modal-image-preview" />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </div>
+  )
+}
+
+export default AnnouncementBoard
