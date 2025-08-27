@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useRef, useEffect, ReactNode, useCallback } from 'react'
-import OSS_CONFIG from '../config/ossConfig';
+import { fetchAudios, AudioData } from '../services/audioService';
 
 export interface Track {
-  id: string
-  name: string
+  id: number
+  title: string
   artist: string
   src: string
   duration?: number
@@ -60,137 +60,15 @@ interface MusicProviderProps {
   children: ReactNode
 }
 
-// 音乐数据
-const musicData = [
-  {
-    id: 1,
-    title: 'Summer Pockets',
-    artist: '水月陵',
-    src: OSS_CONFIG.getAudioUrl('/1-水月陵 - Summer Pockets.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/1-summerpockets.webp'),
-    duration: 0
-  },
-  {
-    id: 2,
-    title: 'Sea, You & Me',
-    artist: '麻枝准',
-    src: OSS_CONFIG.getAudioUrl('/2-麻枝准 - Sea, You & Me.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/2-sea-you-me.webp'),
-    duration: 0
-  },
-  {
-    id: 3,
-    title: 'アルカテイル',
-    artist: '鈴木このみ',
-    src: OSS_CONFIG.getAudioUrl('/3-鈴木このみ,VISUAL ARTS  Key - アルカテイル.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/3-op.webp'),
-    duration: 0
-  },
-  {
-    id: 4,
-    title: '夜は短く、空は遠くて…',
-    artist: '水月陵',
-    src: OSS_CONFIG.getAudioUrl('/4-水月陵 - 夜は短く、空は遠くて….mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/4-saikai.webp'),
-    duration: 0
-  },
-  {
-    id: 5,
-    title: '比翼の蝶たち',
-    artist: '高森奈津美',
-    src: OSS_CONFIG.getAudioUrl('/5-高森奈津美 - 比翼の蝶たち.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/5-空门苍.webp'),
-    duration: 0
-  },
-  {
-    id: 6,
-    title: 'Departure!',
-    artist: '嶺内ともみ',
-    src: OSS_CONFIG.getAudioUrl('/6-嶺内ともみ - Departure!.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/6-久岛鸥.webp'),
-    duration: 0
-  },
-  {
-    id: 7,
-    title: 'with',
-    artist: '嶺内ともみ',
-    src: OSS_CONFIG.getAudioUrl('/7-嶺内ともみ - with.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/7-with.webp'),
-    duration: 0
-  },
-  {
-    id: 8,
-    title: '夏に君を待ちながら',
-    artist: '小原好美',
-    src: OSS_CONFIG.getAudioUrl('/8-小原好美 - 夏に君を待ちながら.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/8-白羽.webp'),
-    duration: 0
-  },
-  {
-    id: 9,
-    title: '紬の夏休み',
-    artist: '岩井映美里',
-    src: OSS_CONFIG.getAudioUrl('/9-岩井映美里,VISUAL ARTS  Key - 紬の夏休み.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/9-紬的暑假.webp'),
-    duration: 0
-  },
-  {
-    id: 10,
-    title: 'Golden Hours',
-    artist: '岩井映美里',
-    src: OSS_CONFIG.getAudioUrl('/10-岩井映美里 - Golden Hours.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/10-golden-hours.webp'),
-    duration: 0
-  },
-  {
-    id: 11,
-    title: '魔法の絵日記',
-    artist: '小原好美',
-    src: OSS_CONFIG.getAudioUrl('/11-鳴瀬しろは(CV.小原好美),加藤うみ(CV.田中あいみ),VISUAL ARTS  Key - 魔法の絵日記.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/11-魔法日记本.webp'),
-    duration: 0
-  },
-  {
-    id: 12,
-    title: 'Don\'t Cry Red',
-    artist: 'Fairouz Ai',
-    src: OSS_CONFIG.getAudioUrl('/12-神山識(CV.ファイルーズあい),VISUAL ARTS  Key - Don\'t Cry Red.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/12-神山识.webp'),
-    duration: 0
-  },
-  {
-    id: 13,
-    title: '柔らかい記憶',
-    artist: '小山さほみ',
-    src: OSS_CONFIG.getAudioUrl('/13-水織静久(CV.小山さほみ),VISUAL ARTS  Key - 柔らかい記憶.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/13-水织静久.webp'),
-    duration: 0
-  },
-  {
-    id: 14,
-    title: 'しろはの子守歌',
-    artist: '小原好美',
-    src: OSS_CONFIG.getAudioUrl('/14-小原好美,VISUAL ARTS  Key - しろはの子守歌.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/14-白羽的摇篮曲.webp'),
-    duration: 0
-  },
-  {
-    id: 15,
-    title: 'Dear Familiar',
-    artist: '一宮朔',
-    src: OSS_CONFIG.getAudioUrl('/15-野村美樹(CV.一宮朔),VISUAL ARTS  Key - Dear Familiar.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/15-野美希.webp'),
-    duration: 0
-  },
-  {
-    id: 16,
-    title: 'フィニステラー',
-    artist: '鈴木このみ',
-    src: OSS_CONFIG.getAudioUrl('/16-鈴木このみ,VISUAL ARTS  Key - フィニステラー.mp3'),
-    cover: OSS_CONFIG.getImageUrl('/covers/16-加藤羽未.webp'),
-    duration: 0
-  }
-];
+// 将AudioData转换为Track格式
+const convertAudioDataToTrack = (audioData: AudioData): Track => ({
+  id: audioData.id,
+  title: audioData.title,
+  artist: audioData.artist,
+  src: audioData.src,
+  cover: audioData.cover,
+  duration: audioData.duration
+});
 
 export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -206,15 +84,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const [volume, setVolumeState] = useState(0.7)
   
   // 播放列表状态
-  const [playlist, setPlaylist] = useState<Track[]>(musicData.map(item => ({
-    id: item.id.toString(),
-    name: item.title,
-    artist: item.artist,
-    src: item.src,
-    duration: item.duration,
-    album: 'Summer Pockets OST', // 专辑名称
-    cover: item.cover
-  })))
+  const [playlist, setPlaylist] = useState<Track[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playMode, setPlayMode] = useState<PlayMode>('list')
   
@@ -229,6 +99,32 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   useEffect(() => {
     playModeRef.current = playMode
   }, [playMode])
+
+  // 加载音频数据
+  useEffect(() => {
+    const loadAudioData = async () => {
+      console.log('🎵 开始加载音频数据...');
+      
+      try {
+        const audioData = await fetchAudios();
+        
+        if (audioData.length > 0) {
+          const tracks = audioData.map(convertAudioDataToTrack);
+          setPlaylist(tracks);
+          console.log(`✅ 成功加载 ${tracks.length} 首音频`);
+        } else {
+          console.warn('⚠️ 未获取到音频数据');
+        }
+      } catch (error) {
+        console.error('❌ 加载音频数据失败:', error);
+      }
+    };
+
+    // 只在playlist为空时加载数据
+    if (playlist.length === 0) {
+      loadAudioData();
+    }
+  }, [playlist.length]);
 
   // 初始化音频
   const checkAudioSupport = (filename: string) => {
@@ -257,7 +153,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       audio.volume = volume;
       audio.load();
       isInitializedRef.current = true;
-      console.log('音频初始化完成:', currentTrack.name);
+      console.log('音频初始化完成:', currentTrack.title);
     }
   }, [currentTrack]);
 
@@ -306,7 +202,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       await audio.play();
       setIsPlaying(true);
       setIsPaused(false);
-      console.log('开始播放:', currentTrack.name, '从位置:', audio.currentTime);
+      console.log('开始播放:', currentTrack.title, '从位置:', audio.currentTime);
     } catch (error: any) {
       console.error('播放失败:', error.message);
       if (error.name === 'NotAllowedError') {
@@ -374,7 +270,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       nextIndex = (currentIndex + 1) % playlist.length
     }
     
-    console.log('切换到下一首:', nextIndex, playlist[nextIndex]?.name)
+    console.log('切换到下一首:', nextIndex, playlist[nextIndex]?.title)
     setCurrentIndex(nextIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
@@ -391,7 +287,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       prevIndex = currentIndex === 0 ? playlist.length - 1 : currentIndex - 1
     }
     
-    console.log('切换到上一首:', prevIndex, playlist[prevIndex]?.name)
+    console.log('切换到上一首:', prevIndex, playlist[prevIndex]?.title)
     setCurrentIndex(prevIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
@@ -418,7 +314,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   // 选择歌曲
   const selectTrack = useCallback((index: number) => {
     if (index >= 0 && index < playlist.length && index !== currentIndex) {
-      console.log('选择歌曲:', index, playlist[index]?.name)
+      console.log('选择歌曲:', index, playlist[index]?.title)
       setCurrentIndex(index)
       isInitializedRef.current = false // 重置初始化标志
       shouldAutoPlayRef.current = true // 设置自动播放标志
@@ -484,7 +380,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
         errorCode: error ? error.code : 'unknown',
         errorMessage: error ? error.message : 'unknown',
         src: audio.src,
-        currentTrack: currentTrack?.name,
+        currentTrack: currentTrack?.title,
         networkState: audio.networkState,
         readyState: audio.readyState
       });

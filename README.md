@@ -111,6 +111,54 @@ npm run type-check
 
 请参考项目中的其他文档了解具体功能使用方法。
 
+## 📝 更新日志
+
+### 2025年8月27日 - 音频系统重构与数据管理优化 🎵
+
+#### 🎯 主要更新内容
+- **音频资源数据化**: 将硬编码的音频数据迁移到Supabase数据库管理
+- **后端API服务**: 新增音频数据获取接口，支持动态音频列表管理
+- **前端服务层**: 重构音频服务，支持API优先、Supabase备用的双重数据源
+- **音乐播放器修复**: 修复歌名显示问题，确保正确读取title字段
+
+#### 🔧 技术改进
+- **数据库设计**: 创建`audios`表，字段包含id、title、artist、path、cover_path
+- **API接口**: 
+  - `GET /api/audios` - 获取所有音频列表
+  - `GET /api/audios/{id}` - 获取单个音频信息
+- **错误处理**: 增强连接测试、超时处理、异常捕获机制
+- **日志系统**: 添加详细的音频服务日志记录
+
+#### 📊 数据结构
+```json
+{
+  "id": 1,
+  "title": "Summer Pockets",
+  "artist": "水月陵",
+  "path": "/public/audios/1-水月陵 - Summer Pockets.mp3",
+  "cover_path": "/public/images/covers/1-summerpockets.webp"
+}
+```
+
+#### 🎵 音频资源
+- **总数量**: 16首游戏原声音乐
+- **存储方式**: OSS对象存储 + Supabase数据库管理
+- **格式支持**: MP3、WAV、OGG、FLAC等主流音频格式
+- **封面图片**: 每首音乐配备对应的游戏场景封面
+
+#### 🚀 部署说明
+1. 运行数据迁移脚本：`python migrate_audios_to_supabase.py`
+2. 启动后端服务：`cd backend && python run.py`
+3. 启动前端服务：`cd frontend && npm run dev`
+
+#### 💡 设计优势
+- **灵活性**: 新增音频只需在数据库中添加记录，无需重新编译
+- **可维护性**: 集中化的资源管理，清晰的数据结构
+- **扩展性**: 易于添加新字段，支持分类、标签等高级功能
+- **容错性**: API失败时自动切换到直连模式，保障用户体验
+
+---
+
 ## 🤝 贡献
 
 欢迎提交Issue和Pull Request！

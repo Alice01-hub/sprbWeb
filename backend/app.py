@@ -40,6 +40,9 @@ from performance_monitor import get_monitor
 from config_loader import ConfigLoader
 import psutil
 
+# 导入音频服务
+from api.audio_service import get_audios_api, get_audio_by_id_api
+
 app = FastAPI(title="Summer Pockets 巡礼网站 API", version="2.0.0", description="简化版本 - 专注于旅游攻略和音乐服务")
 
 # CORS中间件
@@ -683,5 +686,64 @@ async def health_check():
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
 
+# 音频API路由
+@app.get("/api/audios")
+async def get_audios():
+    """获取所有音频数据"""
+    return get_audios_api()
+
+@app.get("/api/audios/{audio_id}")
+async def get_audio_by_id(audio_id: int):
+    """根据ID获取音频数据"""
+    return get_audio_by_id_api(audio_id)
+
 # 静态文件服务
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
+
+# 根路径路由
+@app.get("/")
+async def root():
+    """根路径 - 显示API信息"""
+    return {
+        "message": "Summer Pockets 巡礼网站 API",
+        "version": "2.0.0",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "audios": "/api/audios",
+            "traffic_cards": "/api/traffic-cards",
+            "docs": "/docs"
+        },
+        "timestamp": datetime.now().isoformat()
+    }
+
+# 数据库连接测试端点
+@app.get("/api/test-db")
+async def test_database_connection():
+    """测试数据库连接"""
+    try:
+        # 测试SQLite连接
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1").fetchone()
+        conn.close()
+        
+        # 测试Supabase连接
+        from api.audio_service import audio_service
+        test_audios = audio_service.get_all_audios()
+        
+        return {
+            "success": True,
+            "message": "数据库连接正常",
+            "sqlite": "connected",
+            "supabase": "connected" if test_audios is not None else "failed",
+            "audio_count": len(test_audios) if test_audios else 0,
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"数据库连接失败: {str(e)}",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        } 

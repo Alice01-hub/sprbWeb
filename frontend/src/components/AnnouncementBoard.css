@@ -425,8 +425,93 @@
   margin-bottom: 0;
 }
 
+/* 公告内容格式化样式 */
+.content-break {
+  height: 0.5rem;
+  margin: 0;
+}
+
+.content-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.content-subtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 1.2rem 0 0.8rem 0;
+}
+
+.content-paragraph {
+  line-height: 1.7;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+  text-align: justify;
+}
+
+.content-list-item {
+  line-height: 1.6;
+  color: #2d3748;
+  margin: 0.5rem 0;
+  padding-left: 0.5rem;
+}
+
+.content-indent {
+  line-height: 1.7;
+  color: #2d3748;
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+/* 行内格式样式 */
+.content-paragraph strong,
+.content-list-item strong,
+.content-indent strong {
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.content-paragraph em,
+.content-list-item em,
+.content-indent em {
+  font-style: italic;
+  color: #4a5568;
+}
+
+.content-paragraph code,
+.content-list-item code,
+.content-indent code {
+  background: #f7fafc;
+  color: #e53e3e;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  border: 1px solid #e2e8f0;
+}
+
+.content-paragraph a,
+.content-list-item a,
+.content-indent a {
+  color: #3182ce;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.2s ease;
+}
+
+.content-paragraph a:hover,
+.content-list-item a:hover,
+.content-indent a:hover {
+  border-bottom-color: #3182ce;
+}
+
 /* 加载和错误状态 */
-.loading-container,
 .error-container {
   text-align: center;
   padding: 2rem;
@@ -441,6 +526,26 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
+}
+
+/* 小型加载提示样式 */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

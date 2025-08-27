@@ -101,6 +101,98 @@ const AnnouncementBoard = () => {
 
   const listRef = useRef<HTMLDivElement>(null)
 
+  // 格式化公告内容的函数
+  const formatAnnouncementContent = (content: string) => {
+    if (!content) return null;
+
+    // 按换行符分割内容
+    const lines = content.split('\n');
+    
+    return lines.map((line, index) => {
+      const trimmedLine = line.trim();
+      
+      // 空行处理
+      if (!trimmedLine) {
+        return <div key={index} className="content-break"></div>;
+      }
+      
+      // 标题处理 (# 标题)
+      if (trimmedLine.startsWith('# ')) {
+        const titleText = trimmedLine.substring(2);
+        return <h3 key={index} className="content-title">{titleText}</h3>;
+      }
+      
+      // 二级标题处理 (## 标题)
+      if (trimmedLine.startsWith('## ')) {
+        const titleText = trimmedLine.substring(3);
+        return <h4 key={index} className="content-subtitle">{titleText}</h4>;
+      }
+      
+      // 列表项处理 (- 项目)
+      if (trimmedLine.startsWith('- ')) {
+        const listText = trimmedLine.substring(2);
+        return <div key={index} className="content-list-item">• {listText}</div>;
+      }
+      
+      // 缩进处理 (以两个或更多空格开头)
+      if (line.startsWith('  ')) {
+        const indentLevel = Math.floor((line.length - line.trimStart().length) / 2);
+        const indentText = line.trim();
+        return (
+          <div key={index} className="content-indent" style={{ marginLeft: `${indentLevel * 20}px` }}>
+            {formatInlineText(indentText)}
+          </div>
+        );
+      }
+      
+      // 普通段落处理
+      return (
+        <p key={index} className="content-paragraph">
+          {formatInlineText(trimmedLine)}
+        </p>
+      );
+    });
+  };
+
+  // 格式化行内文本的函数
+  const formatInlineText = (text: string) => {
+    // 处理加粗 (**文字**)
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    let formattedText = text.replace(boldRegex, '<strong>$1</strong>');
+    
+    // 处理斜体 (*文字*)
+    const italicRegex = /\*(.*?)\*/g;
+    formattedText = formattedText.replace(italicRegex, '<em>$1</em>');
+    
+    // 处理代码 (`代码`)
+    const codeRegex = /`(.*?)`/g;
+    formattedText = formattedText.replace(codeRegex, '<code>$1</code>');
+    
+    // 处理链接 [文字](链接)
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    formattedText = formattedText.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    // 处理表情符号 (将 :smile: 转换为 😊)
+    const emojiMap: { [key: string]: string } = {
+      ':smile:': '😊',
+      ':heart:': '❤️',
+      ':star:': '⭐',
+      ':warning:': '⚠️',
+      ':info:': 'ℹ️',
+      ':check:': '✅',
+      ':cross:': '❌',
+      ':arrow:': '➡️',
+      ':fire:': '🔥',
+      ':sparkles:': '✨'
+    };
+    
+    Object.entries(emojiMap).forEach(([code, emoji]) => {
+      formattedText = formattedText.replace(new RegExp(code, 'g'), emoji);
+    });
+    
+    return <span dangerouslySetInnerHTML={{ __html: formattedText }} />;
+  };
+
   useEffect(() => {
     fetchAnnouncements()
   }, [])
@@ -211,15 +303,6 @@ const AnnouncementBoard = () => {
     setKeyboardNav(false)
   }, [selectedIndex, keyboardNav])
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>正在加载公告...</p>
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="error-container">
@@ -270,16 +353,23 @@ const AnnouncementBoard = () => {
                     ref={listRef}
                     className="scroll-list"
                   >
-                    {announcements.map((announcement, index) => (
-                      <AnimatedAnnouncementItem
-                        key={announcement.id}
-                        announcement={announcement}
-                        index={index}
-                        isSelected={selectedIndex === index}
-                        onSelect={handleAnnouncementSelect}
-                        onMouseEnter={handleMouseEnter}
-                      />
-                    ))}
+                    {loading ? (
+                      <div className="loading-indicator">
+                        <div className="loading-spinner-small"></div>
+                        <span>加载中...</span>
+                      </div>
+                    ) : (
+                      announcements.map((announcement, index) => (
+                        <AnimatedAnnouncementItem
+                          key={announcement.id}
+                          announcement={announcement}
+                          index={index}
+                          isSelected={selectedIndex === index}
+                          onSelect={handleAnnouncementSelect}
+                          onMouseEnter={handleMouseEnter}
+                        />
+                      ))
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -336,7 +426,7 @@ const AnnouncementBoard = () => {
               </div>
               
               <div className="modal-content-text">
-                <p>{selectedAnnouncement.content}</p>
+                {formatAnnouncementContent(selectedAnnouncement.content)}
                 
                 {/* 多图九宫格显示区域 */}
                 {selectedAnnouncement.img_url && (

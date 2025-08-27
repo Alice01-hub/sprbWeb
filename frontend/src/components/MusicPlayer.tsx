@@ -491,7 +491,7 @@ const MusicPlayer: React.FC = () => {
                   <>
                     <img 
                       src={currentTrack.cover} 
-                      alt={`${currentTrack.name} 封面`}
+                      alt={`${currentTrack.title} 封面`}
                       onError={(e) => {
                         // 图片加载失败时显示默认图标
                         const target = e.target as HTMLImageElement;
@@ -507,7 +507,7 @@ const MusicPlayer: React.FC = () => {
                 )}
               </AlbumCover>
               <TrackInfo>
-                <TrackName>{currentTrack?.name || '暂无歌曲'}</TrackName>
+                <TrackName>{currentTrack?.title || '暂无歌曲'}</TrackName>
                 <ArtistName>{currentTrack?.artist || '未知艺术家'}</ArtistName>
               </TrackInfo>
               <CloseButton onClick={() => setPlayerOpen(false)}>
@@ -607,7 +607,7 @@ const MusicPlayer: React.FC = () => {
                   </PlaylistIndex>
                   <PlaylistTrackInfo>
                     <PlaylistTrackName isActive={index === currentIndex}>
-                      {track.name}
+                      {track.title}
                     </PlaylistTrackName>
                     <PlaylistArtistName>{track.artist}</PlaylistArtistName>
                   </PlaylistTrackInfo>
