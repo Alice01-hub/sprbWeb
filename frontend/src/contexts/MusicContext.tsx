@@ -11,7 +11,7 @@ export interface Track {
   cover?: string
 }
 
-export type PlayMode = 'list' | 'single'
+export type PlayMode = 'list' | 'single' | 'random'
 
 interface MusicContextType {
   // 播放状态
@@ -88,6 +88,10 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playMode, setPlayMode] = useState<PlayMode>('list')
   
+  // 随机播放相关状态
+  const [playedTracks, setPlayedTracks] = useState<Set<number>>(new Set())
+  const [remainingTracks, setRemainingTracks] = useState<number[]>([])
+  
   // 界面状态
   const [isPlayerOpen, setPlayerOpen] = useState(false)
   
@@ -98,7 +102,14 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   // 同步playMode到ref
   useEffect(() => {
     playModeRef.current = playMode
-  }, [playMode])
+    
+    // 当切换到随机播放模式时，初始化随机播放状态
+    if (playMode === 'random') {
+      const allTracks = Array.from({ length: playlist.length }, (_, i) => i)
+      setRemainingTracks(allTracks)
+      setPlayedTracks(new Set())
+    }
+  }, [playMode, playlist.length])
 
   // 加载音频数据
   useEffect(() => {
@@ -111,6 +122,14 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
         if (audioData.length > 0) {
           const tracks = audioData.map(convertAudioDataToTrack);
           setPlaylist(tracks);
+          
+          // 初始化随机播放状态
+          if (playMode === 'random') {
+            const allTracks = Array.from({ length: tracks.length }, (_, i) => i)
+            setRemainingTracks(allTracks)
+            setPlayedTracks(new Set())
+          }
+          
           console.log(`✅ 成功加载 ${tracks.length} 首音频`);
         } else {
           console.warn('⚠️ 未获取到音频数据');
@@ -259,12 +278,38 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     }
   }, [isPlaying, isPaused, pause, play, currentTrack])
 
+  // 获取随机播放的下一首歌曲
+  const getRandomNextIndex = useCallback(() => {
+    if (remainingTracks.length === 0) {
+      // 如果所有歌曲都播放过了，重新开始随机播放
+      const allTracks = Array.from({ length: playlist.length }, (_, i) => i)
+      setRemainingTracks(allTracks)
+      setPlayedTracks(new Set())
+      return allTracks[Math.floor(Math.random() * allTracks.length)]
+    }
+    
+    // 从剩余歌曲中随机选择
+    const randomIndex = Math.floor(Math.random() * remainingTracks.length)
+    const nextIndex = remainingTracks[randomIndex]
+    
+    // 更新剩余歌曲列表
+    const newRemainingTracks = remainingTracks.filter((_, index) => index !== randomIndex)
+    setRemainingTracks(newRemainingTracks)
+    
+    // 添加到已播放列表
+    setPlayedTracks(prev => new Set([...prev, nextIndex]))
+    
+    return nextIndex
+  }, [remainingTracks, playlist.length])
+
   // 切换到下一首
   const next = useCallback(() => {
     let nextIndex: number
     
     if (playMode === 'single') {
       nextIndex = currentIndex // 单曲循环
+    } else if (playMode === 'random') {
+      nextIndex = getRandomNextIndex()
     } else {
       // 列表循环
       nextIndex = (currentIndex + 1) % playlist.length
@@ -274,7 +319,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     setCurrentIndex(nextIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
-  }, [currentIndex, playlist.length, playMode])
+  }, [currentIndex, playlist.length, playMode, getRandomNextIndex])
 
   // 切换到上一首
   const prev = useCallback(() => {
@@ -282,6 +327,9 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     
     if (playMode === 'single') {
       prevIndex = currentIndex // 单曲循环
+    } else if (playMode === 'random') {
+      // 随机播放模式下，上一首也是随机的
+      prevIndex = getRandomNextIndex()
     } else {
       // 列表循环
       prevIndex = currentIndex === 0 ? playlist.length - 1 : currentIndex - 1
@@ -291,7 +339,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     setCurrentIndex(prevIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
-  }, [currentIndex, playlist.length, playMode])
+  }, [currentIndex, playlist.length, playMode, getRandomNextIndex])
 
   // 进度跳转
   const seek = useCallback((time: number) => {
@@ -316,10 +364,17 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     if (index >= 0 && index < playlist.length && index !== currentIndex) {
       console.log('选择歌曲:', index, playlist[index]?.title)
       setCurrentIndex(index)
+      
+      // 如果是随机播放模式，需要更新随机播放状态
+      if (playMode === 'random') {
+        setPlayedTracks(prev => new Set([...prev, index]))
+        setRemainingTracks(prev => prev.filter(i => i !== index))
+      }
+      
       isInitializedRef.current = false // 重置初始化标志
       shouldAutoPlayRef.current = true // 设置自动播放标志
     }
-  }, [playlist.length, currentIndex])
+  }, [playlist.length, currentIndex, playMode])
 
   // 处理自动播放逻辑
   useEffect(() => {
@@ -355,6 +410,9 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
         // 单曲循环 - 重新播放当前歌曲
         audio.currentTime = 0
         play()
+      } else if (currentPlayMode === 'random') {
+        // 随机播放 - 播放下一首随机歌曲
+        next()
       } else {
         // 列表循环 - 播放下一首
         next()

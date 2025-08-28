@@ -401,6 +401,7 @@ const MusicPlayer: React.FC = () => {
     switch (playMode) {
       case 'single': return '🔂'
       case 'list': return '🔁'
+      case 'random': return '🔀'
       default: return '🔁'
     }
   }
@@ -409,12 +410,13 @@ const MusicPlayer: React.FC = () => {
     switch (playMode) {
       case 'single': return '单曲循环'
       case 'list': return '列表循环'
+      case 'random': return '随机播放'
       default: return '列表循环'
     }
   }
   
   const togglePlayMode = () => {
-    const modes: PlayMode[] = ['list', 'single']
+    const modes: PlayMode[] = ['list', 'single', 'random']
     const currentModeIndex = modes.indexOf(playMode)
     const nextModeIndex = (currentModeIndex + 1) % modes.length
     setPlayMode(modes[nextModeIndex])
