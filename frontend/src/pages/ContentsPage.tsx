@@ -347,7 +347,7 @@ interface SummaryData {
 const summaryData: Record<Exclude<ChapterType, null>, SummaryData> = {
   traffic: {
     image: OSS_CONFIG.getImageUrl('/webps/交通篇摘要图.webp'),
-    text: '🚌 国内各地到高松的完整交通攻略'
+    text: '🚧 交通篇正在重新开发中，敬请期待！'
   },
   checkin: {
     image: OSS_CONFIG.getImageUrl('/webps/打卡篇摘要图.webp'),
@@ -382,7 +382,7 @@ const ContentsPage: React.FC = () => {
     {
       id: 'traffic',
       title: '交通篇',
-      description: '探索前往鸟白岛的交通方式，包括渡轮时刻表、路线规划等实用信息。',
+      description: '🚧 正在重新开发中，将为您提供更完善的交通攻略指南！',
       image: OSS_CONFIG.getImageUrl('/webps/交通篇摘要图.webp'),
       link: '/traffic'
     },

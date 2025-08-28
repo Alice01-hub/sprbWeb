@@ -34,14 +34,13 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
   isHovered, 
   size = 150  // 🦋 蝴蝶图片尺寸调整：修改这里的默认值来调整蝴蝶图片大小
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(1) // 默认显示第二张图片（七影碟-4.png）
+  const [currentImageIndex, setCurrentImageIndex] = useState(0) // 默认显示第一张图片
   const intervalRef = useRef<number | null>(null)
 
-  // 蝴蝶图片路径
+  // 蝴蝶图片路径 - 只保留两张图片循环
   const butterflyImages = [
-    OSS_CONFIG.getImageUrl('/webps/七影蝶.webp'),      // 默认状态
     OSS_CONFIG.getImageUrl('/webps/七影蝶-3.webp'),   // 翅膀闪动状态1
-    OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')    // 翅膀闪动状态2（默认显示）
+    OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')    // 翅膀闪动状态2
   ];
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
         clearInterval(intervalRef.current)
         intervalRef.current = null
       }
-      setCurrentImageIndex(1) // 显示默认图片（七影碟-4.png）
+      setCurrentImageIndex(0) // 显示默认图片（七影蝶-3.webp）
     }
 
     return () => {
