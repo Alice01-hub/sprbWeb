@@ -466,7 +466,22 @@
   color: #2d3748;
   margin: 0.5rem 0;
   padding-left: 1rem;
-  border-left: 2px solid #e2e8f0;
+  border-left: 3px solid #e2e8f0;
+  background-color: #f8f9fa;
+  border-radius: 0 4px 4px 0;
+  padding: 0.75rem 1rem;
+  position: relative;
+}
+
+.content-indent::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
 }
 
 /* 行内格式样式 */
@@ -475,6 +490,11 @@
 .content-indent strong {
   font-weight: 700;
   color: #1a202c;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .content-paragraph em,
@@ -482,6 +502,7 @@
 .content-indent em {
   font-style: italic;
   color: #4a5568;
+  font-weight: 500;
 }
 
 .content-paragraph code,
@@ -494,6 +515,7 @@
   font-family: 'Courier New', monospace;
   font-size: 0.9em;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .content-paragraph a,
@@ -502,13 +524,18 @@
   color: #3182ce;
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: border-bottom-color 0.2s ease;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .content-paragraph a:hover,
 .content-list-item a:hover,
 .content-indent a:hover {
   border-bottom-color: #3182ce;
+  color: #2c5aa0;
+  background-color: #f0f8ff;
+  padding: 0.1rem 0.2rem;
+  border-radius: 3px;
 }
 
 /* 加载和错误状态 */

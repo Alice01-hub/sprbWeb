@@ -25,31 +25,117 @@
 - 背景音乐控制
 - 音乐列表管理
 - 多种播放模式：列表循环、单曲循环、随机播放
+- 用户偏好缓存：自动保存播放模式、音量设置和播放位置
+- 断点续播：记住上次播放的BGM，从上次位置继续播放
+- 点击外部区域关闭：点击播放器以外的区域自动关闭播放器面板
 
 ### 🦋 特效系统
 - 蝴蝶扇动翅膀自定义鼠标特效
 - 流畅的动画过渡效果
 
+### 📢 公告栏系统
+- 实时公告发布和展示
+- 优先级分类（紧急、重要、一般）
+- 支持图片附件和富文本内容
+- 点击外部区域自动关闭：点击公告栏以外的区域自动收起公告列表
+- 键盘导航支持（方向键、Tab、Enter、Esc）
+- **Markdown格式支持**：支持加粗、斜体、代码、链接等格式
+- **智能缩进识别**：自动识别多级缩进，支持2、4、6等空格缩进
+- **增强的视觉效果**：加粗文字使用渐变色，缩进内容带有左边框和背景色
 
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Node.js 16.0 或更高版本
-- npm 或 yarn 包管理器
+- **Linux系统**: Ubuntu 18.04+ / CentOS 7+ / Debian 9+
+- **Python**: 3.9+
+- **Node.js**: 16.0+ 
+- **npm**: 8.0+
+- **PM2**: 5.0+ (进程管理器)
 
-### 安装依赖
+### 🐧 Linux部署 (推荐)
+
+#### 1. 系统环境准备
+```bash
+# 更新系统
+sudo apt update && sudo apt upgrade -y
+
+# 安装Python和Node.js
+sudo apt install python3 python3-pip python3-venv -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install nodejs -y
+
+# 安装PM2
+sudo npm install -g pm2
+```
+
+#### 2. 一键部署
+```bash
+# 给管理脚本执行权限
+chmod +x pm2-manager.sh
+
+# 初始设置 (安装依赖、创建目录、构建前端)
+./pm2-manager.sh setup
+
+# 启动生产环境服务
+./pm2-manager.sh start
+
+# 查看服务状态
+./pm2-manager.sh status
+```
+
+#### 3. PM2管理命令
+```bash
+# 启动服务
+./pm2-manager.sh start
+
+# 停止服务  
+./pm2-manager.sh stop
+
+# 重启服务
+./pm2-manager.sh restart
+
+# 查看日志
+./pm2-manager.sh logs
+
+# 监控面板
+./pm2-manager.sh monit
+```
+
+### 🪟 Windows开发环境
+
+#### 安装依赖
 ```bash
 cd frontend
 npm install
 ```
 
-### 启动开发服务器
+#### 启动开发服务器
 ```bash
 npm run dev
 ```
 
 应用将在 http://localhost:3000 启动
+
+### 🐧 Linux开发环境
+
+#### 快速启动
+```bash
+# 给脚本执行权限
+chmod +x start-dev.sh
+
+# 启动开发环境
+./start-dev.sh
+```
+
+#### 手动启动
+```bash
+# 启动后端
+cd backend && python3 -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+
+# 启动前端 (新终端)
+cd frontend && npm run dev
+```
 
 
 
@@ -58,23 +144,25 @@ npm run dev
 ```
 sprbWeb/
 ├── frontend/                 # 前端应用
-│   ├── src/
-│   │   ├── components/      # React组件
-│   │   │   └── ...          # 其他组件
-│   │   ├── pages/           # 页面组件
-│   │   │   └── ...          # 其他页面
-│   │   ├── styles/          # 样式文件
-│   │   │   └── ...          # 其他样式
-│   │   ├── types/           # TypeScript类型定义
-│   │   │   └── ...          # 其他类型
-│   │   └── config/          # 配置文件
-│   │       └── ...          # 其他配置
-│   ├── package.json
-│   └── tsconfig.json
+│   ├── src/                 # React组件和页面
+│   ├── dist/                # 生产构建文件
+│   ├── package.json         # 前端依赖配置
+│   └── tsconfig.json        # TypeScript配置
 ├── backend/                  # 后端服务
-├── README.md                 # 项目说明
-├── 公告栏系统使用说明.md      # 公告栏系统详细说明
-└── 公告栏参考.txt            # 公告栏系统参考文档
+│   ├── api/                 # API接口模块
+│   ├── data/                # 数据库文件
+│   ├── uploads/             # 文件上传目录
+│   ├── app.py               # 主应用文件
+│   ├── requirements.txt     # Python依赖
+│   └── env.*                # 环境配置文件
+├── logs/                     # PM2日志目录
+├── ecosystem.config.js       # PM2配置文件
+├── pm2-manager.sh           # PM2管理脚本
+├── nginx.conf               # Nginx配置模板
+├── sprb-web.service         # systemd服务文件
+├── package.json              # 根目录依赖配置
+├── config.json              # 项目配置文件
+└── README.md                # 项目说明文档
 ```
 
 
@@ -93,17 +181,49 @@ sprbWeb/
 
 ## 🔧 构建和部署
 
-### 构建生产版本
+### 🐧 Linux生产环境 (PM2管理)
+
+#### 构建和部署
+```bash
+# 构建前端
+./pm2-manager.sh build
+
+# 部署服务
+./pm2-manager.sh deploy
+
+# 重载服务 (零停机更新)
+./pm2-manager.sh reload
+```
+
+#### 系统服务配置
+```bash
+# 配置开机自启
+sudo cp sprb-web.service /etc/systemd/system/
+sudo systemctl enable sprb-web
+sudo systemctl start sprb-web
+```
+
+#### Nginx反向代理
+```bash
+# 配置Nginx
+sudo cp nginx.conf /etc/nginx/sites-available/sprb-web
+sudo ln -s /etc/nginx/sites-available/sprb-web /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
+
+### 🪟 Windows开发环境
+
+#### 构建生产版本
 ```bash
 npm run build
 ```
 
-### 预览生产版本
+#### 预览生产版本
 ```bash
 npm run preview
 ```
 
-### 类型检查
+#### 类型检查
 ```bash
 npm run type-check
 ```

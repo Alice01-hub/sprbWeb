@@ -79,14 +79,32 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   // 基本状态
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
+  const [currentTime, setCurrentTime] = useState(() => {
+    // 从localStorage读取用户上次的播放位置
+    const savedTime = localStorage.getItem('sprb_current_time')
+    return savedTime ? parseFloat(savedTime) : 0
+  })
   const [duration, setDuration] = useState(0)
-  const [volume, setVolumeState] = useState(0.7)
+  const [volume, setVolumeState] = useState(() => {
+    // 从localStorage读取用户上次的音量设置
+    const savedVolume = localStorage.getItem('sprb_volume')
+    return savedVolume ? parseFloat(savedVolume) : 0.7
+  })
   
   // 播放列表状态
   const [playlist, setPlaylist] = useState<Track[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [playMode, setPlayMode] = useState<PlayMode>('list')
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    // 从localStorage读取用户上次播放的歌曲索引
+    const savedIndex = localStorage.getItem('sprb_current_index')
+    return savedIndex ? parseInt(savedIndex) : 0
+  })
+  const [playMode, setPlayMode] = useState<PlayMode>(() => {
+    // 从localStorage读取用户上次的播放模式偏好
+    const savedPlayMode = localStorage.getItem('sprb_play_mode') as PlayMode
+    return savedPlayMode && ['list', 'single', 'random'].includes(savedPlayMode) 
+      ? savedPlayMode 
+      : 'list'
+  })
   
   // 随机播放相关状态
   const [playedTracks, setPlayedTracks] = useState<Set<number>>(new Set())
@@ -98,6 +116,33 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const currentTrack = playlist[currentIndex] || null
 
 
+
+  // 自定义的播放模式设置函数，同时保存到本地存储
+  const setPlayModeWithCache = useCallback((mode: PlayMode) => {
+    setPlayMode(mode)
+    // 保存到localStorage
+    localStorage.setItem('sprb_play_mode', mode)
+  }, [])
+
+  // 自定义的当前索引设置函数，同时保存到本地存储
+  const setCurrentIndexWithCache = useCallback((index: number) => {
+    setCurrentIndex(index)
+    // 保存到localStorage
+    localStorage.setItem('sprb_current_index', index.toString())
+  }, [])
+
+  // 清理用户播放偏好缓存
+  const clearPlaybackPreferences = useCallback(() => {
+    localStorage.removeItem('sprb_play_mode')
+    localStorage.removeItem('sprb_volume')
+    localStorage.removeItem('sprb_current_index')
+    localStorage.removeItem('sprb_current_time')
+    // 重置为默认值
+    setPlayMode('list')
+    setVolumeState(0.7)
+    setCurrentIndex(0)
+    setCurrentTime(0)
+  }, [])
 
   // 同步playMode到ref
   useEffect(() => {
@@ -173,8 +218,19 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       audio.load();
       isInitializedRef.current = true;
       console.log('音频初始化完成:', currentTrack.title);
+      
+      // 如果是从缓存恢复的播放位置，设置音频时间
+      if (currentTime > 0) {
+        // 延迟设置，确保音频已加载
+        setTimeout(() => {
+          if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+            audio.currentTime = currentTime;
+            console.log('从缓存恢复播放位置:', currentTime);
+          }
+        }, 100);
+      }
     }
-  }, [currentTrack]);
+  }, [currentTrack, currentTime]); // 添加currentTime依赖
 
   // 单独处理音量设置
   useEffect(() => {
@@ -316,10 +372,10 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     }
     
     console.log('切换到下一首:', nextIndex, playlist[nextIndex]?.title)
-    setCurrentIndex(nextIndex)
+    setCurrentIndexWithCache(nextIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
-  }, [currentIndex, playlist.length, playMode, getRandomNextIndex])
+  }, [currentIndex, playlist.length, playMode, getRandomNextIndex, setCurrentIndexWithCache])
 
   // 切换到上一首
   const prev = useCallback(() => {
@@ -336,10 +392,10 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     }
     
     console.log('切换到上一首:', prevIndex, playlist[prevIndex]?.title)
-    setCurrentIndex(prevIndex)
+    setCurrentIndexWithCache(prevIndex)
     isInitializedRef.current = false // 重置初始化标志
     shouldAutoPlayRef.current = true // 设置自动播放标志
-  }, [currentIndex, playlist.length, playMode, getRandomNextIndex])
+  }, [currentIndex, playlist.length, playMode, getRandomNextIndex, setCurrentIndexWithCache])
 
   // 进度跳转
   const seek = useCallback((time: number) => {
@@ -348,11 +404,15 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
 
     audio.currentTime = time
     setCurrentTime(time)
+    // 保存播放位置到localStorage
+    localStorage.setItem('sprb_current_time', time.toString())
   }, [])
 
   // 音量控制
   const setVolume = useCallback((newVolume: number) => {
     setVolumeState(newVolume)
+    // 保存到localStorage
+    localStorage.setItem('sprb_volume', newVolume.toString())
     const audio = audioRef.current
     if (audio) {
       audio.volume = newVolume
@@ -363,7 +423,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   const selectTrack = useCallback((index: number) => {
     if (index >= 0 && index < playlist.length && index !== currentIndex) {
       console.log('选择歌曲:', index, playlist[index]?.title)
-      setCurrentIndex(index)
+      setCurrentIndexWithCache(index)
       
       // 如果是随机播放模式，需要更新随机播放状态
       if (playMode === 'random') {
@@ -374,7 +434,7 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       isInitializedRef.current = false // 重置初始化标志
       shouldAutoPlayRef.current = true // 设置自动播放标志
     }
-  }, [playlist.length, currentIndex, playMode])
+  }, [playlist.length, currentIndex, playMode, setCurrentIndexWithCache])
 
   // 处理自动播放逻辑
   useEffect(() => {
@@ -397,7 +457,13 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     }
 
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime || 0)
+      const currentAudioTime = audio.currentTime || 0
+      setCurrentTime(currentAudioTime)
+      
+      // 每5秒保存一次播放位置，避免频繁写入localStorage
+      if (Math.floor(currentAudioTime) % 5 === 0) {
+        localStorage.setItem('sprb_current_time', currentAudioTime.toString())
+      }
     }
 
     const handleEnded = () => {
@@ -522,7 +588,9 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     seek,
     setVolume,
     selectTrack,
-    setPlayMode,
+    setPlayMode: setPlayModeWithCache,
+    setCurrentIndex: setCurrentIndexWithCache,
+    clearPlaybackPreferences,
     
     // 播放器引用
     audioRef,

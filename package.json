@@ -1,0 +1,38 @@
+{
+  "name": "sprb-web",
+  "version": "2.0.0",
+  "description": "Summer Pockets 圣地巡礼网站 - PM2管理版本",
+  "main": "ecosystem.config.js",
+  "scripts": {
+    "start": "pm2 start ecosystem.config.js --env production",
+    "start:dev": "pm2 start ecosystem.config.js --env development",
+    "stop": "pm2 stop ecosystem.config.js",
+    "restart": "pm2 restart ecosystem.config.js",
+    "reload": "pm2 reload ecosystem.config.js",
+    "delete": "pm2 delete ecosystem.config.js",
+    "logs": "pm2 logs",
+    "monit": "pm2 monit",
+    "status": "pm2 status",
+    "install:pm2": "npm install -g pm2",
+    "setup": "npm run install:pm2 && mkdir -p logs && mkdir -p data && mkdir -p uploads",
+    "deploy": "npm run build:frontend && pm2 reload ecosystem.config.js --env production",
+    "build:frontend": "cd frontend && npm install && npm run build:production",
+    "clean": "pm2 delete ecosystem.config.js && pm2 save && pm2 kill"
+  },
+  "keywords": [
+    "summer-pockets",
+    "pilgrimage",
+    "pm2",
+    "fastapi",
+    "react"
+  ],
+  "author": "Agent_小苍",
+  "license": "MIT",
+  "devDependencies": {
+    "pm2": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

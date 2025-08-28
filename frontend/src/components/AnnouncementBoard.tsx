@@ -131,15 +131,16 @@ const AnnouncementBoard = () => {
       // 列表项处理 (- 项目)
       if (trimmedLine.startsWith('- ')) {
         const listText = trimmedLine.substring(2);
-        return <div key={index} className="content-list-item">• {listText}</div>;
+        return <div key={index} className="content-list-item">• {formatInlineText(listText)}</div>;
       }
       
-      // 缩进处理 (以两个或更多空格开头)
-      if (line.startsWith('  ')) {
-        const indentLevel = Math.floor((line.length - line.trimStart().length) / 2);
+      // 缩进处理 (检测行首空格数量)
+      const leadingSpaces = line.length - line.trimStart().length;
+      if (leadingSpaces >= 2) {
+        const indentLevel = Math.floor(leadingSpaces / 2);
         const indentText = line.trim();
         return (
-          <div key={index} className="content-indent" style={{ marginLeft: `${indentLevel * 20}px` }}>
+          <div key={index} className="content-indent" style={{ marginLeft: `${indentLevel * 24}px` }}>
             {formatInlineText(indentText)}
           </div>
         );
@@ -156,6 +157,8 @@ const AnnouncementBoard = () => {
 
   // 格式化行内文本的函数
   const formatInlineText = (text: string) => {
+    if (!text) return null;
+    
     // 处理加粗 (**文字**)
     const boldRegex = /\*\*(.*?)\*\*/g;
     let formattedText = text.replace(boldRegex, '<strong>$1</strong>');
@@ -190,6 +193,7 @@ const AnnouncementBoard = () => {
       formattedText = formattedText.replace(new RegExp(code, 'g'), emoji);
     });
     
+    // 使用 dangerouslySetInnerHTML 渲染格式化后的文本
     return <span dangerouslySetInnerHTML={{ __html: formattedText }} />;
   };
 
@@ -302,6 +306,29 @@ const AnnouncementBoard = () => {
     }
     setKeyboardNav(false)
   }, [selectedIndex, keyboardNav])
+
+  // 点击外部区域关闭公告栏
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      
+      // 检查点击的是否是公告栏相关元素
+      const isAnnouncementElement = target.closest('.announcement-board-container')
+      
+      if (isListExpanded && !isAnnouncementElement) {
+        setIsListExpanded(false)
+      }
+    }
+
+    // 只在公告栏展开时添加事件监听器
+    if (isListExpanded) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isListExpanded])
 
   if (error) {
     return (

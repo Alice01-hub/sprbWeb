@@ -466,6 +466,29 @@ const MusicPlayer: React.FC = () => {
     return () => container.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // 点击外部区域关闭播放器
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      
+      // 检查点击的是否是音乐播放器相关元素
+      const isMusicPlayerElement = target.closest('[data-music-player="true"]')
+      
+      if (isPlayerOpen && !isMusicPlayerElement) {
+        setPlayerOpen(false)
+      }
+    }
+
+    // 只在播放器打开时添加事件监听器
+    if (isPlayerOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isPlayerOpen, setPlayerOpen])
+
   return (
     <PlayerContainer data-music-player="true">
       {/* 音乐播放器菜单按钮 */}
@@ -574,26 +597,29 @@ const MusicPlayer: React.FC = () => {
               <span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
                   播放列表 ({playlist.length})
               </span>
-              <motion.button
-                onClick={togglePlayMode}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  color: '#ff4757',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  transition: 'all 0.2s'
-                }}
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 71, 87, 0.1)' }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {getPlayModeIcon()} {getPlayModeText()}
-              </motion.button>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                 <motion.button
+                   onClick={togglePlayMode}
+                   style={{
+                     background: 'none',
+                     border: 'none',
+                     cursor: 'pointer',
+                     fontSize: '12px',
+                     color: '#ff4757',
+                     display: 'flex',
+                     alignItems: 'center',
+                     gap: '4px',
+                     padding: '4px 8px',
+                     borderRadius: '4px',
+                     transition: 'all 0.2s'
+                   }}
+                   whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 71, 87, 0.1)' }}
+                   whileTap={{ scale: 0.95 }}
+                 >
+                   {getPlayModeIcon()} {getPlayModeText()}
+                 </motion.button>
+
+               </div>
             </PlaylistHeader>
 
             <PlaylistContainer ref={playlistContainerRef}>
