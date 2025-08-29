@@ -35,7 +35,7 @@ const ButterflyAnimation: React.FC<ButterflyAnimationProps> = ({
   size = 150  // 🦋 蝴蝶图片尺寸调整：修改这里的默认值来调整蝴蝶图片大小
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0) // 默认显示第一张图片
-  const intervalRef = useRef<number | null>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   // 蝴蝶图片路径 - 只保留两张图片循环
   const butterflyImages = [
