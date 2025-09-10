@@ -279,6 +279,35 @@ const FadeOverlay = styled(motion.div)`
   pointer-events: none;
 `
 
+const Footer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+`
+
+const ICPText = styled.div`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+`
+
 
 
 const HomePage: React.FC = () => {
@@ -430,6 +459,13 @@ const HomePage: React.FC = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* 备案号 */}
+      <Footer>
+        <ICPText>
+          粤ICP备2025427255号-2
+        </ICPText>
+      </Footer>
 
     </Container>
   )
