@@ -285,10 +285,10 @@ const Footer = styled.div`
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
-  pointer-events: none;
+  pointer-events: auto;
 `
 
-const ICPText = styled.div`
+const ICPText = styled.a`
   color: rgba(255, 255, 255, 0.8);
   font-size: 12px;
   font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
@@ -300,11 +300,15 @@ const ICPText = styled.div`
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
   
   &:hover {
     color: rgba(255, 255, 255, 1);
     background: rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
+    text-decoration: none;
   }
 `
 
@@ -462,7 +466,11 @@ const HomePage: React.FC = () => {
 
       {/* 备案号 */}
       <Footer>
-        <ICPText>
+        <ICPText 
+          href="https://beian.miit.gov.cn/?spm=5176.beian-pc.icp_beian.7.395179feN7xeh4#/Integrated/index"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           粤ICP备2025427255号-2
         </ICPText>
       </Footer>
