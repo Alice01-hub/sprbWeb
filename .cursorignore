@@ -1,0 +1,39 @@
+# 本地开发时隐藏的文件和文件夹
+# 这些文件保留在项目中，但在 Cursor IDE 中不显示
+
+# 生产环境部署文件
+ecosystem.config.js
+pm2-manager.sh
+sprb-web.service
+nginx.conf
+check_deployment.sh
+start-dev.sh
+
+# 生产环境配置模板
+env.production.template
+frontend/env.production
+
+# 根目录依赖 (保留但隐藏)
+package.json
+package-lock.json
+node_modules/
+
+# 工具文件
+ossutil.exe
+
+# 日志和临时文件
+logs/
+*.log
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 配置
+.vscode/
+.idea/
+
+# 环境变量文件 (敏感信息)
+.env
+.env.local
+.env.production

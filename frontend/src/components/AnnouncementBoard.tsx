@@ -204,6 +204,32 @@ const AnnouncementBoard = () => {
   const fetchAnnouncements = async () => {
     try {
       setLoading(true)
+      setError(null)
+      
+      console.log('🔍 开始获取公告数据...')
+      console.log('Supabase URL:', supabase.supabaseUrl)
+      console.log('Supabase Key:', supabase.supabaseKey ? '已设置' : '未设置')
+      console.log('Supabase Key长度:', supabase.supabaseKey?.length || 0)
+      
+      // 测试Supabase连接
+      const { data: testData, error: testError } = await supabase
+        .from('announcements')
+        .select('id')
+        .limit(1)
+      
+      if (testError) {
+        console.error('❌ Supabase连接测试失败:', testError)
+        console.error('连接错误详情:', {
+          message: testError.message,
+          details: testError.details,
+          hint: testError.hint,
+          code: testError.code
+        })
+        setError(`数据库连接失败: ${testError.message}`)
+        return
+      }
+      
+      console.log('✅ Supabase连接测试成功')
       
       const { data, error } = await supabase
         .from('announcements')
@@ -211,17 +237,27 @@ const AnnouncementBoard = () => {
         .eq('is_published', true)
         .order('created_at', { ascending: false })
 
+      console.log('📊 查询结果:', { data, error })
+
       if (error) {
         console.error('❌ 获取公告失败:', error)
-        setError(error.message)
+        console.error('错误详情:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        setError(`获取公告失败: ${error.message}`)
         return
       }
 
+      console.log('✅ 成功获取公告:', data?.length || 0, '条')
       setAnnouncements(data || [])
       
     } catch (err: any) {
       console.error('❌ 获取公告过程中发生错误:', err)
-      setError(err.message)
+      console.error('错误堆栈:', err.stack)
+      setError(`网络错误: ${err.message}`)
     } finally {
       setLoading(false)
     }

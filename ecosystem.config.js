@@ -15,7 +15,9 @@ module.exports = {
         HOST: '0.0.0.0',
         PORT: 8000,
         RELOAD: 'false',
-        WORKERS: 4
+        WORKERS: 4,
+        SUPABASE_URL: 'https://kcqcljzazatopmoifqzt.supabase.co',
+        SUPABASE_SECRET_KEY: 'sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V'
       },
       env_development: {
         NODE_ENV: 'development',
@@ -25,7 +27,9 @@ module.exports = {
         HOST: '127.0.0.1',
         PORT: 8000,
         RELOAD: 'true',
-        WORKERS: 1
+        WORKERS: 1,
+        SUPABASE_URL: 'https://kcqcljzazatopmoifqzt.supabase.co',
+        SUPABASE_SECRET_KEY: 'sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V'
       },
       error_file: './logs/backend-error.log',
       out_file: './logs/backend-out.log',
@@ -47,11 +51,15 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000
+        PORT: 3000,
+        VITE_SUPABASE_URL: 'https://kcqcljzazatopmoifqzt.supabase.co',
+        VITE_SUPABASE_PUBLIC_KEY: 'sb_publishable_VCpD0kHRMM18T7WMnrUmIA_hNoDZ229'
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: 3000
+        PORT: 3000,
+        VITE_SUPABASE_URL: 'https://kcqcljzazatopmoifqzt.supabase.co',
+        VITE_SUPABASE_PUBLIC_KEY: 'sb_publishable_VCpD0kHRMM18T7WMnrUmIA_hNoDZ229'
       },
       error_file: '../logs/frontend-error.log',
       out_file: '../logs/frontend-out.log',

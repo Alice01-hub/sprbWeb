@@ -6,6 +6,7 @@ After=network.target
 Type=forking
 User=ubuntu
 WorkingDirectory=/var/www/sprb-web
+EnvironmentFile=/var/www/sprb-web/.env
 ExecStart=/usr/bin/pm2 start ecosystem.config.js --env production
 ExecReload=/usr/bin/pm2 reload ecosystem.config.js
 ExecStop=/usr/bin/pm2 stop ecosystem.config.js

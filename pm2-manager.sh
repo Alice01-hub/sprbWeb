@@ -37,9 +37,41 @@ create_directories() {
     echo -e "${GREEN}✅ 目录创建完成${NC}"
 }
 
+# 创建环境变量文件
+create_env_file() {
+    echo -e "${BLUE}📝 创建环境变量文件...${NC}"
+    cat > .env << 'EOF'
+# Summer Pockets 巡礼网站 - 环境变量配置
+
+# Supabase配置
+SUPABASE_URL=https://kcqcljzazatopmoifqzt.supabase.co
+SUPABASE_PUBLIC_KEY=sb_publishable_VCpD0kHRMM18T7WMnrUmIA_hNoDZ229
+SUPABASE_SECRET_KEY=sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V
+
+# 应用配置
+NODE_ENV=production
+ENVIRONMENT=production
+DEBUG=false
+LOG_LEVEL=WARNING
+
+# 服务器配置
+HOST=0.0.0.0
+PORT=8000
+RELOAD=false
+WORKERS=4
+EOF
+    echo -e "${GREEN}✅ 环境变量文件创建完成${NC}"
+}
+
 # 安装依赖
 install_dependencies() {
     echo -e "${BLUE}📦 安装项目依赖...${NC}"
+    
+    # 检查环境变量文件
+    if [ ! -f ".env" ]; then
+        echo -e "${YELLOW}⚠️  .env 文件不存在，创建默认环境变量文件...${NC}"
+        create_env_file
+    fi
     
     # 安装后端依赖
     echo "安装后端依赖..."
@@ -70,6 +102,18 @@ start_services() {
     local env=${1:-production}
     
     echo -e "${BLUE}🚀 启动服务 (环境: $env)...${NC}"
+    
+    # 检查环境变量文件
+    if [ ! -f ".env" ]; then
+        echo -e "${YELLOW}⚠️  .env 文件不存在，创建默认环境变量文件...${NC}"
+        create_env_file
+    fi
+    
+    # 加载环境变量
+    if [ -f ".env" ]; then
+        echo -e "${BLUE}📋 加载环境变量...${NC}"
+        export $(cat .env | grep -v '^#' | xargs)
+    fi
     
     if [ "$env" = "development" ]; then
         pm2 start ecosystem.config.js --env development

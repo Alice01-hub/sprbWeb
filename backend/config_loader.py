@@ -17,9 +17,6 @@ class ConfigLoader:
             "environment": os.getenv("ENVIRONMENT", "development"),
             "debug": os.getenv("DEBUG", "true").lower() == "true",
             "log_level": os.getenv("LOG_LEVEL", "INFO"),
-            "database": {
-                "path": os.getenv("DATABASE_PATH", "./data/traffic_cards.db")
-            },
             "server": {
                 "host": os.getenv("HOST", "127.0.0.1"),
                 "port": int(os.getenv("PORT", "8000")),
@@ -29,10 +26,6 @@ class ConfigLoader:
         
         return config
     
-    @staticmethod
-    def get_database_path() -> str:
-        """获取数据库路径"""
-        return os.getenv("DATABASE_PATH", "./data/traffic_cards.db")
     
     @staticmethod
     def get_server_config() -> Dict[str, Any]:

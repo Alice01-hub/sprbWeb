@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 class AudioService:
     def __init__(self):
-        # Supabase配置
-        self.supabase_url = "https://kcqcljzazatopmoifqzt.supabase.co"
-        self.supabase_anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjcWNsanphemF0b3Btb2lmcXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NTk1NTMsImV4cCI6MjA3MTMzNTU1M30.8_Tdbh3Mfl8j3E2slOJ9gqrvlduGC4X0j8S-EDucIJk"
+        # 从环境变量读取Supabase配置
+        self.supabase_url = os.getenv("SUPABASE_URL", "https://kcqcljzazatopmoifqzt.supabase.co")
+        self.supabase_anon_key = os.getenv("SUPABASE_SECRET_KEY", "sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V")
         
         # 请求头
         self.headers = {

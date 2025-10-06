@@ -33,15 +33,17 @@ from pydantic import BaseModel
 from typing import List, Optional
 import json
 import io
-import sqlite3
 from datetime import datetime
 import tempfile
-from performance_monitor import get_monitor
+# performance_monitor 已移除
 from config_loader import ConfigLoader
 import psutil
 
 # 导入音频服务
 from api.audio_service import get_audios_api, get_audio_by_id_api
+
+# 导入神域服务
+from api.divine_realm_service import get_divine_scenes_api, get_random_scene_api, get_scene_by_id_api
 
 app = FastAPI(title="Summer Pockets 巡礼网站 API", version="2.0.0", description="简化版本 - 专注于旅游攻略和音乐服务")
 
@@ -56,22 +58,33 @@ app.add_middleware(
 
 # 配置文件夹
 UPLOAD_FOLDER = 'uploads'
-DATA_FOLDER = 'data'
-DATABASE_PATH = 'data/traffic_cards.db'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(DATA_FOLDER, exist_ok=True)
 
 # 加载环境变量
 def load_env_file():
     """加载环境变量文件"""
-    env_file = Path(__file__).parent / '.env'
+    env_file = Path(__file__).parent.parent / '.env'  # 从项目根目录加载
     if env_file.exists():
+        print(f"🔍 加载环境变量文件: {env_file}")
         with open(env_file, 'r', encoding='utf-8') as f:
-            for line in f:
+            for line_num, line in enumerate(f, 1):
                 line = line.strip()
                 if line and not line.startswith('#') and '=' in line:
                     key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    
+                    # 移除引号
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+                    elif value.startswith("'") and value.endswith("'"):
+                        value = value[1:-1]
+                    
                     os.environ[key] = value
+                    print(f"✅ 加载环境变量: {key}")
+        print("🎉 环境变量加载完成")
+    else:
+        print(f"⚠️  环境变量文件不存在: {env_file}")
 
 # 在导入其他模块前加载环境变量
 load_env_file()
@@ -87,16 +100,6 @@ if 'LOG_LEVEL' not in os.environ:
     os.environ['LOG_LEVEL'] = 'DEBUG' if os.environ['ENVIRONMENT'] == 'development' else 'INFO'
 
 # Pydantic模型
-class TrafficCard(BaseModel):
-    id: Optional[int] = None
-    title: str
-    icon: str
-    content: str
-    category: str
-    subcategory: Optional[str] = None
-    order_index: int = 0
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
 
 class AudioFile(BaseModel):
     name: str
@@ -115,105 +118,6 @@ class PlaylistInfo(BaseModel):
     total: int
     tracks: List[MusicTrack]
 
-# 数据库初始化
-def init_database():
-    """初始化数据库"""
-    conn = sqlite3.connect(DATABASE_PATH)
-    cursor = conn.cursor()
-    
-    # 创建交通攻略卡片表
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS traffic_cards (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            icon TEXT,
-            content TEXT NOT NULL,
-            category TEXT NOT NULL,
-            subcategory TEXT,
-            order_index INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    # 插入默认数据
-    default_cards = [
-        ('机票购买指南', '💳', '''推荐购票平台：
-• 春秋航空官网/APP - 官方直销，价格透明
-• 携程/去哪儿 - 比价便捷，促销活动多
-• 飞猪 - 阿里系平台，信用保障
-
-购票注意事项：
-• 建议提前1-2个月预订，价格更优惠
-• 注意行李额度，春秋航空需单独购买
-• 确认护照有效期至少6个月以上''', 'international', 'guangzhou', 1),
-        
-        ('行李托运与安检', '🧳', '''行李规格：
-• 手提行李：20cm×30cm×40cm，重量≤7kg
-• 托运行李：需单独购买，规格详见官网
-• 禁止携带：液体>100ml、充电宝>20000mAh
-
-安检须知：
-• 提前2小时到达机场办理手续
-• 电子设备需单独过检
-• 液体化妆品需装入透明袋''', 'international', 'guangzhou', 2),
-        
-        ('登机流程', '🛫', '''值机流程：
-• 在线值机：起飞前24小时开放
-• 机场值机：柜台或自助值机设备
-• 选择座位：在线值机可免费选择
-
-登机须知：
-• 提前30分钟到达登机口
-• 准备好护照和登机牌
-• 注意登机口变更广播''', 'international', 'guangzhou', 3),
-        
-        ('到达日本入境', '🏛️', '''入境流程：
-• 填写入境记录卡（飞机上发放）
-• 护照检查 → 行李提取 → 海关申报
-• 准备好返程机票和住宿证明
-
-注意事项：
-• 入境记录卡需如实填写
-• 携带现金需申报（超过100万日元）
-• 保持手机联系方式畅通''', 'international', 'guangzhou', 4),
-        
-        ('交通卡购买', '💳', '''推荐交通卡：
-• ICOCA卡 - 关西地区通用
-• SUICA卡 - 全国通用
-• 购买地点：机场、车站自助售票机
-
-使用方法：
-• 首次购买包含500日元押金
-• 可在便利店、餐厅使用
-• 余额不足时可随时充值''', 'international', 'guangzhou', 5),
-        
-        ('机场内换乘指引', '🚌', '''交通方式选择：
-• 电车：关西机场线 → 大阪/神户方向
-• 大巴：利木津巴士 → 各主要城市
-• 出租车：价格较高，适合多人出行
-
-换乘指引：
-• 跟随"电车"标识前往车站
-• 购票后通过检票口
-• 确认列车方向和终点站''', 'international', 'guangzhou', 6)
-    ]
-    
-    # 检查是否已有数据
-    cursor.execute('SELECT COUNT(*) FROM traffic_cards')
-    count = cursor.fetchone()[0]
-    
-    if count == 0:
-        cursor.executemany('''
-            INSERT INTO traffic_cards (title, icon, content, category, subcategory, order_index)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', default_cards)
-    
-    conn.commit()
-    conn.close()
-
-# 初始化数据库
-init_database()
 
 # 中文字体处理
 def get_font_name():
@@ -561,87 +465,6 @@ async def record_play_stats():
         "timestamp": datetime.now().isoformat()
     }
 
-@app.get("/api/traffic-cards")
-async def get_traffic_cards():
-    """获取交通攻略卡片"""
-    try:
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT id, title, icon, content, category, subcategory, order_index, created_at, updated_at
-            FROM traffic_cards
-            ORDER BY order_index, created_at
-        ''')
-        rows = cursor.fetchall()
-        conn.close()
-        
-        cards = []
-        for row in rows:
-            cards.append({
-                "id": row[0],
-                "title": row[1],
-                "icon": row[2],
-                "content": row[3],
-                "category": row[4],
-                "subcategory": row[5],
-                "order_index": row[6],
-                "created_at": row[7],
-                "updated_at": row[8]
-            })
-        
-        return {"cards": cards}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"获取交通攻略卡片失败: {str(e)}")
-
-@app.post("/api/traffic-cards")
-async def create_traffic_card(card: TrafficCard):
-    """创建交通攻略卡片"""
-    try:
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO traffic_cards (title, icon, content, category, subcategory, order_index)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (card.title, card.icon, card.content, card.category, card.subcategory, card.order_index))
-        conn.commit()
-        card_id = cursor.lastrowid
-        conn.close()
-        
-        return {"id": card_id, "message": "交通攻略卡片创建成功"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"创建交通攻略卡片失败: {str(e)}")
-
-@app.put("/api/traffic-cards/{card_id}")
-async def update_traffic_card(card_id: int, card: TrafficCard):
-    """更新交通攻略卡片"""
-    try:
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute('''
-            UPDATE traffic_cards 
-            SET title=?, icon=?, content=?, category=?, subcategory=?, order_index=?, updated_at=CURRENT_TIMESTAMP
-            WHERE id=?
-        ''', (card.title, card.icon, card.content, card.category, card.subcategory, card.order_index, card_id))
-        conn.commit()
-        conn.close()
-        
-        return {"message": "交通攻略卡片更新成功"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"更新交通攻略卡片失败: {str(e)}")
-
-@app.delete("/api/traffic-cards/{card_id}")
-async def delete_traffic_card(card_id: int):
-    """删除交通攻略卡片"""
-    try:
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM traffic_cards WHERE id=?', (card_id,))
-        conn.commit()
-        conn.close()
-        
-        return {"message": "交通攻略卡片删除成功"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"删除交通攻略卡片失败: {str(e)}")
 
 @app.get("/api/download-checklist")
 async def download_checklist():
@@ -669,22 +492,13 @@ async def download_checklist():
 @app.get("/health")
 async def health_check():
     """健康检查端点"""
-    try:
-        # 检查数据库连接
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1").fetchone()
-        conn.close()
-        
-        return {
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "version": "2.0.0",
-            "environment": os.getenv("ENVIRONMENT", "development"),
-            "description": "Summer Pockets 巡礼网站 API - 简化版本"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "2.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "description": "Summer Pockets 巡礼网站 API - 简化版本"
+    }
 
 # 音频API路由
 @app.get("/api/audios")
@@ -696,6 +510,22 @@ async def get_audios():
 async def get_audio_by_id(audio_id: int):
     """根据ID获取音频数据"""
     return get_audio_by_id_api(audio_id)
+
+# 神域相关API
+@app.get("/api/divine-realm/scenes")
+async def get_divine_scenes():
+    """获取所有神域场景"""
+    return await get_divine_scenes_api()
+
+@app.get("/api/divine-realm/random-scene")
+async def get_random_divine_scene():
+    """获取随机神域场景"""
+    return await get_random_scene_api()
+
+@app.get("/api/divine-realm/scenes/{scene_id}")
+async def get_divine_scene_by_id(scene_id: int):
+    """根据ID获取神域场景"""
+    return await get_scene_by_id_api(scene_id)
 
 # 静态文件服务
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
@@ -711,7 +541,7 @@ async def root():
         "endpoints": {
             "health": "/health",
             "audios": "/api/audios",
-            "traffic_cards": "/api/traffic-cards",
+            "divine_realm": "/api/divine-realm",
             "docs": "/docs"
         },
         "timestamp": datetime.now().isoformat()
@@ -722,12 +552,6 @@ async def root():
 async def test_database_connection():
     """测试数据库连接"""
     try:
-        # 测试SQLite连接
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1").fetchone()
-        conn.close()
-        
         # 测试Supabase连接
         from api.audio_service import audio_service
         test_audios = audio_service.get_all_audios()
@@ -735,7 +559,6 @@ async def test_database_connection():
         return {
             "success": True,
             "message": "数据库连接正常",
-            "sqlite": "connected",
             "supabase": "connected" if test_audios is not None else "failed",
             "audio_count": len(test_audios) if test_audios else 0,
             "timestamp": datetime.now().isoformat()
@@ -746,4 +569,8 @@ async def test_database_connection():
             "message": f"数据库连接失败: {str(e)}",
             "error": str(e),
             "timestamp": datetime.now().isoformat()
-        } 
+        }
+
+# 启动服务器
+# 启动代码已移至 run.py
+# 使用 python run.py 启动服务

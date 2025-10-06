@@ -48,6 +48,38 @@
 ### 环境要求
 - **Linux系统**: Ubuntu 18.04+ / CentOS 7+ / Debian 9+
 - **Python**: 3.9+
+
+### 🔧 环境变量配置
+
+项目已更新为使用 API-key 方式，所有部署脚本都会自动创建和配置环境变量文件。
+
+### 📋 自动配置
+
+所有启动脚本都会自动检查并创建 `.env` 文件：
+
+- **Windows**: `start_full_project.bat` 会自动创建环境变量文件
+- **Linux开发**: `start-dev.sh` 会自动创建环境变量文件  
+- **Linux生产**: `pm2-manager.sh setup` 会自动创建环境变量文件
+
+### 🔑 Supabase API-key 配置
+
+环境变量文件包含以下 Supabase 配置：
+
+```bash
+# Supabase配置
+SUPABASE_URL=https://kcqcljzazatopmoifqzt.supabase.co
+SUPABASE_PUBLIC_KEY=sb_publishable_VCpD0kHRMM18T7WMnrUmIA_hNoDZ229
+SUPABASE_SECRET_KEY=sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V
+```
+
+### 📝 自定义配置
+
+如需自定义配置，请编辑项目根目录的 `.env` 文件：
+
+1. **开发环境**: 修改 `.env` 文件中的配置
+2. **生产环境**: 使用 `env.production.template` 作为模板创建 `.env` 文件
+
+详细配置说明请参考：[环境变量配置说明.md](ENV_CONFIG.md)
 - **Node.js**: 16.0+ 
 - **npm**: 8.0+
 - **PM2**: 5.0+ (进程管理器)
@@ -73,7 +105,7 @@ sudo npm install -g pm2
 # 给管理脚本执行权限
 chmod +x pm2-manager.sh
 
-# 初始设置 (安装依赖、创建目录、构建前端)
+# 初始设置 (安装依赖、创建目录、构建前端、创建环境变量文件)
 ./pm2-manager.sh setup
 
 # 启动生产环境服务
@@ -82,6 +114,8 @@ chmod +x pm2-manager.sh
 # 查看服务状态
 ./pm2-manager.sh status
 ```
+
+**注意**: 脚本会自动创建 `.env` 文件，包含 Supabase API-key 配置。如需自定义配置，请编辑 `.env` 文件。
 
 #### 3. PM2管理命令
 ```bash
@@ -103,18 +137,20 @@ chmod +x pm2-manager.sh
 
 ### 🪟 Windows开发环境
 
-#### 安装依赖
+#### 手动启动
 ```bash
-cd frontend
-npm install
-```
+# 启动后端服务
+cd backend
+start_backend.bat
 
-#### 启动开发服务器
-```bash
-npm run dev
+# 启动前端服务 (新终端)
+cd frontend
+start_frontend.bat
 ```
 
 应用将在 http://localhost:3000 启动
+
+**注意**: 脚本会自动创建 `.env` 文件，包含 Supabase API-key 配置。
 
 ### 🐧 Linux开发环境
 
@@ -126,6 +162,8 @@ chmod +x start-dev.sh
 # 启动开发环境
 ./start-dev.sh
 ```
+
+**注意**: 脚本会自动创建 `.env` 文件，包含 Supabase API-key 配置。
 
 #### 手动启动
 ```bash
@@ -149,7 +187,8 @@ sprbWeb/
 │   └── tsconfig.json        # TypeScript配置
 ├── backend/                  # 后端服务
 │   ├── api/                 # API接口模块
-│   ├── data/                # 数据库文件
+│   │   ├── audio_service.py     # 音频服务 (Supabase)
+│   │   └── divine_realm_service.py # 神域服务 (Supabase)
 │   ├── uploads/             # 文件上传目录
 │   ├── app.py               # 主应用文件
 │   ├── requirements.txt     # Python依赖
@@ -164,7 +203,85 @@ sprbWeb/
 └── README.md                # 项目说明文档
 ```
 
+## 🗄️ 数据库架构
 
+### 📊 数据库使用情况
+
+本项目采用**云端数据库架构**，所有数据都通过Supabase进行管理：
+
+#### ☁️ **Supabase (云端数据库)**
+- **用途**: 音频数据和神域场景数据
+- **优势**: 云端托管、高可用性、实时同步、REST API
+- **数据表**:
+  - `audios` - 音频文件信息 (音乐播放器)
+  - `DivineRealmPage_graph` - 神域场景数据 (神域页面)
+
+### 🔄 数据流向
+
+```
+前端应用
+├── 音频数据 → Supabase API (/api/audios)
+└── 神域数据 → Supabase API (/api/divine-realm/*)
+
+后端服务
+├── audio_service.py → Supabase REST API
+└── divine_realm_service.py → Supabase REST API
+```
+
+### 🎯 设计理念
+
+**为什么选择Supabase？**
+
+1. **音频数据** → Supabase
+   - 需要CDN加速分发
+   - 支持云端管理
+   - 便于扩展和维护
+
+2. **神域数据** → Supabase
+   - 需要实时更新
+   - 支持多用户访问
+   - 云端备份安全
+
+### 🚀 数据库连接配置
+
+#### Supabase配置
+```python
+# 在 audio_service.py 和 divine_realm_service.py 中
+# Supabase配置 - 请从环境变量读取
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://kcqcljzazatopmoifqzt.supabase.co")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_SECRET_KEY", "your_secret_key_here")
+```
+
+### 📈 性能优化
+
+- **API缓存**: Supabase API支持缓存策略
+- **错误处理**: 完善的错误处理和重试机制
+- **异步处理**: FastAPI异步处理提高并发性能
+- **CDN加速**: 音频文件通过CDN全球分发
+
+## 🔌 API接口说明
+
+### 🎵 音频相关API
+- `GET /api/audios` - 获取所有音频列表
+- `GET /api/audios/{id}` - 获取指定音频信息
+- `POST /api/music/play-stats` - 记录播放统计
+
+### 🦋 神域相关API
+- `GET /api/divine-realm/scenes` - 获取所有神域场景
+- `GET /api/divine-realm/random-scene` - 获取随机神域场景
+- `GET /api/divine-realm/scenes/{id}` - 获取指定神域场景
+
+### 📄 其他API
+- `GET /health` - 健康检查
+- `GET /api/test-db` - 数据库连接测试
+- `GET /api/download-checklist` - 下载巡礼任务清单PDF
+- `GET /` - API信息概览
+
+### 🚫 已移除的API
+- ~~`GET /api/traffic-cards`~~ - 交通攻略卡片 (已移除)
+- ~~`POST /api/traffic-cards`~~ - 创建交通攻略卡片 (已移除)
+- ~~`PUT /api/traffic-cards/{id}`~~ - 更新交通攻略卡片 (已移除)
+- ~~`DELETE /api/traffic-cards/{id}`~~ - 删除交通攻略卡片 (已移除)
 
 ## 🎨 自定义配置
 
@@ -202,6 +319,8 @@ sudo systemctl enable sprb-web
 sudo systemctl start sprb-web
 ```
 
+**注意**: systemd 服务会自动加载 `.env` 文件中的环境变量。
+
 #### Nginx反向代理
 ```bash
 # 配置Nginx
@@ -227,13 +346,109 @@ npm run preview
 npm run type-check
 ```
 
+## 🔍 部署检查
+
+在部署前，建议运行检查脚本验证配置：
+
+### Linux 检查
+```bash
+# 给脚本执行权限
+chmod +x check_deployment.sh
+
+# 运行部署检查脚本
+./check_deployment.sh
+```
+
+检查脚本会验证：
+- 环境变量配置是否正确
+- 项目文件是否完整
+- 依赖是否已安装
+- 部署脚本是否存在
+
 ## 📚 相关文档
 
 请参考项目中的其他文档了解具体功能使用方法。
 
 ## 📝 更新日志
 
-### 2025年8月27日 - 音频系统重构与数据管理优化 🎵
+### 2025年1月27日 - API-key 配置优化与部署脚本更新 🔧
+
+#### 🎯 主要更新内容
+- **API-key 配置**: 项目全面更新为使用环境变量管理 Supabase API-key
+- **自动配置**: 所有部署脚本都会自动创建和配置环境变量文件
+- **跨平台支持**: Windows 和 Linux 系统都有对应的自动配置脚本
+- **部署检查**: 新增部署检查脚本，帮助验证配置是否正确
+
+#### 🔧 技术改进
+- **环境变量管理**:
+  - 更新 `ecosystem.config.js` 添加 Supabase 环境变量配置
+  - 更新 `pm2-manager.sh` 支持自动创建和加载环境变量
+  - 更新所有启动脚本支持环境变量自动配置
+- **部署脚本优化**:
+  - `start_full_project.bat` - Windows 一键启动脚本
+  - `start-dev.sh` - Linux 开发环境启动脚本
+  - `pm2-manager.sh` - Linux 生产环境管理脚本
+- **配置模板**:
+  - 创建 `env.production.template` 生产环境配置模板
+  - 更新 `sprb-web.service` systemd 服务配置
+- **检查工具**:
+  - 新增 `check_deployment.bat` Windows 部署检查脚本
+  - 新增 `check_deployment.sh` Linux 部署检查脚本
+
+#### 📊 配置结构
+```
+环境变量配置:
+├── .env - 自动创建的环境变量文件
+├── env.production.template - 生产环境配置模板
+├── frontend/env.production - 前端生产环境配置
+└── 各启动脚本自动创建和加载环境变量
+```
+
+#### 🚀 部署流程优化
+1. **开发环境**: 运行启动脚本自动创建环境变量
+2. **生产环境**: 使用 PM2 管理脚本自动配置
+3. **配置检查**: 运行检查脚本验证配置正确性
+4. **零配置**: 无需手动创建环境变量文件
+
+### 2025年8月27日 - 数据库架构优化与僵尸代码清理 🧹
+
+#### 🎯 主要更新内容
+- **数据库架构优化**: 清理未使用的SQLite交通攻略相关代码
+- **代码结构简化**: 移除僵尸API和未使用的数据模型
+- **配置清理**: 删除交通攻略相关的环境变量和配置
+- **文档更新**: 完善数据库使用说明和架构文档
+
+#### 🔧 技术改进
+- **移除内容**:
+  - 删除 `TrafficCard` 数据模型
+  - 移除交通攻略相关API端点 (GET/POST/PUT/DELETE /api/traffic-cards)
+  - 清理 `init_database()` 函数和SQLite初始化代码
+  - 删除 `data/traffic_cards.db` 和 `data/traffic_guides.json` 文件
+- **保留功能**:
+  - Supabase音频数据服务 (完全正常)
+  - Supabase神域数据服务 (完全正常)
+  - SQLite神域本地数据 (通过ORM管理)
+- **配置优化**:
+  - 简化环境变量配置
+  - 更新健康检查端点
+  - 优化API路由信息
+
+#### 📊 当前数据库架构
+```
+实际使用:
+└── Supabase (云端)
+    ├── audios 表 - 音频数据
+    └── DivineRealmPage_graph 表 - 神域场景
+
+已清理:
+├── traffic_cards.db - 交通攻略数据库 ❌
+├── shenyu.db - 神域本地数据库 ❌
+├── traffic_guides.json - 交通攻略JSON ❌
+├── database.py - SQLite配置文件 ❌
+└── 相关API和代码 - 僵尸代码 ❌
+```
+
+#### 🎵 音频系统重构与数据管理优化 🎵
 
 #### 🎯 主要更新内容
 - **音频资源数据化**: 将硬编码的音频数据迁移到Supabase数据库管理
