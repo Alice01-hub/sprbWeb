@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
 import { supabase } from '../config/supabaseClient'
+import MemoryButterfly, { ButterflyMemory } from '../components/MemoryButterfly'
+import MemoryCard from '../components/MemoryCard'
+import ErrorBoundary from '../components/ErrorBoundary'
+import { getPublishedMemories, getRandomMemories, assignRandomPositions } from '../services/memoryService'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -82,7 +86,7 @@ const Title = styled.h1`
   text-align: center;
 `
 
-// 图片容器样式 - 直接放在页面中央
+// 图片容器样式 - 直接放在页面中央，作为蝴蝶的定位参考
 const ImageContainer = styled(motion.div)`
   display: flex;
   align-items: center;
@@ -91,6 +95,21 @@ const ImageContainer = styled(motion.div)`
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
+`
+
+// 蝴蝶容器 - 覆盖在图片上方
+const ButterfliesContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;  /* 默认不阻止下方元素点击 */
+  
+  /* 让蝴蝶本身可以点击 */
+  & > * {
+    pointer-events: auto;
+  }
 `
 
 const SceneImage = styled(motion.img)`
@@ -347,6 +366,11 @@ const DivineRealmPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [allScenes, setAllScenes] = useState<DivineScene[]>([])
   
+  // 蝴蝶相关状态
+  const [allMemories, setAllMemories] = useState<ButterflyMemory[]>([])  // 所有已发布的蝴蝶记忆池
+  const [displayedButterflies, setDisplayedButterflies] = useState<ButterflyMemory[]>([])  // 当前显示的蝴蝶
+  const [selectedMemory, setSelectedMemory] = useState<ButterflyMemory | null>(null)  // 被点击的蝴蝶
+  
   // 图片尺寸配置 - 你可以在这里调整图片大小
   const imageConfig = {
     maxWidth: '1000px',    // 图片最大宽度
@@ -367,7 +391,7 @@ const DivineRealmPage: React.FC = () => {
     return publishedScenes[randomIndex]
   }
 
-  // 切换场景 - 从本地数据中随机选择
+  // 切换场景 - 从本地数据中随机选择，并随机显示蝴蝶
   const handleSwitchScene = async () => {
     setIsLoading(true)
     setError(null)
@@ -380,6 +404,9 @@ const DivineRealmPage: React.FC = () => {
       if (randomScene) {
         setCurrentScene(randomScene)
         console.log('🎯 切换到场景:', randomScene.graph_name)
+        
+        // 随机显示3-5只蝴蝶
+        refreshButterflies()
       } else {
         setError('没有可用的场景')
         console.log('❌ 没有可用的场景')
@@ -390,6 +417,34 @@ const DivineRealmPage: React.FC = () => {
     } finally {
       setIsLoading(false)
     }
+  }
+  
+  // 刷新蝴蝶显示
+  const refreshButterflies = () => {
+    if (allMemories.length === 0) {
+      console.log('⚠️ 蝴蝶记忆池为空')
+      setDisplayedButterflies([])
+      return
+    }
+    
+    // 随机选择3-5只蝴蝶
+    const randomButterflies = getRandomMemories(allMemories)
+    console.log('🦋 随机选择了', randomButterflies.length, '只蝴蝶')
+    
+    // 为蝴蝶分配随机位置
+    const positionedButterflies = assignRandomPositions(randomButterflies)
+    setDisplayedButterflies(positionedButterflies)
+  }
+  
+  // 点击蝴蝶处理
+  const handleButterflyClick = (memory: ButterflyMemory) => {
+    console.log('🦋 点击蝴蝶:', memory.title)
+    setSelectedMemory(memory)
+  }
+  
+  // 关闭蝴蝶详情卡片
+  const handleCloseMemoryCard = () => {
+    setSelectedMemory(null)
   }
 
   // 加载场景数据 - 直接从Supabase读取，类似公告栏
@@ -471,10 +526,31 @@ const DivineRealmPage: React.FC = () => {
     return publishedScenes[randomIndex]
   }
 
+  // 加载蝴蝶记忆数据
+  const loadMemories = async () => {
+    try {
+      console.log('🦋 加载蝴蝶记忆数据...')
+      const memories = await getPublishedMemories()
+      setAllMemories(memories)
+      console.log('✅ 蝴蝶记忆池加载完成，共', memories.length, '只蝴蝶')
+    } catch (err) {
+      console.error('❌ 加载蝴蝶记忆失败:', err)
+      // 即使蝴蝶加载失败，页面其他功能仍可正常使用
+    }
+  }
+
   // 组件挂载时加载数据
   useEffect(() => {
     loadScenes()
+    loadMemories()
   }, [])
+  
+  // 当场景和蝴蝶记忆都加载完成后，显示初始蝴蝶
+  useEffect(() => {
+    if (currentScene && allMemories.length > 0 && displayedButterflies.length === 0) {
+      refreshButterflies()
+    }
+  }, [currentScene, allMemories])
 
   return (
     <Container>
@@ -500,20 +576,43 @@ const DivineRealmPage: React.FC = () => {
             {error}
           </ErrorMessage>
         ) : currentScene ? (
-          <SceneImage
-            src={currentScene.graph_url}
-            alt={currentScene.graph_name}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.02 }}
-          />
+          <>
+            <SceneImage
+              src={currentScene.graph_url}
+              alt={currentScene.graph_name}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+            />
+            
+            {/* 蝴蝶容器 - 覆盖在图片上方 */}
+            <ButterfliesContainer>
+              {displayedButterflies.map((memory) => (
+                <MemoryButterfly
+                  key={memory.id}
+                  memory={memory}
+                  onClick={() => handleButterflyClick(memory)}
+                />
+              ))}
+            </ButterfliesContainer>
+          </>
         ) : (
           <ErrorMessage>
             暂无可用场景
           </ErrorMessage>
         )}
       </ImageContainer>
+      
+      {/* 蝴蝶详情卡片 */}
+      {selectedMemory && (
+        <ErrorBoundary>
+          <MemoryCard
+            memory={selectedMemory}
+            onClose={handleCloseMemoryCard}
+          />
+        </ErrorBoundary>
+      )}
 
       {/* 控制区域 - 场景名称和切换按钮 */}
       <ControlArea

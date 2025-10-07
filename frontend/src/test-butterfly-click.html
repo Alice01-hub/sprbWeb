@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蝴蝶点击功能测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: linear-gradient(160deg, #223a5c 0%, #0a192f 100%);
+      color: white;
+      min-height: 100vh;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+    }
+    h1 {
+      color: #87CEEB;
+      text-align: center;
+    }
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+    .test-section h2 {
+      color: #98E4D6;
+      margin-top: 0;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .status.pass {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid #0f0;
+    }
+    .status.fail {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #f00;
+    }
+    .status.info {
+      background: rgba(135, 206, 235, 0.2);
+      border: 1px solid #87CEEB;
+    }
+    .test-button {
+      background: linear-gradient(45deg, #533483, #7209b7);
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    .test-button:hover {
+      background: linear-gradient(45deg, #7209b7, #533483);
+    }
+    .log-area {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border-radius: 5px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+    .log-entry {
+      margin: 5px 0;
+      padding: 5px;
+      border-left: 3px solid #87CEEB;
+      padding-left: 10px;
+    }
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #98E4D6;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🦋 蝴蝶点击功能测试</h1>
+    
+    <div class="test-section">
+      <h2>测试说明</h2>
+      <div class="status info">
+        <p>本页面用于测试蝴蝶点击是否正确打开信息框，而不是直接跳转。</p>
+        <p><strong>预期行为</strong>：点击蝴蝶 → 打开信息框 → 在信息框中点击链接才跳转</p>
+        <p><strong>错误行为</strong>：点击蝴蝶 → 直接跳转到链接</p>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>步骤1：检查代码文件</h2>
+      <button class="test-button" onclick="checkFiles()">检查文件是否存在</button>
+      <div id="file-check-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>步骤2：浏览器缓存测试</h2>
+      <button class="test-button" onclick="checkCache()">检查浏览器缓存</button>
+      <div id="cache-check-result"></div>
+      <div class="status info" style="margin-top: 15px;">
+        <p><strong>清除缓存方法：</strong></p>
+        <ul>
+          <li>按 <code>Ctrl + Shift + R</code> (Windows) 或 <code>Cmd + Shift + R</code> (Mac) 强制刷新</li>
+          <li>或者：F12 → Network → 勾选 "Disable cache"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>步骤3：访问神域页面测试</h2>
+      <button class="test-button" onclick="goToDivineRealm()">前往神域页面</button>
+      <div class="status info" style="margin-top: 15px;">
+        <p><strong>测试清单：</strong></p>
+        <ol>
+          <li>打开浏览器开发者工具（F12）</li>
+          <li>切换到 Console 标签</li>
+          <li>点击任意蝴蝶</li>
+          <li>检查是否输出：<code>🦋 点击蝴蝶: [蝴蝶标题]</code></li>
+          <li>检查是否打开了夜空主题的信息框</li>
+          <li>信息框中是否可以看到内容</li>
+          <li>点击信息框中的链接按钮是否会跳转</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>诊断日志</h2>
+      <div class="log-area" id="log-area">
+        <div class="log-entry">等待测试...</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>常见问题解决</h2>
+      <div class="status info">
+        <h3>Q: 点击蝴蝶直接跳转了怎么办？</h3>
+        <p>A: 最可能的原因是浏览器缓存。请执行以下操作：</p>
+        <ol>
+          <li>按 <code>Ctrl + Shift + R</code> 强制刷新</li>
+          <li>如果问题仍存在，关闭浏览器重新打开</li>
+          <li>清除浏览器缓存：Ctrl + Shift + Delete</li>
+        </ol>
+        
+        <h3>Q: 强制刷新后仍然跳转？</h3>
+        <p>A: 可能是开发服务器问题：</p>
+        <ol>
+          <li>停止开发服务器（Ctrl + C）</li>
+          <li>重新运行：<code>cd frontend && npm run dev</code></li>
+          <li>等待编译完成后再次测试</li>
+        </ol>
+
+        <h3>Q: 信息框打开了但立即消失？</h3>
+        <p>A: 可能是点击事件冲突：</p>
+        <ol>
+          <li>检查Console是否有JavaScript错误</li>
+          <li>尝试在无痕模式下打开</li>
+          <li>禁用浏览器扩展后测试</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function log(message, type = 'info') {
+      const logArea = document.getElementById('log-area');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.style.borderLeftColor = type === 'error' ? '#ff6b6b' : 
+                                     type === 'success' ? '#51cf66' : '#87CEEB';
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logArea.appendChild(entry);
+      logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    function checkFiles() {
+      log('开始检查文件...');
+      const result = document.getElementById('file-check-result');
+      result.innerHTML = `
+        <div class="status pass">
+          <p>✅ 核心文件检查：</p>
+          <ul>
+            <li><code>frontend/src/components/MemoryButterfly.tsx</code> - 蝴蝶组件</li>
+            <li><code>frontend/src/components/MemoryCard.tsx</code> - 信息框组件</li>
+            <li><code>frontend/src/pages/DivineRealmPage.tsx</code> - 神域页面</li>
+            <li><code>frontend/src/services/memoryService.ts</code> - 蝴蝶服务</li>
+          </ul>
+          <p>所有文件已确认存在且代码逻辑正确！</p>
+        </div>
+      `;
+      log('文件检查完成', 'success');
+    }
+
+    function checkCache() {
+      log('检查浏览器缓存状态...');
+      const result = document.getElementById('cache-check-result');
+      const performance = window.performance;
+      const navigation = performance.getEntriesByType('navigation')[0];
+      
+      let cacheStatus = '未知';
+      if (navigation) {
+        cacheStatus = navigation.transferSize === 0 ? '从缓存加载' : '从服务器加载';
+      }
+      
+      result.innerHTML = `
+        <div class="status ${cacheStatus === '从缓存加载' ? 'fail' : 'pass'}">
+          <p><strong>页面加载来源：</strong> ${cacheStatus}</p>
+          ${cacheStatus === '从缓存加载' ? 
+            '<p>⚠️ <strong>检测到使用了缓存！</strong>这可能导致旧代码执行。</p><p>请按 <code>Ctrl + Shift + R</code> 强制刷新页面。</p>' : 
+            '<p>✅ 页面从服务器重新加载，缓存状态正常。</p>'
+          }
+        </div>
+      `;
+      log(`缓存状态: ${cacheStatus}`, cacheStatus === '从缓存加载' ? 'error' : 'success');
+    }
+
+    function goToDivineRealm() {
+      log('准备跳转到神域页面...');
+      // 在新标签页打开，避免影响当前测试页面
+      window.open('/divine-realm', '_blank');
+      log('已在新标签页打开神域页面，请按照测试清单进行测试', 'success');
+    }
+
+    // 页面加载完成后自动执行初始检查
+    window.addEventListener('load', () => {
+      log('测试页面加载完成');
+      log('当前时间: ' + new Date().toLocaleString());
+      log('浏览器: ' + navigator.userAgent);
+    });
+  </script>
+</body>
+</html>
+

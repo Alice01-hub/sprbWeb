@@ -32,6 +32,19 @@
 - 蝴蝶扇动翅膀自定义鼠标特效
 - 流畅的动画过渡效果
 
+### 🌟 神域篇互动蝴蝶系统
+- **动态蝴蝶展示**: 每次切换场景随机显示3-5只蝴蝶
+- **智能分布算法**: 蝴蝶自动避免重叠，确保美观和可点击性
+- **权重尺寸系统**: 根据蝴蝶权重(1-5)动态调整尺寸
+- **飞舞动画效果**: 两张图片交替播放+上下浮动，模拟真实飞舞
+- **悬停加速特效**: 鼠标悬停时翅膀扇动速度加快（400ms→200ms）
+- **互动内容卡片**: 点击蝴蝶查看详细内容，支持文字、图片、音频和链接
+- **智能内容展示**: 根据实际内容自动适配展示项，空内容自动隐藏
+- **图片放大查看**: 点击图片全屏查看，点击外部关闭，无需关闭按钮
+- **链接安全验证**: 跳转前验证URL格式，错误时提示用户
+- **夜晚宁静主题**: 星空背景、渐变光晕、发光文字，营造梦幻回忆氛围
+- **数据库管理**: 通过Supabase的memories表管理所有蝴蝶内容
+
 ### 📢 公告栏系统
 - 实时公告发布和展示
 - 优先级分类（紧急、重要、一般）
@@ -193,6 +206,18 @@ sprbWeb/
 │   ├── app.py               # 主应用文件
 │   ├── requirements.txt     # Python依赖
 │   └── env.*                # 环境配置文件
+├── frontend/                 # 前端应用
+│   ├── src/
+│   │   ├── components/      # React组件
+│   │   │   ├── MemoryButterfly.tsx  # 蝴蝶组件
+│   │   │   ├── MemoryCard.tsx       # 蝴蝶详情卡片
+│   │   │   └── ...          # 其他组件
+│   │   ├── services/        # 服务层
+│   │   │   ├── memoryService.ts     # 蝴蝶记忆服务
+│   │   │   └── ...          # 其他服务
+│   │   └── pages/           # 页面组件
+│   │       ├── DivineRealmPage.tsx  # 神域页面
+│   │       └── ...          # 其他页面
 ├── logs/                     # PM2日志目录
 ├── ecosystem.config.js       # PM2配置文件
 ├── pm2-manager.sh           # PM2管理脚本
@@ -215,13 +240,15 @@ sprbWeb/
 - **数据表**:
   - `audios` - 音频文件信息 (音乐播放器)
   - `DivineRealmPage_graph` - 神域场景数据 (神域页面)
+  - `memories` - 蝴蝶记忆数据 (神域互动蝴蝶系统)
 
 ### 🔄 数据流向
 
 ```
 前端应用
 ├── 音频数据 → Supabase API (/api/audios)
-└── 神域数据 → Supabase API (/api/divine-realm/*)
+├── 神域数据 → Supabase API (/api/divine-realm/*)
+└── 蝴蝶记忆 → Supabase 直连 (memoryService.ts)
 
 后端服务
 ├── audio_service.py → Supabase REST API
@@ -270,6 +297,15 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_SECRET_KEY", "your_secret_key_here")
 - `GET /api/divine-realm/scenes` - 获取所有神域场景
 - `GET /api/divine-realm/random-scene` - 获取随机神域场景
 - `GET /api/divine-realm/scenes/{id}` - 获取指定神域场景
+
+### 🌟 蝴蝶记忆系统 (Supabase直连)
+神域蝴蝶功能通过前端直接连接Supabase数据库，无需后端API中转：
+- **数据表**: `memories`
+- **连接方式**: 前端通过`memoryService.ts`直接调用Supabase API
+- **功能模块**: 
+  - `getPublishedMemories()` - 获取所有已发布的蝴蝶记忆
+  - `getRandomMemories()` - 从记忆池随机抽取3-5只蝴蝶
+  - `assignRandomPositions()` - 智能分配蝴蝶位置，避免重叠
 
 ### 📄 其他API
 - `GET /health` - 健康检查
@@ -369,7 +405,81 @@ chmod +x check_deployment.sh
 
 请参考项目中的其他文档了解具体功能使用方法。
 
+## 🦋 神域蝴蝶数据库结构
+
+### memories 表字段说明
+
+| 字段名 | 类型 | 说明 | 备注 |
+|--------|------|------|------|
+| `id` | integer | 蝴蝶编号 | 主键，自增 |
+| `created_at` | timestamp | 创建时间 | 自动生成 |
+| `user_name` | text | 作者名称 | 蝴蝶记忆的创作者 |
+| `title` | text | 标题 | 记忆标题 |
+| `content` | text | 文字内容 | 记忆的详细文字描述 |
+| `image_url` | text | 图片链接 | 可选，附带的图片URL |
+| `audio_url` | text | 音频链接 | 可选，附带的音频URL |
+| `web_url` | text | 跳转链接 | 可选，相关的外部链接 |
+| `weight` | integer | 权重 | 1-5，决定蝴蝶尺寸(weight=1为20px，weight=5为84px) |
+| `is_published` | boolean | 是否发布 | true时加入蝴蝶池，false时隐藏 |
+
+### 蝴蝶尺寸计算规则
+
+蝴蝶尺寸 = 基础尺寸(80px) × 缩放系数
+- weight=1: 80 × 0.25 = 20px
+- weight=2: 80 × 0.45 = 36px
+- weight=3: 80 × 0.65 = 52px
+- weight=4: 80 × 0.85 = 68px
+- weight=5: 80 × 1.05 = 84px
+
+### 蝴蝶位置分布算法
+
+- **随机数量**: 每次切换场景随机显示3-5只蝴蝶
+- **边缘留白**: 距离容器边缘保持10%的安全距离
+- **防重叠**: 蝴蝶之间保持至少15%的间距
+- **重试机制**: 最多尝试50次寻找合适位置
+
 ## 📝 更新日志
+
+### 2025年10月7日 - 神域篇互动蝴蝶系统上线 🦋
+
+#### 🎯 主要更新内容
+- **神域蝴蝶系统**: 在神域页面添加可交互的飞舞蝴蝶
+- **智能分布算法**: 实现蝴蝶随机位置分布，自动避免重叠
+- **动态内容展示**: 点击蝴蝶展开详情卡片，支持多媒体内容
+- **数据库设计**: 创建memories表，完整的蝴蝶记忆数据结构
+
+#### 🔧 技术实现
+- **新增组件**:
+  - `MemoryButterfly.tsx` - 蝴蝶组件，支持飞舞动画和权重尺寸
+  - `MemoryCard.tsx` - 详情卡片组件，展示文字、图片、音频和链接
+- **新增服务**:
+  - `memoryService.ts` - 蝴蝶数据服务，包含获取、随机选择和位置分配
+- **页面集成**:
+  - 更新 `DivineRealmPage.tsx` 集成蝴蝶功能
+  - 每次切换场景自动刷新蝴蝶显示
+
+#### 🦋 功能特性
+- **双图飞舞**: 使用七影蝶-3和七影蝶-4两张图片交替(400ms)模拟翅膀扇动
+- **浮动效果**: 蝴蝶自带轻微上下浮动动画，更加生动
+- **权重系统**: 根据weight(1-5)动态调整蝴蝶尺寸，视觉层次分明
+- **智能交互**: 点击蝴蝶弹出详情卡片，支持ESC键和点击遮罩关闭
+- **多媒体支持**: 详情卡片支持图片展示、音频播放和外部链接跳转
+
+#### 📊 数据库设计
+```sql
+CREATE TABLE memories (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT NOW(),
+  user_name TEXT NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT,
+  image_url TEXT,
+  audio_url TEXT,
+  web_url TEXT,
+  weight INTEGER CHECK (weight >= 1 AND weight <= 5),
+  is_published BOOLEAN DEFAULT false
+);
+```
 
 ### 2025年1月27日 - API-key 配置优化与部署脚本更新 🔧
 
