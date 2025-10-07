@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMusic, PlayMode } from '../contexts/MusicContext'
 
 // 主容器
-const PlayerContainer = styled.div`
+const PlayerContainer = styled.div<{ $isHidden?: boolean }>`
   position: fixed;
   bottom: 30px;
   right: 30px;
   z-index: 1000;
+  display: ${props => props.$isHidden ? 'none' : 'block'};
 `
 
 
@@ -365,6 +366,7 @@ const MusicPlayer: React.FC = () => {
     currentTime,
     duration,
     volume,
+    isDivineMode,
     playlist,
     currentTrack,
     currentIndex,
@@ -490,7 +492,7 @@ const MusicPlayer: React.FC = () => {
   }, [isPlayerOpen, setPlayerOpen])
 
   return (
-    <PlayerContainer data-music-player="true">
+    <PlayerContainer data-music-player="true" $isHidden={isDivineMode}>
       {/* 音乐播放器菜单按钮 */}
       <PlayButton
         isPlaying={isPlaying}

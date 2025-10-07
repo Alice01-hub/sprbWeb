@@ -44,6 +44,13 @@ interface MusicContextType {
   // 界面状态
   isPlayerOpen: boolean
   setPlayerOpen: (open: boolean) => void
+  
+  // 神域BGM相关
+  isDivineMode: boolean
+  enterDivineMode: () => void
+  exitDivineMode: () => void
+  isDivinePlayerOpen: boolean
+  setDivinePlayerOpen: (open: boolean) => void
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
@@ -113,6 +120,10 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
   // 界面状态
   const [isPlayerOpen, setPlayerOpen] = useState(false)
   
+  // 神域BGM状态
+  const [isDivineMode, setIsDivineMode] = useState(false)
+  const [isDivinePlayerOpen, setIsDivinePlayerOpen] = useState(false)
+  
   const currentTrack = playlist[currentIndex] || null
 
 
@@ -142,6 +153,30 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     setVolumeState(0.7)
     setCurrentIndex(0)
     setCurrentTime(0)
+  }, [])
+
+  // 神域BGM模式控制
+  const enterDivineMode = useCallback(() => {
+    console.log('🦋 进入神域模式，暂停普通BGM')
+    setIsDivineMode(true)
+    // 暂停当前播放的普通BGM
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause()
+      setIsPlaying(false)
+      setIsPaused(true)
+    }
+  }, [])
+
+  const exitDivineMode = useCallback(() => {
+    console.log('🦋 退出神域模式，恢复普通BGM')
+    setIsDivineMode(false)
+    setIsDivinePlayerOpen(false)
+    // 注意：不自动恢复播放，让用户手动控制
+  }, [])
+
+  // 神域BGM播放器控制
+  const setDivinePlayerOpen = useCallback((open: boolean) => {
+    setIsDivinePlayerOpen(open)
   }, [])
 
   // 同步playMode到ref
@@ -597,7 +632,14 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     
     // 界面状态
     isPlayerOpen,
-    setPlayerOpen
+    setPlayerOpen,
+    
+    // 神域BGM相关
+    isDivineMode,
+    enterDivineMode,
+    exitDivineMode,
+    isDivinePlayerOpen,
+    setDivinePlayerOpen
   }
 
   return (

@@ -6,7 +6,9 @@ import { supabase } from '../config/supabaseClient'
 import MemoryButterfly, { ButterflyMemory } from '../components/MemoryButterfly'
 import MemoryCard from '../components/MemoryCard'
 import ErrorBoundary from '../components/ErrorBoundary'
+import DivineMusicPlayer from '../components/DivineMusicPlayer'
 import { getPublishedMemories, getRandomMemories, assignRandomPositions } from '../services/memoryService'
+import { useMusic } from '../contexts/MusicContext'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -359,6 +361,7 @@ interface DivineScene {
 
 const DivineRealmPage: React.FC = () => {
   const navigate = useNavigate()
+  const { enterDivineMode, exitDivineMode, isDivineMode } = useMusic()
   
   // 状态管理
   const [currentScene, setCurrentScene] = useState<DivineScene | null>(null)
@@ -543,6 +546,13 @@ const DivineRealmPage: React.FC = () => {
   useEffect(() => {
     loadScenes()
     loadMemories()
+    // 进入神域模式
+    enterDivineMode()
+    
+    // 组件卸载时退出神域模式
+    return () => {
+      exitDivineMode()
+    }
   }, [])
   
   // 当场景和蝴蝶记忆都加载完成后，显示初始蝴蝶
@@ -650,6 +660,9 @@ const DivineRealmPage: React.FC = () => {
       >
         🏠 返回目录
       </BackButton>
+      
+      {/* 神域BGM播放器 - 自动显示 */}
+      <DivineMusicPlayer isVisible={isDivineMode} />
     </Container>
   )
 }
