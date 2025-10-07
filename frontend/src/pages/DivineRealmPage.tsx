@@ -82,47 +82,30 @@ const Title = styled.h1`
   text-align: center;
 `
 
-// 神域场景展示模态框样式
-const SceneModal = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(135, 206, 235, 0.3);
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 600px;
-  width: 90%;
-  backdrop-filter: blur(15px);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  text-align: center;
+// 图片容器样式 - 直接放在页面中央
+const ImageContainer = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-      rgba(135, 206, 235, 0.1) 0%, 
-      rgba(98, 228, 214, 0.1) 50%, 
-      rgba(83, 52, 131, 0.1) 100%);
-    border-radius: 18px;
-    z-index: -1;
-  }
 `
 
 const SceneImage = styled(motion.img)`
   width: 100%;
-  max-width: 500px;
+  max-width: 1000px;
   height: auto;
+  max-height: 70vh;
   border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  margin-bottom: 20px;
-  object-fit: cover;
-  border: 2px solid rgba(135, 206, 235, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(135, 206, 235, 0.2);
+  object-fit: contain;
+  border: 2px solid rgba(135, 206, 235, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
 `
 
 const SceneName = styled(motion.h3)`
@@ -239,10 +222,117 @@ const ErrorMessage = styled(motion.div)`
   border-radius: 10px;
 `
 
+// 外部控制区域样式
+const ControlArea = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  z-index: 10;
+  position: relative;
+`
+
+// 场景名称外部样式
+const ExternalSceneName = styled(motion.h3)`
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  font-family: '华文行楷', 'STXingkai', 'KaiTi', 'SimKai', cursive;
+  text-shadow: 
+    2px 2px 8px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(135, 206, 235, 0.3);
+  background: linear-gradient(45deg, #87CEEB, #98E4D6, #533483, #7209b7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease-in-out infinite alternate;
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+`
+
+// 外部切换按钮样式
+const ExternalSwitchButton = styled(motion.button)`
+  background: linear-gradient(45deg, #533483, #7209b7, #87CEEB, #98E4D6);
+  background-size: 300% 300%;
+  border: none;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 15px rgba(123, 9, 183, 0.3),
+    0 0 20px rgba(135, 206, 235, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: gradientFlow 4s ease-in-out infinite;
+  
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.3), 
+      transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &::after {
+    content: '🦋';
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    opacity: 0.8;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+      0 8px 25px rgba(123, 9, 183, 0.5),
+      0 0 40px rgba(135, 206, 235, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`
+
 // 神域场景数据类型
 interface DivineScene {
   id: number
-  graph_path: string
+  graph_url: string
   graph_name: string
   is_published: boolean
   created_at: string
@@ -256,6 +346,12 @@ const DivineRealmPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [allScenes, setAllScenes] = useState<DivineScene[]>([])
+  
+  // 图片尺寸配置 - 你可以在这里调整图片大小
+  const imageConfig = {
+    maxWidth: '1000px',    // 图片最大宽度
+    maxHeight: '70vh'      // 图片最大高度
+  }
 
   // 返回按钮处理
   const handleBack = () => {
@@ -318,21 +414,21 @@ const DivineRealmPage: React.FC = () => {
         const mockScenes: DivineScene[] = [
           {
             id: 1,
-            graph_path: 'https://oss.sprb.love/webps/神域摘要图.webp',
+            graph_url: 'https://oss.sprb.love/webps/神域摘要图.webp',
             graph_name: '神秘夜空',
             is_published: true,
             created_at: new Date().toISOString()
           },
           {
             id: 2,
-            graph_path: 'https://oss.sprb.love/webps/神域摘要图.webp',
+            graph_url: 'https://oss.sprb.love/webps/神域摘要图.webp',
             graph_name: '七影蝶之舞',
             is_published: true,
             created_at: new Date().toISOString()
           },
           {
             id: 3,
-            graph_path: 'https://oss.sprb.love/webps/神域摘要图.webp',
+            graph_url: 'https://oss.sprb.love/webps/神域摘要图.webp',
             graph_name: '星海梦境',
             is_published: true,
             created_at: new Date().toISOString()
@@ -384,8 +480,8 @@ const DivineRealmPage: React.FC = () => {
     <Container>
       <Title>神域</Title>
 
-      {/* 神域场景展示区域 */}
-      <SceneModal
+      {/* 图片展示区域 - 直接放在页面中央 */}
+      <ImageContainer
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -404,40 +500,49 @@ const DivineRealmPage: React.FC = () => {
             {error}
           </ErrorMessage>
         ) : currentScene ? (
-          <>
-            <SceneImage
-              src={currentScene.graph_path}
-              alt={currentScene.graph_name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ scale: 1.02 }}
-            />
-            <SceneName
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              {currentScene.graph_name}
-            </SceneName>
-            <SwitchButton
-              onClick={handleSwitchScene}
-              disabled={isLoading}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              切换场景
-            </SwitchButton>
-          </>
+          <SceneImage
+            src={currentScene.graph_url}
+            alt={currentScene.graph_name}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+          />
         ) : (
           <ErrorMessage>
             暂无可用场景
           </ErrorMessage>
         )}
-      </SceneModal>
+      </ImageContainer>
+
+      {/* 控制区域 - 场景名称和切换按钮 */}
+      <ControlArea
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        {currentScene && (
+          <ExternalSceneName
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {currentScene.graph_name}
+          </ExternalSceneName>
+        )}
+        
+        <ExternalSwitchButton
+          onClick={handleSwitchScene}
+          disabled={isLoading}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          切换场景
+        </ExternalSwitchButton>
+      </ControlArea>
 
       <BackButton
         onClick={handleBack}

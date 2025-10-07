@@ -53,7 +53,7 @@ class DivineRealmService:
         try:
             url = f"{self.supabase_url}/rest/v1/DivineRealmPage_graph"
             params = {
-                "select": "id,created_at,graph_path,is_published,graph_name",
+                "select": "id,created_at,graph_url,is_published,graph_name",
                 "is_published": "eq.true",
                 "order": "created_at.desc"
             }
@@ -77,7 +77,7 @@ class DivineRealmService:
         try:
             url = f"{self.supabase_url}/rest/v1/DivineRealmPage_graph"
             params = {
-                "select": "id,created_at,graph_path,is_published,graph_name",
+                "select": "id,created_at,graph_url,is_published,graph_name",
                 "id": f"eq.{scene_id}",
                 "is_published": "eq.true"
             }
