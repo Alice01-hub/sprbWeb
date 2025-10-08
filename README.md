@@ -438,22 +438,36 @@ chmod +x check_deployment.sh
 | `id` | integer | 蝴蝶编号 | 主键，自增 |
 | `created_at` | timestamp | 创建时间 | 自动生成 |
 | `user_name` | text | 作者名称 | 蝴蝶记忆的创作者 |
-| `title` | text | 标题 | 记忆标题 |
+| ~~`title`~~ | ~~text~~ | ~~标题~~ | ~~已移除，记忆不需要标题~~ |
 | `content` | text | 文字内容 | 记忆的详细文字描述 |
 | `image_url` | text | 图片链接 | 可选，附带的图片URL |
 | `audio_url` | text | 音频链接 | 可选，附带的音频URL |
 | `web_url` | text | 跳转链接 | 可选，相关的外部链接 |
-| `weight` | integer | 权重 | 1-5，决定蝴蝶尺寸(weight=1为20px，weight=5为84px) |
+| ~~`weight`~~ | ~~integer~~ | ~~权重~~ | ~~已移除，现在使用字段数量动态计算尺寸~~ |
 | `is_published` | boolean | 是否发布 | true时加入蝴蝶池，false时隐藏 |
 
-### 蝴蝶尺寸计算规则
+### 蝴蝶尺寸计算规则（新机制）
 
-蝴蝶尺寸 = 基础尺寸(80px) × 缩放系数
-- weight=1: 80 × 0.25 = 20px
-- weight=2: 80 × 0.45 = 36px
-- weight=3: 80 × 0.65 = 52px
-- weight=4: 80 × 0.85 = 68px
-- weight=5: 80 × 1.05 = 84px
+蝴蝶尺寸 = (字段数量 + 1) × 25px
+
+**字段统计规则**：
+- 文字内容（content）：有内容且不为空
+- 图片内容（image_url）：有URL且不为空
+- 音频内容（audio_url）：有URL且不为空  
+- 跳转链接（web_url）：有URL且不为空
+
+**尺寸计算示例**：
+- 0个字段: (0 + 1) × 25 = 25px
+- 1个字段: (1 + 1) × 25 = 50px
+- 2个字段: (2 + 1) × 25 = 75px
+- 3个字段: (3 + 1) × 25 = 100px
+- 4个字段: (4 + 1) × 25 = 125px
+
+**优势**：
+- 内容越丰富，蝴蝶越大，视觉层次更清晰
+- 自动适应内容，无需手动设置权重
+- 更直观地反映记忆的完整程度
+- 确保所有蝴蝶都有基础可见尺寸
 
 ### 蝴蝶位置分布算法
 
@@ -466,8 +480,8 @@ chmod +x check_deployment.sh
 
 **添加蝴蝶内容**:
 ```sql
-INSERT INTO memories (user_name, title, content, weight, is_published) 
-VALUES ('作者名称', '记忆标题', '内容描述', 3, true);
+INSERT INTO memories (user_name, content, is_published) 
+VALUES ('作者名称', '内容描述', true);
 ```
 
 **管理蝴蝶状态**:
@@ -478,14 +492,13 @@ UPDATE memories SET is_published = false WHERE id = 1;
 -- 显示蝴蝶
 UPDATE memories SET is_published = true WHERE id = 1;
 
--- 修改权重
-UPDATE memories SET weight = 5 WHERE id = 1;
+-- 注意：权重字段已移除，现在使用字段数量自动计算尺寸
 ```
 
 **查询统计**:
 ```sql
 -- 查看已发布的蝴蝶
-SELECT * FROM memories WHERE is_published = true ORDER BY weight DESC;
+SELECT * FROM memories WHERE is_published = true ORDER BY created_at DESC;
 
 -- 统计蝴蝶数量
 SELECT COUNT(*) as total, 
@@ -494,6 +507,35 @@ FROM memories;
 ```
 
 ## 📝 更新日志
+
+### 2025年1月7日 - 神域篇七影蝶动态尺寸系统 🦋
+
+#### 🎯 主要更新内容
+- **移除标题字段**: 从ButterflyMemory接口和数据库表中移除title字段
+- **重点突出作者名**: 重新设计信息框布局，将作者名作为主要显示元素
+- **动态尺寸计算**: 移除固定权重机制，改为基于字段数量的动态尺寸计算
+- **智能内容识别**: 自动统计文字、图片、音频、链接字段数量
+- **灵活尺寸调整**: 内容越丰富，蝴蝶越大，视觉层次更清晰
+
+#### 🔧 技术实现
+- **接口更新**: 更新ButterflyMemory接口，移除title和weight字段
+- **字段统计**: 新增calculateFieldCount函数，智能统计有效字段
+- **尺寸算法**: 新公式：(字段数量 + 1) × 25px
+- **组件重构**: 重新设计MemoryCard组件布局，使用AuthorName替代Title
+- **样式优化**: 增强作者名的视觉效果，使用渐变和动画
+- **数据库更新**: 提供SQL脚本移除数据库中的title和weight字段
+
+#### 📊 尺寸计算示例
+- 0个字段（无内容）: 25px
+- 1个字段（仅文字）: 50px
+- 2个字段（文字+图片）: 75px  
+- 3个字段（文字+图片+音频）: 100px
+- 4个字段（全部内容）: 125px
+
+#### 🐛 问题修复
+- **修复数据库查询错误**: 移除了已删除的`weight`字段排序
+- **修复字段引用错误**: 更新了所有对`title`字段的引用
+- **修复空字段处理**: 使用(n+1)×25px公式，确保所有蝴蝶都有基础可见尺寸
 
 ### 2025年10月7日 - 神域灯笼鼠标特效系统上线 🏮
 

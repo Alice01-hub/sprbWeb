@@ -149,32 +149,34 @@ const CloseButton = styled(motion.button)`
   }
 `
 
-// 标题 - 渐变星光效果
-const Title = styled.h2`
+// 作者名 - 重点突出的星光效果
+const AuthorName = styled.h2`
   color: #fff;
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 20px 0;
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 15px 0;
   font-family: '华文行楷', 'STXingkai', 'KaiTi', 'SimKai', cursive;
   text-shadow: 
-    0 0 20px rgba(135, 206, 235, 0.5),
-    0 0 40px rgba(135, 206, 235, 0.3),
-    2px 2px 10px rgba(0, 0, 0, 0.5);
+    0 0 25px rgba(152, 228, 214, 0.8),
+    0 0 50px rgba(152, 228, 214, 0.5),
+    0 0 75px rgba(152, 228, 214, 0.3),
+    2px 2px 15px rgba(0, 0, 0, 0.6);
   background: linear-gradient(
     120deg,
-    #87CEEB 0%,
-    #98E4D6 30%,
+    #98E4D6 0%,
+    #87CEEB 25%,
     #E0F7FA 50%,
-    #98E4D6 70%,
-    #87CEEB 100%
+    #87CEEB 75%,
+    #98E4D6 100%
   );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 200%;
-  animation: shimmer 4s ease-in-out infinite;
+  animation: shimmer 3s ease-in-out infinite;
   padding-right: 50px;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-align: center;
   
   @keyframes shimmer {
     0%, 100% { background-position: 0% 50%; }
@@ -182,43 +184,29 @@ const Title = styled.h2`
   }
 `
 
-// 作者和日期信息 - 柔和的夜色
+// 日期信息 - 柔和的夜色，居中显示
 const MetaInfo = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 25px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-  flex-wrap: wrap;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(135, 206, 235, 0.15);
-`
-
-const Author = styled.span`
-  color: rgba(152, 228, 214, 0.95);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  &::before {
-    content: '✨';
-    font-size: 16px;
-  }
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
 `
 
 const DateDisplay = styled.span`
-  color: rgba(135, 206, 235, 0.7);
-  font-size: 13px;
+  color: rgba(135, 206, 235, 0.8);
+  font-size: 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-weight: 500;
   
   &::before {
     content: '🌙';
-    font-size: 14px;
+    font-size: 18px;
   }
 `
 
@@ -528,11 +516,11 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
             ×
           </CloseButton>
           
-          <Title>{memory.title}</Title>
+          {/* 作者名 - 重点突出显示 */}
+          <AuthorName>{memory.user_name}</AuthorName>
           
-          {/* 作者和日期信息 - 始终显示 */}
+          {/* 日期信息 - 居中显示 */}
           <MetaInfo>
-            <Author>{memory.user_name}</Author>
             <DateDisplay>{formatDate(memory.created_at)}</DateDisplay>
           </MetaInfo>
           
@@ -545,7 +533,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
               onClick={() => setIsImageExpanded(true)}
               className="memory-card-image"
             >
-              <ContentImage src={memory.image_url} alt={memory.title} />
+              <ContentImage src={memory.image_url} alt={memory.user_name} />
             </ImageContainer>
           )}
           
@@ -600,7 +588,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
         >
           <LightboxImage
             src={memory.image_url}
-            alt={memory.title}
+            alt={memory.user_name}
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}

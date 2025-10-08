@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
@@ -93,7 +93,7 @@ const ImageContainer = styled(motion.div)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
   position: relative;
 `
@@ -371,6 +371,11 @@ const DivineRealmPage: React.FC = () => {
   const [displayedButterflies, setDisplayedButterflies] = useState<ButterflyMemory[]>([])  // 当前显示的蝴蝶
   const [selectedMemory, setSelectedMemory] = useState<ButterflyMemory | null>(null)  // 被点击的蝴蝶
   
+  // 图片ref和尺寸状态
+  const imageRef = useRef<HTMLImageElement>(null)
+  const [imageDimensions, setImageDimensions] = useState({ width: 800, height: 600 })  // 默认尺寸
+  const [isImageLoaded, setIsImageLoaded] = useState(false)  // 图片是否已加载完成
+  
   // 图片尺寸配置 - 你可以在这里调整图片大小
   const imageConfig = {
     maxWidth: '1000px',    // 图片最大宽度
@@ -380,6 +385,21 @@ const DivineRealmPage: React.FC = () => {
   // 返回按钮处理
   const handleBack = () => {
     navigate('/contents')
+  }
+
+  // 获取图片实际渲染尺寸
+  const updateImageDimensions = () => {
+    if (imageRef.current) {
+      const rect = imageRef.current.getBoundingClientRect()
+      const width = rect.width
+      const height = rect.height
+      
+      console.log('📐 图片实际渲染尺寸:', { width, height })
+      
+      setImageDimensions({ width, height })
+      return { width, height }
+    }
+    return null
   }
 
   // 获取随机场景
@@ -395,6 +415,8 @@ const DivineRealmPage: React.FC = () => {
   const handleSwitchScene = async () => {
     setIsLoading(true)
     setError(null)
+    setIsImageLoaded(false)  // 重置图片加载状态
+    setDisplayedButterflies([])  // 清空当前蝴蝶
     
     try {
       console.log('🔄 切换神域场景...')
@@ -405,8 +427,7 @@ const DivineRealmPage: React.FC = () => {
         setCurrentScene(randomScene)
         console.log('🎯 切换到场景:', randomScene.graph_name)
         
-        // 随机显示3-5只蝴蝶
-        refreshButterflies()
+        // 图片加载完成后会自动显示蝴蝶（通过useEffect监听isImageLoaded）
       } else {
         setError('没有可用的场景')
         console.log('❌ 没有可用的场景')
@@ -427,18 +448,38 @@ const DivineRealmPage: React.FC = () => {
       return
     }
     
+    // 如果图片还没有加载完成，延迟执行
+    if (!isImageLoaded) {
+      console.log('🦋 图片未加载完成，延迟显示蝴蝶')
+      return
+    }
+    
     // 随机选择3-5只蝴蝶
     const randomButterflies = getRandomMemories(allMemories)
     console.log('🦋 随机选择了', randomButterflies.length, '只蝴蝶')
     
-    // 为蝴蝶分配随机位置
-    const positionedButterflies = assignRandomPositions(randomButterflies)
+    // 获取图片实际渲染尺寸
+    const dimensions = updateImageDimensions()
+    const containerWidthPx = dimensions?.width || imageDimensions.width
+    const containerHeightPx = dimensions?.height || imageDimensions.height
+    
+    console.log('🦋 使用容器尺寸:', { containerWidthPx, containerHeightPx })
+    
+    // 为蝴蝶分配随机位置，传递真实容器尺寸
+    // 这样可以确保蝴蝶不会超出图片边界（考虑了最大125px的蝴蝶尺寸）
+    const positionedButterflies = assignRandomPositions(
+      randomButterflies, 
+      100,  // 容器宽度百分比
+      100,  // 容器高度百分比
+      containerWidthPx,  // 实际宽度（像素）
+      containerHeightPx  // 实际高度（像素）
+    )
     setDisplayedButterflies(positionedButterflies)
   }
   
   // 点击蝴蝶处理
   const handleButterflyClick = (memory: ButterflyMemory) => {
-    console.log('🦋 点击蝴蝶:', memory.title)
+    console.log('🦋 点击蝴蝶:', memory.user_name)
     setSelectedMemory(memory)
   }
   
@@ -558,6 +599,33 @@ const DivineRealmPage: React.FC = () => {
       refreshButterflies()
     }
   }, [currentScene, allMemories])
+  
+  // 当图片加载完成时，显示蝴蝶
+  useEffect(() => {
+    if (isImageLoaded && allMemories.length > 0 && displayedButterflies.length === 0) {
+      console.log('🦋 图片加载完成，开始显示蝴蝶')
+      refreshButterflies()
+    }
+  }, [isImageLoaded, allMemories])
+  
+  // 监听窗口大小变化，重新计算图片尺寸和蝴蝶位置
+  useEffect(() => {
+    const handleResize = () => {
+      if (imageRef.current && displayedButterflies.length > 0) {
+        console.log('🔄 窗口大小变化，重新计算蝴蝶位置')
+        // 延迟一下确保图片已经调整完尺寸
+        setTimeout(() => {
+          refreshButterflies()
+        }, 100)
+      }
+    }
+    
+    window.addEventListener('resize', handleResize)
+    
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [displayedButterflies.length, allMemories])
 
   return (
     <Container className="divine-realm-page">
@@ -585,12 +653,19 @@ const DivineRealmPage: React.FC = () => {
         ) : currentScene ? (
           <>
             <SceneImage
+              ref={imageRef}
               src={currentScene.graph_url}
               alt={currentScene.graph_name}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
               whileHover={{ scale: 1.02 }}
+              onLoad={() => {
+                // 图片加载完成后，更新图片尺寸并刷新蝴蝶位置
+                console.log('🖼️ 图片加载完成')
+                updateImageDimensions()
+                setIsImageLoaded(true)
+              }}
             />
             
             {/* 蝴蝶容器 - 覆盖在图片上方 */}

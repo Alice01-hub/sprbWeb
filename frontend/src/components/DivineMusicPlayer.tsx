@@ -271,6 +271,7 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
   const [volume, setVolume] = useState(0.7)
   const [isLoading, setIsLoading] = useState(false)
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false) // 跟踪是否已经自动播放过
+  const [playedSongs, setPlayedSongs] = useState<Set<number>>(new Set()) // 记录已播放的歌曲ID
   
   const audioRef = useRef<HTMLAudioElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -300,6 +301,34 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // 随机选择下一首歌曲
+  const getRandomNextSong = (): number => {
+    if (audios.length === 0) return 0
+    
+    // 如果所有歌曲都已播放过，重置播放记录
+    if (playedSongs.size >= audios.length) {
+      console.log('🎵 所有歌曲已播放完毕，重置播放记录')
+      setPlayedSongs(new Set())
+    }
+    
+    // 获取未播放的歌曲索引
+    const unplayedIndices = audios
+      .map((_, index) => index)
+      .filter(index => !playedSongs.has(audios[index].id))
+    
+    // 如果还有未播放的歌曲，随机选择一首
+    if (unplayedIndices.length > 0) {
+      const randomIndex = unplayedIndices[Math.floor(Math.random() * unplayedIndices.length)]
+      console.log('🎵 随机选择下一首歌曲:', audios[randomIndex].title)
+      return randomIndex
+    }
+    
+    // 如果没有未播放的歌曲，随机选择任意一首
+    const randomIndex = Math.floor(Math.random() * audios.length)
+    console.log('🎵 随机选择歌曲:', audios[randomIndex].title)
+    return randomIndex
   }
 
 
@@ -335,16 +364,32 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
     if (!audio) return
 
     const handleEnded = () => {
-      console.log('🎵 BGM播放结束，开始循环播放')
-      // BGM播放结束后自动重新播放
-      audio.currentTime = 0
-      audio.play().then(() => {
-        console.log('🎵 循环播放成功')
-        setIsPlaying(true)
-      }).catch((error) => {
-        console.error('循环播放失败:', error)
-        setIsPlaying(false)
-      })
+      console.log('🎵 BGM播放结束，随机选择下一首歌曲')
+      
+      // 记录当前歌曲已播放
+      const currentAudio = audios[currentIndex]
+      if (currentAudio) {
+        setPlayedSongs(prev => new Set([...prev, currentAudio.id]))
+        console.log('🎵 记录已播放歌曲:', currentAudio.title)
+      }
+      
+      // 随机选择下一首歌曲
+      const nextIndex = getRandomNextSong()
+      setCurrentIndex(nextIndex)
+      
+      // 播放下一首歌曲
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0
+          audioRef.current.play().then(() => {
+            console.log('🎵 随机播放下一首成功:', audios[nextIndex]?.title)
+            setIsPlaying(true)
+          }).catch((error) => {
+            console.error('随机播放失败:', error)
+            setIsPlaying(false)
+          })
+        }
+      }, 100) // 短暂延迟确保音频源已更新
     }
     const handleLoadStart = () => setIsLoading(true)
     const handleCanPlay = () => setIsLoading(false)
@@ -358,7 +403,7 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
       audio.removeEventListener('loadstart', handleLoadStart)
       audio.removeEventListener('canplay', handleCanPlay)
     }
-  }, [currentIndex])
+  }, [currentIndex, audios, playedSongs])
 
   // 加载保存的音量设置
   useEffect(() => {
@@ -428,13 +473,17 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
     }
   }, [isVisible])
 
-  // 当播放器可见且有音频数据时，自动开始播放（仅一次）
+  // 当播放器可见且有音频数据时，随机选择并自动开始播放（仅一次）
   useEffect(() => {
     if (isVisible && audios.length > 0 && !isPlaying && !hasAutoPlayed) {
+      // 随机选择第一首歌曲
+      const randomIndex = getRandomNextSong()
+      setCurrentIndex(randomIndex)
+      
       // 延迟一点时间确保音频元素已准备好
       const timer = setTimeout(() => {
         if (audioRef.current) {
-          console.log('🎵 神域BGM自动播放开始')
+          console.log('🎵 神域BGM随机播放开始:', audios[randomIndex]?.title)
           audioRef.current.play().catch(console.error)
           setIsPlaying(true)
           setHasAutoPlayed(true) // 标记已经自动播放过
@@ -502,7 +551,6 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
         <audio
           ref={audioRef}
           preload="metadata"
-          loop
           style={{ display: 'none' }}
         />
       </PlayerContainer>
