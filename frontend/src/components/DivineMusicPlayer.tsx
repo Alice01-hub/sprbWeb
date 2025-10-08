@@ -36,7 +36,6 @@ const PlayButton = styled(motion.button)<{ isPlaying: boolean }>`
     0 8px 25px rgba(26, 35, 126, 0.4),
     0 0 0 3px rgba(135, 206, 235, 0.2),
     inset 0 -2px 10px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,7 +74,7 @@ const PlayerPanel = styled(motion.div)`
   right: 0;
   width: 400px;
   height: 225px; /* 16:9比例 (400 * 9 / 16) */
-  background-image: url('https://sprbweb-src.oss-cn-guangzhou.aliyuncs.com/public/images/%E7%A5%9E%E5%9F%9F%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8%E8%83%8C%E6%99%AF%E5%9B%BE.gif');
+  background-image: url('https://sprbweb-src.oss-cn-guangzhou.aliyuncs.com/public/images/divineRealm/%E7%A5%9E%E5%9F%9F%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8%E8%83%8C%E6%99%AF%E5%9B%BE.gif');
   background-size: cover;
   background-position: center top; /* 背景图片定位到顶部，组件下移 */
   background-repeat: no-repeat;
@@ -189,7 +188,6 @@ const ControlButton = styled(motion.button)`
   background: rgba(0, 0, 0, 0.6);
   color: #ffffff;
   font-size: 14px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,7 +244,6 @@ const VolumeSlider = styled.input`
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
   outline: none;
-  cursor: pointer;
   backdrop-filter: blur(5px);
   
   &::-webkit-slider-thumb {
@@ -255,7 +252,6 @@ const VolumeSlider = styled.input`
     height: 16px;
     background: #ffffff;
     border-radius: 50%;
-    cursor: pointer;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(0, 0, 0, 0.3);
   }

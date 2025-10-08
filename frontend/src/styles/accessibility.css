@@ -174,7 +174,6 @@
 
 /* 交互元素的可访问性样式 */
 .announcement-interactive {
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -203,7 +202,6 @@
   color: #ffffff;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 

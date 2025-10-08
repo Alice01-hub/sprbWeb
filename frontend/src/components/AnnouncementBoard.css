@@ -45,7 +45,6 @@
     0 4px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -281,7 +280,6 @@
   box-shadow: 
     0 4px 16px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -367,7 +365,6 @@
   border: none;
   font-size: 2rem;
   color: #a0aec0;
-  cursor: pointer;
   padding: 0;
   width: 32px;
   height: 32px;
@@ -586,7 +583,6 @@
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.3s;
 }
@@ -627,7 +623,6 @@
   aspect-ratio: 1;
   border-radius: 8px;
   overflow: hidden;
-  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   background: #f8f9fa;
   border: 1px solid #e2e8f0;

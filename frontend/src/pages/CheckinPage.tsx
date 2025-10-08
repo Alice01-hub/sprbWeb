@@ -84,7 +84,6 @@ const QRCodeButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #5d4037;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   font-weight: 600;
@@ -186,7 +185,6 @@ const IslandCard = styled(motion.div)<{ selected: boolean }>`
   box-shadow: ${props => props.selected ? '0 10px 30px rgba(255, 165, 0, 0.4)' : '0 8px 25px rgba(0, 0, 0, 0.15)'};
   backdrop-filter: blur(20px);
   width: 250px;
-  cursor: pointer;
   border: ${props => props.selected ? '3px solid #FFA500' : 'none'};
 `
 
@@ -272,7 +270,6 @@ const MapOverlay = styled.div`
 const LocationIcon = styled(motion.div)<{ x: number; y: number }>`
   position: absolute;
   font-size: 30px;
-  cursor: pointer;
   left: ${props => props.x}%;
   top: ${props => props.y}%;
   transform: translate(-50%, -50%);
@@ -385,7 +382,6 @@ const BackButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;
@@ -407,7 +403,6 @@ const OtherPilgrimageButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;
@@ -456,7 +451,6 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 24px;
-  cursor: pointer;
   color: #666;
   width: 32px;
   height: 32px;

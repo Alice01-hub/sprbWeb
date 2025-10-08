@@ -37,10 +37,14 @@ const ButterflyContainer = styled(motion.div)<{
   top: ${props => props.y}%;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
-  cursor: pointer;
   z-index: 10;
   filter: drop-shadow(0 2px 8px rgba(135, 206, 235, 0.3));
   transition: filter 0.3s ease;
+  
+  /* 添加特殊类名，供灯笼鼠标检测 */
+  &.memory-butterfly {
+    cursor: pointer;
+  }
   
   &:hover {
     filter: drop-shadow(0 4px 16px rgba(135, 206, 235, 0.6));
@@ -108,6 +112,7 @@ const MemoryButterfly: React.FC<MemoryButterflyProps> = ({ memory, onClick }) =>
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className="memory-butterfly"
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ 
         opacity: 1, 

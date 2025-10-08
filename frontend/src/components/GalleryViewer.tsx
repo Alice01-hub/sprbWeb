@@ -91,7 +91,6 @@ const IndicatorDot = styled(motion.button)<{ active: boolean }>`
   border-radius: 50%;
   border: none;
   background: ${props => (props.active ? '#5d4037' : '#ccc')};
-  cursor: pointer;
 `
 
 export default function GalleryViewer(props: GalleryViewerProps) {

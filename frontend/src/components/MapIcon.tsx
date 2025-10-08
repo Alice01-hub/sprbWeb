@@ -24,7 +24,6 @@ const IconContainer = styled(motion.div)<{
   top: ${props => props.top}px;
   transform: translate(-50%, -50%);
   z-index: ${props => props.zIndex};
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;

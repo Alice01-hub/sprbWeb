@@ -25,7 +25,6 @@ const PlayButton = styled(motion.button)<{ isPlaying: boolean }>`
     0 8px 25px rgba(255, 71, 87, 0.4),
     0 0 0 3px rgba(255, 255, 255, 0.2),
     inset 0 -2px 10px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,7 +141,6 @@ const CloseButton = styled.button`
   border: none;
   font-size: 20px;
   color: #999;
-  cursor: pointer;
   padding: 5px;
   border-radius: 50%;
   transition: all 0.2s;
@@ -171,7 +169,6 @@ const ProgressBar = styled.div`
   height: 4px;
   background: #e9e9e9;
   border-radius: 2px;
-  cursor: pointer;
   position: relative;
 `
 
@@ -210,7 +207,6 @@ const ControlButton = styled(motion.button)`
   border: none;
   font-size: 20px;
   color: #666;
-  cursor: pointer;
   padding: 10px;
   border-radius: 50%;
   transition: all 0.2s;
@@ -261,7 +257,6 @@ const VolumeSlider = styled.input`
     height: 12px;
     background: #ff4757;
     border-radius: 50%;
-    cursor: pointer;
     box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
   }
 `
@@ -315,7 +310,6 @@ const PlaylistItem = styled(motion.div)<{ isActive: boolean }>`
   padding: 10px;
   margin-bottom: 5px;
   border-radius: 8px;
-  cursor: pointer;
   transition: all 0.2s;
   background: ${props => props.isActive ? 'rgba(255, 71, 87, 0.1)' : 'transparent'};
   
@@ -605,7 +599,6 @@ const MusicPlayer: React.FC = () => {
                    style={{
                      background: 'none',
                      border: 'none',
-                     cursor: 'pointer',
                      fontSize: '12px',
                      color: '#ff4757',
                      display: 'flex',

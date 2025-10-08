@@ -65,7 +65,6 @@ const DiaryBook = styled(motion.div)`
   width: 600px;
   height: 800px;
   position: relative;
-  cursor: pointer;
 `
 
 const BookPages = styled.div`
@@ -163,7 +162,7 @@ const CoverImage = styled.img`
     0 0 20px rgba(255, 215, 0, 0.3),
     inset 0 2px 10px rgba(255, 255, 255, 0.2);
   border: 2px solid #FFD700;
-  cursor: pointer; /* 新增：可点击 */
+ /* 新增：可点击 */
   &::after {
     content: '';
     position: absolute;
@@ -215,7 +214,6 @@ const CloseButton = styled.button`
   width: 40px;
   height: 40px;
   font-size: 1.5rem;
-  cursor: pointer;
   z-index: 201;
   display: flex;
   align-items: center;
@@ -252,7 +250,6 @@ const Lock = styled(motion.div)`
   transform-origin: center center; /* 🔧 保持中心点为变换原点 */
   width: 100px; /* 图片容器宽度 */
   height: 100px; /* 图片容器高度 */
-  cursor: pointer;
   z-index: 10;
   
   /* 🔧 确保悬停时位置稳定 */
@@ -301,7 +298,6 @@ const ICPText = styled.a`
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   text-decoration: none;
-  cursor: pointer;
   display: inline-block;
   
   &:hover {

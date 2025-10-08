@@ -136,7 +136,6 @@ const TooltipContainer = styled.div<TooltipContainerProps>`
 `
 
 const ChildrenWrapper = styled.div`
-  cursor: pointer;
   
   /* 桌面端保持原有的悬停样式 */
   @media (min-width: 769px) {

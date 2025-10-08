@@ -204,7 +204,6 @@ const MapOverlay = styled.div`
 const LocationIcon = styled(motion.div)<{ x: number; y: number; iconSize: number }>`
   position: absolute;
   font-size: ${props => props.iconSize}px;
-  cursor: pointer;
   left: ${props => props.x}%;
   top: ${props => props.y}%;
   transform: translate(-50%, -50%);
@@ -425,7 +424,6 @@ const BackButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;
@@ -447,7 +445,6 @@ const PlayPauseButton = styled(motion.button)`
   padding: 12px 20px;
   font-size: 16px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;
@@ -556,7 +553,6 @@ const TabButton = styled(motion.button)<{ active: boolean; tabType: 'intro' | 'g
   font-size: 18px;
   font-weight: 600;
   font-family: 'KaiTi', 'SimKai', serif;
-  cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -1100,7 +1096,7 @@ const OgijimaPage: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={() => openImageViewer(location.images, 0, location.title)}
-                style={{ cursor: 'pointer' }}
+                style={{}}
               >
                 <ImageSlider
                   images={location.images}

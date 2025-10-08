@@ -26,6 +26,13 @@ body {
   cursor: none; /* 隐藏默认鼠标 */
 }
 
+/* 神域页面恢复普通鼠标 */
+body:has(.divine-realm-page),
+.divine-realm-page,
+.divine-realm-page * {
+  cursor: auto !important;
+}
+
 /* 🦋 强制所有可点击元素使用蝴蝶鼠标特效 */
 *, *:hover, *:focus, *:active,
 a, a:hover, a:focus, a:active,
@@ -223,4 +230,51 @@ img[class*="Image"] {
   padding: 10px 15px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 15px var(--shadow-color);
-} 
+}
+
+/* ===== 神域灯笼鼠标样式 ===== */
+
+/* 提高灯笼鼠标动画性能 */
+@media (prefers-reduced-motion: no-preference) {
+  .lantern-cursor,
+  .lantern-image {
+    contain: layout style paint;
+  }
+}
+
+/* 灯笼鼠标容器 */
+.lantern-cursor {
+  position: fixed;
+  pointer-events: none !important; /* 绝对不阻挡点击事件 */
+  z-index: 9999;
+  width: 50px;
+  height: 50px;
+  top: 0;
+  left: 0;
+  will-change: transform; /* 启用硬件加速 */
+  backface-visibility: hidden; /* 启用硬件加速 */
+  transform-style: preserve-3d; /* 启用3D变换 */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* 灯笼图片样式 */
+.lantern-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  will-change: transform, filter; /* 启用硬件加速 */
+  backface-visibility: hidden; /* 启用硬件加速 */
+  transform: translateZ(0); /* 强制启用硬件加速 */
+  image-rendering: optimizeSpeed; /* 优化图片渲染性能 */
+  pointer-events: none !important; /* 确保图片不阻挡点击 */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  transition: filter 0.3s ease-in-out, transform 0.3s ease-out;
+}
+
+/* 在可点击区域时的特殊效果 - 已移除，使用双图片方案 */ 

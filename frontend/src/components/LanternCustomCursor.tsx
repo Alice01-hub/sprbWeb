@@ -1,40 +1,39 @@
 import { useState, useEffect, useRef, useCallback } from 'react'; 
 import { useLocation } from 'react-router-dom';
-import OSS_CONFIG from '../config/ossConfig';  // 添加这行导入
+import OSS_CONFIG from '../config/ossConfig';
 
-
-const ButterflyCustomCursor = () => {
+const LanternCustomCursor = () => {
   const location = useLocation();
   
-  // 在神域页面禁用七影蝶鼠标，恢复普通鼠标
-  if (location.pathname === '/divine-realm') {
+  // 仅在神域页面显示灯笼鼠标
+  if (location.pathname !== '/divine-realm') {
     return null;
   }
   
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isOnClickable, setIsOnClickable] = useState(false);
-  const [currentFrame, setCurrentFrame] = useState(0);
   const cursorRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>();
   const lastCheckTimeRef = useRef(0);
   const imagesPreloadedRef = useRef(false);
 
-  // 蝴蝶翅膀的两个状态图片
-  const butterflyFrames = [
-    OSS_CONFIG.getImageUrl('/webps/七影蝶-3.webp'),
-    OSS_CONFIG.getImageUrl('/webps/七影蝶-4.webp')
-  ];
+  // 灯笼图片地址 - 双图片系统
+  const lanternImages = {
+    off: 'https://sprbweb-src.oss-cn-guangzhou.aliyuncs.com/public/images/divineRealm/%E7%A5%9E%E5%9F%9F%E7%81%AF%E7%AC%BC-%E7%86%84%E7%81%AD.webp',
+    on: 'https://sprbweb-src.oss-cn-guangzhou.aliyuncs.com/public/images/divineRealm/%E7%A5%9E%E5%9F%9F%E7%81%AF%E7%AC%BC-%E4%BA%AE%E5%85%89.webp'
+  };
 
   // 预加载图片
   const preloadImages = useCallback(() => {
     if (imagesPreloadedRef.current) return;
     
-    butterflyFrames.forEach(src => {
+    // 预加载两张灯笼图片
+    Object.values(lanternImages).forEach(src => {
       const img = new Image();
       img.src = src;
     });
     imagesPreloadedRef.current = true;
-  }, [butterflyFrames]);
+  }, [lanternImages]);
 
   // 节流的可点击元素检测（每100ms最多检测一次）
   const checkClickableElement = useCallback((x: number, y: number) => {
@@ -51,9 +50,14 @@ const ButterflyCustomCursor = () => {
       elementUnderMouse.tagName === 'TEXTAREA' ||
       elementUnderMouse.getAttribute('role') === 'button' ||
       elementUnderMouse.classList.contains('clickable') ||
+      elementUnderMouse.classList.contains('memory-butterfly') || // 检测七影蝶
+      elementUnderMouse.classList.contains('divine-clickable') || // 检测神域页面按钮
+      elementUnderMouse.classList.contains('memory-card-image') || // 检测七影蝶信息页面图片
+      elementUnderMouse.classList.contains('memory-card-audio') || // 检测七影蝶信息页面音频
+      elementUnderMouse.hasAttribute('data-divine-player-button') || // 检测神域音乐播放器
       (elementUnderMouse instanceof HTMLElement && elementUnderMouse.style.cursor === 'pointer') ||
       // 检查父元素是否可点击
-      elementUnderMouse.closest('a, button, [role="button"], .clickable')
+      elementUnderMouse.closest('a, button, [role="button"], .clickable, .memory-butterfly, .divine-clickable, .memory-card-image, .memory-card-audio, [data-divine-player-button]')
     );
     
     setIsOnClickable(!!isClickable);
@@ -140,14 +144,6 @@ const ButterflyCustomCursor = () => {
     };
   }, [updateCursorPosition, preloadImages, clearAllCursorStyles, clearElementCursor]);
 
-  // 蝴蝶翅膀扇动动画
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFrame(prev => (prev + 1) % butterflyFrames.length);
-    }, isOnClickable ? 200 : 300); // 在可点击区域时扇动更快
-
-    return () => clearInterval(interval);
-  }, [isOnClickable, butterflyFrames.length]);
 
   // 隐藏鼠标离开窗口时的光标
   useEffect(() => {
@@ -175,36 +171,37 @@ const ButterflyCustomCursor = () => {
   return (
     <div
       ref={cursorRef}
-      className={`butterfly-cursor ${isOnClickable ? 'on-clickable' : ''}`}
+      className={`lantern-cursor ${isOnClickable ? 'on-clickable' : ''}`}
       style={{
-        transform: `translate3d(${mousePosition.x - 20}px, ${mousePosition.y - 20}px, 0)`,
+        transform: `translate3d(${mousePosition.x - 25}px, ${mousePosition.y - 25}px, 0)`,
         willChange: 'transform', // 提示浏览器启用硬件加速
         pointerEvents: 'none', // 确保不会阻挡点击事件
-        border: 'none', // 🦋 确保容器没有边框
-        outline: 'none', // 🦋 确保容器没有轮廓
-        boxShadow: 'none', // 🦋 确保容器没有阴影
-        background: 'transparent', // 🦋 确保容器背景透明
+        border: 'none',
+        outline: 'none',
+        boxShadow: 'none',
+        background: 'transparent',
       }}
     >
       <img
-        src={butterflyFrames[currentFrame]}
-        alt="蝴蝶鼠标"
-        className="butterfly-wing"
+        src={isOnClickable ? lanternImages.on : lanternImages.off}
+        alt="神域灯笼鼠标"
+        className="lantern-image"
         draggable={false}
         style={{
           userSelect: 'none',
-          transform: isOnClickable ? 'scale(1.1)' : 'scale(1)',
-          transition: 'transform 0.2s ease-out',
-          willChange: 'transform', // 提示浏览器启用硬件加速
-          pointerEvents: 'none', // 确保图片也不会阻挡点击
-          border: 'none', // 🦋 确保没有边框
-          outline: 'none', // 🦋 确保没有轮廓
-          boxShadow: 'none', // 🦋 确保没有阴影
-          background: 'transparent', // 🦋 确保背景透明
+          transform: isOnClickable ? 'scale(1.15)' : 'scale(1)',
+          transition: 'transform 0.3s ease-out',
+          willChange: 'transform',
+          pointerEvents: 'none',
+          border: 'none',
+          outline: 'none',
+          boxShadow: 'none',
+          background: 'transparent',
+          filter: 'none',
         }}
       />
     </div>
   );
 };
 
-export default ButterflyCustomCursor; 
+export default LanternCustomCursor;

@@ -84,7 +84,6 @@
   background: rgba(0, 0, 0, 0.1);
   color: #5a6c7d;
   font-size: 12px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,7 +184,6 @@
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 

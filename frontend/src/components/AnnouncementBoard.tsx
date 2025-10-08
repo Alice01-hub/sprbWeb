@@ -59,7 +59,7 @@ const AnimatedAnnouncementItem = ({
         delay: index * 0.1,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
-      style={{ marginBottom: "0.5rem", cursor: "pointer" }}
+      style={{ marginBottom: "0.5rem" }}
       whileHover={{ 
         scale: 1.02,
         y: -2,

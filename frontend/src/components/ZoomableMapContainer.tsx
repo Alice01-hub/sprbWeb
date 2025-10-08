@@ -116,7 +116,6 @@ const ZoomButton = styled.button`
   color: #333;
   font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   display: flex;

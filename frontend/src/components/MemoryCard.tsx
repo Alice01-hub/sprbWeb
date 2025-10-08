@@ -135,7 +135,6 @@ const CloseButton = styled(motion.button)`
   background: rgba(15, 25, 50, 0.6);
   color: rgba(255, 255, 255, 0.7);
   font-size: 20px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,7 +258,6 @@ const ImageContainer = styled.div`
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(135, 206, 235, 0.1);
-  cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   
@@ -315,7 +313,6 @@ const ImageLightbox = styled(motion.div)`
   align-items: center;
   justify-content: center;
   padding: 20px;
-  cursor: pointer;
 `
 
 const LightboxImage = styled(motion.img)`
@@ -544,14 +541,20 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
           
           {/* 图片 - 如果存在则显示，点击可放大 */}
           {memory.image_url && (
-            <ImageContainer onClick={() => setIsImageExpanded(true)}>
+            <ImageContainer 
+              onClick={() => setIsImageExpanded(true)}
+              className="memory-card-image"
+            >
               <ContentImage src={memory.image_url} alt={memory.title} />
             </ImageContainer>
           )}
           
           {/* 音频播放器 - 如果存在则显示 */}
           {memory.audio_url && (
-            <AudioPlayer controls>
+            <AudioPlayer 
+              controls
+              className="memory-card-audio"
+            >
               <source src={memory.audio_url} type="audio/mpeg" />
               您的浏览器不支持音频播放。
             </AudioPlayer>

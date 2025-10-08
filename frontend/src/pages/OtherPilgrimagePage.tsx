@@ -40,7 +40,6 @@ const BackButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;

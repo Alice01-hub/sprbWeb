@@ -63,7 +63,6 @@ const BackButton = styled(motion.button)`
   padding: 15px 25px;
   font-size: 18px;
   color: #2E8B57;
-  cursor: pointer;
   box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
   display: flex;
   align-items: center;
@@ -160,7 +159,6 @@ const SwitchButton = styled(motion.button)`
   font-size: 18px;
   font-weight: 600;
   color: #fff;
-  cursor: pointer;
   margin-top: 25px;
   box-shadow: 
     0 4px 15px rgba(123, 9, 183, 0.3),
@@ -287,7 +285,6 @@ const ExternalSwitchButton = styled(motion.button)`
   font-size: 18px;
   font-weight: 600;
   color: #fff;
-  cursor: pointer;
   box-shadow: 
     0 4px 15px rgba(123, 9, 183, 0.3),
     0 0 20px rgba(135, 206, 235, 0.2),
@@ -563,7 +560,7 @@ const DivineRealmPage: React.FC = () => {
   }, [currentScene, allMemories])
 
   return (
-    <Container>
+    <Container className="divine-realm-page">
       <Title>神域</Title>
 
       {/* 图片展示区域 - 直接放在页面中央 */}
@@ -648,6 +645,7 @@ const DivineRealmPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
+          className="divine-clickable"
         >
           切换场景
         </ExternalSwitchButton>
@@ -657,6 +655,7 @@ const DivineRealmPage: React.FC = () => {
         onClick={handleBack}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        className="divine-clickable"
       >
         🏠 返回目录
       </BackButton>

@@ -13,6 +13,7 @@ import ProgressPage from './pages/ProgressPage'
 
 import MusicPlayer from './components/MusicPlayer'
 import ButterflyCustomCursor from './components/ButterflyCustomCursor'
+import LanternCustomCursor from './components/LanternCustomCursor'
 import './styles/global.css'
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
           <MusicPlayer />
           {/* 🦋 蝴蝶扇动翅膀自定义鼠标特效 */}
           <ButterflyCustomCursor />
+          {/* 🏮 神域灯笼鼠标特效 */}
+          <LanternCustomCursor />
         </div>
       </Router>
     </MusicProvider>
