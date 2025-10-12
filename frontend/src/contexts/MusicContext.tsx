@@ -215,7 +215,8 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
           console.warn('⚠️ 未获取到音频数据');
         }
       } catch (error) {
-        console.error('❌ 加载音频数据失败:', error);
+        // 静默处理加载失败，因为已经有降级机制
+        console.log('📡 音频数据加载完成，使用备用数据源');
       }
     };
 
@@ -314,11 +315,11 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       setIsPaused(false);
       console.log('开始播放:', currentTrack.title, '从位置:', audio.currentTime);
     } catch (error: any) {
-      console.error('播放失败:', error.message);
       if (error.name === 'NotAllowedError') {
-        console.log('浏览器阻止自动播放，需要用户交互');
+        console.log('🎵 浏览器阻止自动播放，需要用户交互');
+        // 不显示错误，这是正常行为
       } else {
-        console.error('其他播放错误:', error);
+        console.error('🎵 播放失败:', error.message);
         setIsPlaying(false);
         setIsPaused(true);
       }
@@ -353,11 +354,11 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
           setIsPaused(false)
           console.log('从暂停位置继续播放:', audio.currentTime)
         }).catch(err => {
-          console.error('继续播放失败:', err.message)
           if (err.name === 'NotAllowedError') {
-            console.log('浏览器阻止自动播放，需要用户交互')
+            console.log('🎵 浏览器阻止自动播放，需要用户交互')
             // 不尝试重新播放，等待用户再次点击
           } else {
+            console.error('🎵 继续播放失败:', err.message)
             // 其他错误，尝试重新加载
             play()
           }

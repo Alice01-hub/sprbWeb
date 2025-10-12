@@ -22,18 +22,6 @@ export const getDivineAudios = async (): Promise<DivineAudio[]> => {
 
     console.log('✅ 成功获取神域BGM数据:', data?.length || 0, '首')
     
-    // 调试：检查数据格式
-    if (data && data.length > 0) {
-      console.log('🦋 第一条BGM数据示例:', data[0])
-      console.log('🦋 字段检查:', {
-        id: typeof data[0].id,
-        title: typeof data[0].title,
-        artist: typeof data[0].artist,
-        url: typeof data[0].url,
-        is_published: typeof data[0].is_published
-      })
-    }
-    
     return data || []
   } catch (err) {
     console.error('❌ 获取神域BGM过程中发生错误:', err)

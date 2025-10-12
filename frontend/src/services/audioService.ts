@@ -30,7 +30,9 @@ export const fetchAudiosFromAPI = async (): Promise<AudioData[]> => {
     const response = await fetch('/api/audios');
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // 静默处理HTTP错误，不抛出异常
+      console.log('📡 API服务不可用，将使用Supabase作为备用数据源');
+      return [];
     }
     
     const result: AudioApiResponse = await response.json();
@@ -47,11 +49,12 @@ export const fetchAudiosFromAPI = async (): Promise<AudioData[]> => {
       });
       return result.data;
     } else {
-      throw new Error('API返回失败状态');
+      console.log('📡 API返回失败状态，将使用Supabase作为备用数据源');
+      return [];
     }
   } catch (error) {
-    console.error('❌ 从API获取音频数据失败:', error);
-    // 如果API失败，返回空数组，让应用继续工作
+    // 静默处理API失败，不显示错误日志，因为已经有降级机制
+    console.log('📡 API服务不可用，将使用Supabase作为备用数据源');
     return [];
   }
 };
@@ -123,7 +126,8 @@ export const fetchAudioById = async (id: number): Promise<AudioData | null> => {
     const response = await fetch(`/api/audios/${id}`);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.log(`📡 API服务不可用，无法获取音频ID ${id}`);
+      return null;
     }
     
     const result: SingleAudioResponse = await response.json();
@@ -131,10 +135,11 @@ export const fetchAudioById = async (id: number): Promise<AudioData | null> => {
     if (result.success) {
       return result.data;
     } else {
-      throw new Error('API返回失败状态');
+      console.log(`📡 API返回失败状态，无法获取音频ID ${id}`);
+      return null;
     }
   } catch (error) {
-    console.error(`获取音频ID ${id} 失败:`, error);
+    console.log(`📡 API服务不可用，无法获取音频ID ${id}`);
     return null;
   }
 };

@@ -22,13 +22,6 @@ export const getPublishedMemories = async (): Promise<ButterflyMemory[]> => {
 
     console.log('✅ 成功获取蝴蝶记忆数据:', data?.length || 0, '条')
     
-    // 调试：检查数据格式
-    if (data && data.length > 0) {
-      console.log('🦋 第一条数据示例:', data[0])
-      console.log('🦋 created_at字段类型:', typeof data[0].created_at)
-      console.log('🦋 created_at字段值:', data[0].created_at)
-    }
-    
     return data || []
   } catch (err) {
     console.error('❌ 获取蝴蝶记忆过程中发生错误:', err)

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getDivineAudios } from '../services/divineAudioService'
+import { useAudio } from '../contexts/AudioContext'
 
 // 神域BGM数据类型
 export interface DivineAudio {
@@ -73,7 +74,7 @@ const PlayerPanel = styled(motion.div)`
   bottom: 90px; /* 调整位置，确保不遮挡按钮 */
   right: 0;
   width: 400px;
-  height: 225px; /* 16:9比例 (400 * 9 / 16) */
+  min-height: 225px; /* 改为最小高度，允许内容扩展 */
   background-image: url('https://sprbweb-src.oss-cn-guangzhou.aliyuncs.com/public/images/divineRealm/%E7%A5%9E%E5%9F%9F%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8%E8%83%8C%E6%99%AF%E5%9B%BE.gif');
   background-size: cover;
   background-position: center top; /* 背景图片定位到顶部，组件下移 */
@@ -84,10 +85,9 @@ const PlayerPanel = styled(motion.div)`
     0 15px 40px rgba(0, 0, 0, 0.6),
     0 0 30px rgba(135, 206, 235, 0.2);
   border: 1px solid rgba(135, 206, 235, 0.3);
-  backdrop-filter: blur(5px);
   position: relative;
   z-index: 5; /* 面板层级低于按钮 */
-  overflow: hidden;
+  overflow: visible; /* 改为visible，确保进度条不被裁剪 */
   
   /* 添加半透明遮罩层，确保文字清晰可见 */
   &::before {
@@ -153,7 +153,6 @@ const TrackTitle = styled.div`
   background: rgba(0, 0, 0, 0.4);
   padding: 6px 12px;
   border-radius: 8px;
-  backdrop-filter: blur(10px);
   max-width: 100%;
   word-wrap: break-word;
 `
@@ -166,7 +165,6 @@ const ArtistName = styled.div`
   background: rgba(0, 0, 0, 0.3);
   padding: 4px 8px;
   border-radius: 6px;
-  backdrop-filter: blur(5px);
   max-width: 100%;
   word-wrap: break-word;
 `
@@ -192,7 +190,6 @@ const ControlButton = styled(motion.button)`
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   
   &:hover {
@@ -235,7 +232,6 @@ const VolumeIcon = styled.span`
   background: rgba(0, 0, 0, 0.3);
   padding: 2px 4px;
   border-radius: 3px;
-  backdrop-filter: blur(5px);
 `
 
 const VolumeSlider = styled.input`
@@ -244,7 +240,6 @@ const VolumeSlider = styled.input`
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
   outline: none;
-  backdrop-filter: blur(5px);
   
   &::-webkit-slider-thumb {
     appearance: none;
@@ -262,19 +257,152 @@ const VolumeSlider = styled.input`
   }
 `
 
+// 进度条区域样式
+const ProgressArea = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+`
+
+// 时间显示样式
+const TimeDisplay = styled.span`
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  min-width: 35px;
+  text-align: center;
+`
+
+// 进度条样式
+const ProgressSlider = styled.input`
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+  
+  &::-webkit-slider-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+`
+
 
 const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
   const [audios, setAudios] = useState<DivineAudio[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    // 从localStorage读取用户上次播放的歌曲索引
+    const savedIndex = localStorage.getItem('divine-bgm-current-index')
+    return savedIndex ? parseInt(savedIndex) : 0
+  })
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const [volume, setVolume] = useState(0.7)
+  const [volume, setVolume] = useState(() => {
+    // 从localStorage读取用户上次的音量设置
+    const savedVolume = localStorage.getItem('divine-music-volume')
+    return savedVolume ? parseFloat(savedVolume) : 0.7
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false) // 跟踪是否已经自动播放过
   const [playedSongs, setPlayedSongs] = useState<Set<number>>(new Set()) // 记录已播放的歌曲ID
+  const [remainingSongs, setRemainingSongs] = useState<number[]>([]) // 剩余未播放的歌曲索引
   
-  const audioRef = useRef<HTMLAudioElement>(null)
+  // 播放进度相关状态
+  const [currentTime, setCurrentTime] = useState(() => {
+    // 从localStorage读取保存的播放位置
+    const savedTime = localStorage.getItem('divine-bgm-current-time')
+    return savedTime ? parseFloat(savedTime) : 0
+  })
+  const [duration, setDuration] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  
+  // 添加初始化状态管理，参考普通播放器
+  const isInitializedRef = useRef(false)
+  const shouldAutoPlayRef = useRef(false)
+  
+  // 自定义的当前索引设置函数，同时保存到本地存储
+  const setCurrentIndexWithCache = useCallback((index: number) => {
+    setCurrentIndex(index)
+    // 保存到localStorage
+    localStorage.setItem('divine-bgm-current-index', index.toString())
+  }, [])
+
+  // 清理神域播放器播放偏好缓存
+  const clearDivinePlaybackPreferences = useCallback(() => {
+    localStorage.removeItem('divine-bgm-current-index')
+    localStorage.removeItem('divine-music-volume')
+    localStorage.removeItem('divine-bgm-current-time')
+    // 重置为默认值
+    setCurrentIndex(0)
+    setVolume(0.7)
+    setCurrentTime(0)
+    console.log('🎵 神域播放器播放偏好已重置')
+  }, [])
+  
   const panelRef = useRef<HTMLDivElement>(null)
+  
+  // 使用音频管理上下文
+  const { 
+    divineAudioRef, 
+    isDivinePlaying, 
+    pauseDivineAudio, 
+    resumeDivineAudio,
+    updateDivineCurrentTime,
+    resetDivineCurrentTime
+  } = useAudio()
+
+  // 时间格式化函数
+  const formatTime = (time: number): string => {
+    if (isNaN(time) || !isFinite(time)) return '0:00'
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  // 进度条变化处理
+  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = parseFloat(e.target.value)
+    setCurrentTime(newTime)
+    
+    if (divineAudioRef.current) {
+      divineAudioRef.current.currentTime = newTime
+      updateDivineCurrentTime(newTime)
+      console.log('🎵 进度条拖拽到:', newTime, '秒')
+    }
+  }
+
+  // 进度条拖拽开始
+  const handleProgressMouseDown = () => {
+    setIsDragging(true)
+  }
+
+  // 进度条拖拽结束
+  const handleProgressMouseUp = () => {
+    setIsDragging(false)
+    // 拖拽结束后，确保播放位置同步
+    if (divineAudioRef.current) {
+      const currentAudioTime = divineAudioRef.current.currentTime
+      setCurrentTime(currentAudioTime)
+      updateDivineCurrentTime(currentAudioTime)
+      console.log('🎵 进度条拖拽结束，最终位置:', currentAudioTime, '秒')
+    }
+  }
 
   // 获取神域BGM数据
   const loadDivineAudios = async () => {
@@ -284,6 +412,14 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
       
       const audios = await getDivineAudios()
       setAudios(audios)
+      
+      // 初始化随机播放状态
+      if (audios.length > 0) {
+        const allSongs = Array.from({ length: audios.length }, (_, i) => i)
+        setRemainingSongs(allSongs)
+        setPlayedSongs(new Set())
+      }
+      
       console.log('✅ 神域BGM数据加载完成:', audios.length, '首')
     } catch (error) {
       console.error('❌ 加载神域BGM失败:', error)
@@ -303,46 +439,45 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
     }
   }
 
-  // 随机选择下一首歌曲
-  const getRandomNextSong = (): number => {
+  // 获取随机播放的下一首歌曲 - 参考普通播放器的实现
+  const getRandomNextSong = useCallback((): number => {
     if (audios.length === 0) return 0
     
-    // 如果所有歌曲都已播放过，重置播放记录
-    if (playedSongs.size >= audios.length) {
-      console.log('🎵 所有歌曲已播放完毕，重置播放记录')
+    if (remainingSongs.length === 0) {
+      // 如果所有歌曲都播放过了，重新开始随机播放
+      const allSongs = Array.from({ length: audios.length }, (_, i) => i)
+      setRemainingSongs(allSongs)
       setPlayedSongs(new Set())
+      return allSongs[Math.floor(Math.random() * allSongs.length)]
     }
     
-    // 获取未播放的歌曲索引
-    const unplayedIndices = audios
-      .map((_, index) => index)
-      .filter(index => !playedSongs.has(audios[index].id))
+    // 从剩余歌曲中随机选择
+    const randomIndex = Math.floor(Math.random() * remainingSongs.length)
+    const nextIndex = remainingSongs[randomIndex]
     
-    // 如果还有未播放的歌曲，随机选择一首
-    if (unplayedIndices.length > 0) {
-      const randomIndex = unplayedIndices[Math.floor(Math.random() * unplayedIndices.length)]
-      console.log('🎵 随机选择下一首歌曲:', audios[randomIndex].title)
-      return randomIndex
-    }
+    // 更新剩余歌曲列表
+    const newRemainingSongs = remainingSongs.filter((_, index) => index !== randomIndex)
+    setRemainingSongs(newRemainingSongs)
     
-    // 如果没有未播放的歌曲，随机选择任意一首
-    const randomIndex = Math.floor(Math.random() * audios.length)
-    console.log('🎵 随机选择歌曲:', audios[randomIndex].title)
-    return randomIndex
-  }
+    // 添加到已播放列表
+    setPlayedSongs(prev => new Set([...prev, audios[nextIndex].id]))
+    
+    console.log('🎵 随机选择下一首歌曲:', audios[nextIndex].title)
+    return nextIndex
+  }, [audios, remainingSongs])
 
 
-  // 播放/暂停
+  // 播放/暂停 - 简化逻辑，参考普通播放器
   const togglePlayPause = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!audioRef.current) return
+    if (!divineAudioRef.current) return
     
-    if (isPlaying) {
-      audioRef.current.pause()
+    if (isDivinePlaying) {
+      pauseDivineAudio()
     } else {
-      audioRef.current.play()
+      // AudioContext会自动处理冲突检测和恢复播放
+      resumeDivineAudio()
     }
-    setIsPlaying(!isPlaying)
   }
 
 
@@ -351,8 +486,8 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value)
     setVolume(newVolume)
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume
+    if (divineAudioRef.current) {
+      divineAudioRef.current.volume = newVolume
     }
     // 保存音量到localStorage
     localStorage.setItem('divine-music-volume', newVolume.toString())
@@ -360,93 +495,125 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
 
   // 音频事件处理
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = divineAudioRef.current
     if (!audio) return
 
     const handleEnded = () => {
-      console.log('🎵 BGM播放结束，随机选择下一首歌曲')
-      
-      // 记录当前歌曲已播放
-      const currentAudio = audios[currentIndex]
-      if (currentAudio) {
-        setPlayedSongs(prev => new Set([...prev, currentAudio.id]))
-        console.log('🎵 记录已播放歌曲:', currentAudio.title)
-      }
+      console.log('🎵 BGM播放结束，自动播放下一首歌曲')
       
       // 随机选择下一首歌曲
       const nextIndex = getRandomNextSong()
-      setCurrentIndex(nextIndex)
+      setCurrentIndexWithCache(nextIndex)
       
-      // 播放下一首歌曲
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0
-          audioRef.current.play().then(() => {
-            console.log('🎵 随机播放下一首成功:', audios[nextIndex]?.title)
-            setIsPlaying(true)
-          }).catch((error) => {
-            console.error('随机播放失败:', error)
-            setIsPlaying(false)
-          })
-        }
-      }, 100) // 短暂延迟确保音频源已更新
+      // 重置播放位置，因为要播放新歌曲
+      resetDivineCurrentTime()
+      
+      // 设置自动播放标志，让初始化逻辑处理播放
+      shouldAutoPlayRef.current = true
+      isInitializedRef.current = false // 重置初始化标志
+      
+      console.log('🎵 准备播放下一首:', audios[nextIndex]?.title)
     }
+    
     const handleLoadStart = () => setIsLoading(true)
     const handleCanPlay = () => setIsLoading(false)
+    
+    // 音频元数据加载完成
+    const handleLoadedMetadata = () => {
+      const audioDuration = audio.duration || 0
+      setDuration(audioDuration)
+      console.log('🎵 音频元数据加载完成，时长:', audioDuration, '秒')
+    }
+    
+    // 播放位置跟踪 - 参考普通播放器的实现
+    const handleTimeUpdate = () => {
+      const currentAudioTime = audio.currentTime || 0
+      setCurrentTime(currentAudioTime)
+      
+      // 每5秒保存一次播放位置，避免频繁写入localStorage
+      if (Math.floor(currentAudioTime) % 5 === 0) {
+        updateDivineCurrentTime(currentAudioTime)
+      }
+    }
 
     audio.addEventListener('ended', handleEnded)
     audio.addEventListener('loadstart', handleLoadStart)
     audio.addEventListener('canplay', handleCanPlay)
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('timeupdate', handleTimeUpdate)
 
     return () => {
       audio.removeEventListener('ended', handleEnded)
       audio.removeEventListener('loadstart', handleLoadStart)
       audio.removeEventListener('canplay', handleCanPlay)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('timeupdate', handleTimeUpdate)
     }
-  }, [currentIndex, audios, playedSongs])
-
-  // 加载保存的音量设置
-  useEffect(() => {
-    const savedVolume = localStorage.getItem('divine-music-volume')
-    if (savedVolume) {
-      const volumeValue = parseFloat(savedVolume)
-      if (volumeValue >= 0 && volumeValue <= 1) {
-        setVolume(volumeValue)
-      }
-    }
-  }, [])
+  }, [currentIndex, audios, updateDivineCurrentTime, resetDivineCurrentTime, isDragging, getRandomNextSong, setCurrentIndexWithCache])
 
   // 设置音量
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume
+    if (divineAudioRef.current) {
+      divineAudioRef.current.volume = volume
     }
   }, [volume])
 
-  // 当音频源改变时，确保音频继续播放（如果之前正在播放）
+  // 同步AudioContext中的播放位置到组件状态 - 简化逻辑
   useEffect(() => {
-    const audio = audioRef.current
-    const currentAudio = audios[currentIndex]
-    if (!audio || !currentAudio) return
-
-    const wasPlaying = isPlaying
-    audio.src = currentAudio.url
-    audio.load() // 重新加载音频源
-    
-    if (wasPlaying) {
-      audio.play().catch(console.error)
+    const audio = divineAudioRef.current
+    if (audio && !isDragging) {
+      // 当音频元素存在且不在拖拽状态时，同步播放位置
+      const savedTime = localStorage.getItem('divine-bgm-current-time')
+      if (savedTime) {
+        const time = parseFloat(savedTime)
+        setCurrentTime(time)
+        // 如果音频已加载且不在播放状态，设置播放位置
+        if (audio.readyState >= 2 && audio.paused) {
+          audio.currentTime = time
+        }
+      }
     }
-  }, [audios, currentIndex, isPlaying])
+  }, [isDragging, divineAudioRef])
 
-  // 初始化音频源
+  // 初始化音频源 - 参考普通播放器的实现
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = divineAudioRef.current
     const currentAudio = audios[currentIndex]
     if (!audio || !currentAudio) return
 
-    audio.src = currentAudio.url
-    audio.load()
-  }, [audios, currentIndex])
+    // 只有在音频源不同或未初始化时才重新加载
+    if (!isInitializedRef.current || audio.src !== currentAudio.url) {
+      audio.src = currentAudio.url
+      audio.volume = volume
+      audio.load()
+      isInitializedRef.current = true
+      console.log('🎵 神域BGM初始化完成:', currentAudio.title)
+      
+      // 如果是从缓存恢复的播放位置，设置音频时间
+      const savedTime = localStorage.getItem('divine-bgm-current-time')
+      if (savedTime) {
+        const time = parseFloat(savedTime)
+        // 延迟设置，确保音频已加载
+        setTimeout(() => {
+          if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+            audio.currentTime = time
+            console.log('🎵 从缓存恢复神域BGM播放位置:', time)
+          }
+        }, 100)
+      }
+    }
+  }, [audios, currentIndex, volume])
+
+  // 处理自动播放逻辑 - 参考普通播放器
+  useEffect(() => {
+    if (shouldAutoPlayRef.current && audios.length > 0 && isInitializedRef.current) {
+      shouldAutoPlayRef.current = false
+      // 延迟播放确保音频完全加载
+      setTimeout(() => {
+        resumeDivineAudio()
+      }, 100)
+    }
+  }, [audios.length, currentIndex, resumeDivineAudio])
 
   // 点击外部关闭面板
   useEffect(() => {
@@ -475,32 +642,45 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
 
   // 当播放器可见且有音频数据时，随机选择并自动开始播放（仅一次）
   useEffect(() => {
-    if (isVisible && audios.length > 0 && !isPlaying && !hasAutoPlayed) {
+    if (isVisible && audios.length > 0 && !isDivinePlaying && !hasAutoPlayed) {
       // 随机选择第一首歌曲
       const randomIndex = getRandomNextSong()
-      setCurrentIndex(randomIndex)
+      setCurrentIndexWithCache(randomIndex)
+      console.log('🎵 准备自动播放神域BGM:', audios[randomIndex]?.title)
       
-      // 延迟一点时间确保音频元素已准备好
-      const timer = setTimeout(() => {
-        if (audioRef.current) {
-          console.log('🎵 神域BGM随机播放开始:', audios[randomIndex]?.title)
-          audioRef.current.play().catch(console.error)
-          setIsPlaying(true)
-          setHasAutoPlayed(true) // 标记已经自动播放过
-        }
-      }, 500)
+      // 标记已经触发自动播放逻辑
+      setHasAutoPlayed(true)
       
-      return () => clearTimeout(timer)
+      // 设置自动播放标志，让初始化逻辑处理播放
+      shouldAutoPlayRef.current = true
     }
-  }, [isVisible, audios.length, isPlaying, hasAutoPlayed])
+  }, [isVisible, audios.length, isDivinePlaying, hasAutoPlayed])
 
   const currentAudio = audios[currentIndex]
   
-  // 调试信息
-  console.log('🎵 播放状态:', { 
-    isPlaying, 
-    currentAudio: currentAudio?.title 
+  // 优化调试信息 - 只在重要状态变化时打印
+  const prevStateRef = useRef<{isDivinePlaying: boolean, currentAudio: string | undefined, duration: number, currentTime: number}>({
+    isDivinePlaying: false,
+    currentAudio: undefined,
+    duration: 0,
+    currentTime: 0
   })
+  
+  const currentState = {
+    isDivinePlaying,
+    currentAudio: currentAudio?.title,
+    duration,
+    currentTime
+  }
+  
+  // 只在重要状态变化时才打印日志（减少频繁打印）
+  if (prevStateRef.current.isDivinePlaying !== currentState.isDivinePlaying || 
+      prevStateRef.current.currentAudio !== currentState.currentAudio ||
+      prevStateRef.current.duration !== currentState.duration ||
+      Math.floor(prevStateRef.current.currentTime / 5) !== Math.floor(currentState.currentTime / 5)) { // 每5秒打印一次时间变化
+    console.log('🎵 播放状态变化:', currentState)
+    prevStateRef.current = currentState
+  }
 
   if (!isVisible) return null
 
@@ -524,7 +704,7 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {isPlaying ? '⏸' : '▶'}
+                {isDivinePlaying ? '⏸' : '▶'}
               </PlayPauseButton>
             </PlayerHeader>
 
@@ -543,13 +723,34 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
               />
             </VolumeArea>
 
+            {/* 播放进度控制 */}
+            <ProgressArea>
+              <TimeDisplay>{formatTime(currentTime)}</TimeDisplay>
+              <ProgressSlider
+                type="range"
+                min="0"
+                max={duration || 100}
+                step="1"
+                value={currentTime}
+                onChange={handleProgressChange}
+                onMouseDown={handleProgressMouseDown}
+                onMouseUp={handleProgressMouseUp}
+                style={{ 
+                  opacity: 1,
+                  cursor: 'pointer'
+                }}
+                title={`进度条: ${currentTime}/${duration}`}
+              />
+              <TimeDisplay>{formatTime(duration)}</TimeDisplay>
+            </ProgressArea>
+
           </PlayerPanel>
         )}
       </AnimatePresence>
       
         {/* 音频元素 - 移到面板外部，确保面板关闭时音频继续播放 */}
         <audio
-          ref={audioRef}
+          ref={divineAudioRef}
           preload="metadata"
           style={{ display: 'none' }}
         />
@@ -557,7 +758,7 @@ const DivineMusicPlayer: React.FC<DivineMusicPlayerProps> = ({ isVisible }) => {
       
       {/* 圆形播放按钮 - 独立于PlayerContainer，固定在右下角 */}
       <PlayButton
-        isPlaying={isPlaying}
+        isPlaying={isDivinePlaying}
         onClick={() => setIsPanelOpen(!isPanelOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 1.05 }}

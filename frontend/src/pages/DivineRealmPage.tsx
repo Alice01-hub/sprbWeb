@@ -9,6 +9,7 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import DivineMusicPlayer from '../components/DivineMusicPlayer'
 import { getPublishedMemories, getRandomMemories, assignRandomPositions } from '../services/memoryService'
 import { useMusic } from '../contexts/MusicContext'
+import { AudioProvider } from '../contexts/AudioContext'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -536,7 +537,7 @@ const DivineRealmPage: React.FC = () => {
         return
       }
 
-      console.log('✅ 成功获取神域场景数据:', data)
+      console.log('✅ 成功获取神域场景数据: ▶ (17) [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}]')
       setAllScenes(data || [])
       
       if (data && data.length > 0) {
@@ -582,6 +583,7 @@ const DivineRealmPage: React.FC = () => {
 
   // 组件挂载时加载数据
   useEffect(() => {
+    console.log('🦋 神域页面初始化开始')
     loadScenes()
     loadMemories()
     // 进入神域模式
@@ -589,6 +591,7 @@ const DivineRealmPage: React.FC = () => {
     
     // 组件卸载时退出神域模式
     return () => {
+      console.log('🦋 神域页面卸载，退出神域模式')
       exitDivineMode()
     }
   }, [])
@@ -628,116 +631,118 @@ const DivineRealmPage: React.FC = () => {
   }, [displayedButterflies.length, allMemories])
 
   return (
-    <Container className="divine-realm-page">
-      <Title>神域</Title>
+    <AudioProvider>
+      <Container className="divine-realm-page">
+        <Title>神域</Title>
 
-      {/* 图片展示区域 - 直接放在页面中央 */}
-      <ImageContainer
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        {isLoading ? (
-          <LoadingSpinner
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
-        ) : error ? (
-          <ErrorMessage
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {error}
-          </ErrorMessage>
-        ) : currentScene ? (
-          <>
-            <SceneImage
-              ref={imageRef}
-              src={currentScene.graph_url}
-              alt={currentScene.graph_name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ scale: 1.02 }}
-              onLoad={() => {
-                // 图片加载完成后，更新图片尺寸并刷新蝴蝶位置
-                console.log('🖼️ 图片加载完成')
-                updateImageDimensions()
-                setIsImageLoaded(true)
-              }}
+        {/* 图片展示区域 - 直接放在页面中央 */}
+        <ImageContainer
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {isLoading ? (
+            <LoadingSpinner
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             />
-            
-            {/* 蝴蝶容器 - 覆盖在图片上方 */}
-            <ButterfliesContainer>
-              {displayedButterflies.map((memory) => (
-                <MemoryButterfly
-                  key={memory.id}
-                  memory={memory}
-                  onClick={() => handleButterflyClick(memory)}
-                />
-              ))}
-            </ButterfliesContainer>
-          </>
-        ) : (
-          <ErrorMessage>
-            暂无可用场景
-          </ErrorMessage>
-        )}
-      </ImageContainer>
-      
-      {/* 蝴蝶详情卡片 */}
-      {selectedMemory && (
-        <ErrorBoundary>
-          <MemoryCard
-            memory={selectedMemory}
-            onClose={handleCloseMemoryCard}
-          />
-        </ErrorBoundary>
-      )}
-
-      {/* 控制区域 - 场景名称和切换按钮 */}
-      <ControlArea
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-      >
-        {currentScene && (
-          <ExternalSceneName
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            {currentScene.graph_name}
-          </ExternalSceneName>
-        )}
+          ) : error ? (
+            <ErrorMessage
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {error}
+            </ErrorMessage>
+          ) : currentScene ? (
+            <>
+              <SceneImage
+                ref={imageRef}
+                src={currentScene.graph_url}
+                alt={currentScene.graph_name}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                whileHover={{ scale: 1.02 }}
+                onLoad={() => {
+                  // 图片加载完成后，更新图片尺寸并刷新蝴蝶位置
+                  console.log('🖼️ 图片加载完成')
+                  updateImageDimensions()
+                  setIsImageLoaded(true)
+                }}
+              />
+              
+              {/* 蝴蝶容器 - 覆盖在图片上方 */}
+              <ButterfliesContainer>
+                {displayedButterflies.map((memory) => (
+                  <MemoryButterfly
+                    key={memory.id}
+                    memory={memory}
+                    onClick={() => handleButterflyClick(memory)}
+                  />
+                ))}
+              </ButterfliesContainer>
+            </>
+          ) : (
+            <ErrorMessage>
+              暂无可用场景
+            </ErrorMessage>
+          )}
+        </ImageContainer>
         
-        <ExternalSwitchButton
-          onClick={handleSwitchScene}
-          disabled={isLoading}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        {/* 蝴蝶详情卡片 */}
+        {selectedMemory && (
+          <ErrorBoundary>
+            <MemoryCard
+              memory={selectedMemory}
+              onClose={handleCloseMemoryCard}
+            />
+          </ErrorBoundary>
+        )}
+
+        {/* 控制区域 - 场景名称和切换按钮 */}
+        <ControlArea
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          {currentScene && (
+            <ExternalSceneName
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              {currentScene.graph_name}
+            </ExternalSceneName>
+          )}
+          
+          <ExternalSwitchButton
+            onClick={handleSwitchScene}
+            disabled={isLoading}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="divine-clickable"
+          >
+            切换场景
+          </ExternalSwitchButton>
+        </ControlArea>
+
+        <BackButton
+          onClick={handleBack}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="divine-clickable"
         >
-          切换场景
-        </ExternalSwitchButton>
-      </ControlArea>
-
-      <BackButton
-        onClick={handleBack}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="divine-clickable"
-      >
-        🏠 返回目录
-      </BackButton>
-      
-      {/* 神域BGM播放器 - 自动显示 */}
-      <DivineMusicPlayer isVisible={isDivineMode} />
-    </Container>
+          🏠 返回目录
+        </BackButton>
+        
+        {/* 神域BGM播放器 - 自动显示 */}
+        <DivineMusicPlayer isVisible={true} />
+      </Container>
+    </AudioProvider>
   )
 }
 

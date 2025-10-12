@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ButterflyMemory } from './MemoryButterfly'
+import { useAudio } from '../contexts/AudioContext'
 
 interface MemoryCardProps {
   memory: ButterflyMemory | null
@@ -351,23 +352,17 @@ const AudioPlayer = styled.audio`
 const LinkButton = styled(motion.a)`
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  background: linear-gradient(
-    135deg,
-    rgba(83, 52, 131, 0.8) 0%,
-    rgba(114, 9, 183, 0.8) 50%,
-    rgba(135, 206, 235, 0.8) 100%
-  );
+  gap: 8px;
+  background: linear-gradient(135deg, #1A1A2E, #16213E);
   color: #fff;
-  padding: 14px 28px;
-  border-radius: 30px;
+  padding: 12px 28px;
+  border-radius: 20px;
   text-decoration: none;
   font-weight: 600;
-  margin-top: 20px;
   transition: all 0.3s ease;
   box-shadow: 
-    0 6px 20px rgba(114, 9, 183, 0.4),
-    0 0 20px rgba(135, 206, 235, 0.2);
+    0 4px 15px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(135, 206, 235, 0.1);
   border: 1px solid rgba(135, 206, 235, 0.3);
   font-size: 15px;
   
@@ -377,20 +372,14 @@ const LinkButton = styled(motion.a)`
   }
   
   &:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(114, 9, 183, 0.9) 0%,
-      rgba(83, 52, 131, 0.9) 50%,
-      rgba(135, 206, 235, 0.9) 100%
-    );
-    transform: translateY(-3px);
+    transform: scale(1.05);
     box-shadow: 
-      0 10px 30px rgba(114, 9, 183, 0.6),
-      0 0 40px rgba(135, 206, 235, 0.4);
+      0 6px 20px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(135, 206, 235, 0.2);
   }
   
   &:active {
-    transform: translateY(-1px);
+    transform: scale(0.98);
   }
 `
 
@@ -417,6 +406,38 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
   const cardRef = useRef<HTMLDivElement>(null)
   const [isImageExpanded, setIsImageExpanded] = useState(false)
   const [linkError, setLinkError] = useState<string | null>(null)
+  
+  // 使用音频管理上下文
+  const { 
+    playMemoryAudio, 
+    pauseMemoryAudio,
+    stopMemoryAudio,
+    isMemoryPlaying,
+    setMemoryCardOpen 
+  } = useAudio()
+  
+  // 音频播放控制 - 合并播放和停止功能
+  const handleAudioToggle = () => {
+    if (isMemoryPlaying) {
+      // 如果正在播放，则停止（会恢复神域BGM）
+      stopMemoryAudio()
+    } else {
+      // 如果未播放，则开始播放
+      if (memory?.audio_url) {
+        playMemoryAudio(memory.audio_url)
+      }
+    }
+  }
+  
+  // 组件挂载时设置信息框为打开状态
+  useEffect(() => {
+    setMemoryCardOpen(true)
+    
+    // 组件卸载时设置信息框为关闭状态
+    return () => {
+      setMemoryCardOpen(false)
+    }
+  }, [setMemoryCardOpen])
   
   // 格式化日期
   const formatDate = (dateString: string) => {
@@ -450,6 +471,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
   // 点击遮罩关闭
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
+      setMemoryCardOpen(false) // 先设置状态
       onClose()
     }
   }
@@ -461,6 +483,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
         if (isImageExpanded) {
           setIsImageExpanded(false)
         } else {
+          setMemoryCardOpen(false) // 先设置状态
           onClose()
         }
       }
@@ -468,7 +491,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
     
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose, isImageExpanded])
+  }, [onClose, isImageExpanded, setMemoryCardOpen])
 
   // 验证并处理链接点击
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -509,7 +532,10 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <CloseButton
-            onClick={onClose}
+            onClick={() => {
+              setMemoryCardOpen(false) // 先设置状态
+              onClose()
+            }}
             whileHover={{ scale: 1.15, rotate: 90 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -537,42 +563,77 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
             </ImageContainer>
           )}
           
-          {/* 音频播放器 - 如果存在则显示 */}
-          {memory.audio_url && (
-            <AudioPlayer 
-              controls
-              className="memory-card-audio"
-            >
-              <source src={memory.audio_url} type="audio/mpeg" />
-              您的浏览器不支持音频播放。
-            </AudioPlayer>
+          {/* 按钮区域 - 根据音频和链接的存在情况调整布局 */}
+          {(memory.audio_url || memory.web_url) && (
+            <div style={{ 
+              margin: '25px 0',
+              display: 'flex', 
+              justifyContent: memory.audio_url && memory.web_url ? 'center' : 'center',
+              gap: '15px',
+              flexWrap: 'wrap'
+            }}>
+              {/* 音频播放控制 - 如果存在音频则显示 */}
+              {memory.audio_url && (
+                <button
+                  onClick={handleAudioToggle}
+                  style={{
+                    background: isMemoryPlaying 
+                      ? 'linear-gradient(135deg, #2C1810, #4A2C17)' 
+                      : 'linear-gradient(135deg, #1A1A2E, #16213E)',
+                    border: '1px solid rgba(135, 206, 235, 0.3)',
+                    borderRadius: '20px',
+                    padding: '12px 28px',
+                    color: 'white',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(135, 206, 235, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)'
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(135, 206, 235, 0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(135, 206, 235, 0.1)'
+                  }}
+                >
+                  <span style={{ fontSize: '18px' }}>
+                    {isMemoryPlaying ? '⏹' : '▶'}
+                  </span>
+                  <span>{isMemoryPlaying ? '停止回忆' : '播放回忆'}</span>
+                </button>
+              )}
+              
+              {/* 跳转链接 - 如果存在则显示 */}
+              {memory.web_url && (
+                <LinkButton
+                  href={memory.web_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleLinkClick}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  跳转回忆
+                </LinkButton>
+              )}
+            </div>
           )}
           
-          {/* 跳转链接 - 如果存在则显示 */}
-          {memory.web_url && (
-            <>
-              <LinkButton
-                href={memory.web_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleLinkClick}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                查看相关内容
-              </LinkButton>
-              
-              {/* 链接错误提示 */}
-              {linkError && (
-                <ErrorMessage
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  {linkError}
-                </ErrorMessage>
-              )}
-            </>
+          {/* 链接错误提示 */}
+          {memory.web_url && linkError && (
+            <ErrorMessage
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              {linkError}
+            </ErrorMessage>
           )}
         </CardContainer>
       </Overlay>

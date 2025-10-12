@@ -19,7 +19,7 @@ class AudioService:
     def __init__(self):
         # 从环境变量读取Supabase配置
         self.supabase_url = os.getenv("SUPABASE_URL", "https://kcqcljzazatopmoifqzt.supabase.co")
-        self.supabase_anon_key = os.getenv("SUPABASE_SECRET_KEY", "sb_secret_R48SqAB3HuyR-nq2QLq6Ag_NRPTIX_V")
+        self.supabase_anon_key = os.getenv("SUPABASE_PUBLIC_KEY", "sb_publishable_VCpD0kHRMM18T7WMnrUmIA_hNoDZ229")
         
         # 请求头
         self.headers = {
