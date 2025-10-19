@@ -8,7 +8,7 @@ export interface ButterflyMemory {
   created_at: string
   user_name: string
   content: string
-  image_url: string | null
+  image_url: string | null  // 支持逗号分隔的多张图片URL
   audio_url: string | null
   web_url: string | null
   is_published: boolean
@@ -32,9 +32,12 @@ export const calculateFieldCount = (memory: ButterflyMemory): number => {
     count++
   }
   
-  // 检查图片内容
+  // 检查图片内容：从image_url字段中解析逗号分隔的图片
   if (memory.image_url && memory.image_url.trim().length > 0) {
-    count++
+    const images = memory.image_url.split(',').map(url => url.trim()).filter(url => url.length > 0)
+    if (images.length > 0) {
+      count++
+    }
   }
   
   // 检查音频内容

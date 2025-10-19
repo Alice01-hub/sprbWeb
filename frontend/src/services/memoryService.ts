@@ -224,3 +224,87 @@ export const assignRandomPositions = (
   return positionedMemories
 }
 
+/**
+ * 生成测试用的蝴蝶记忆数据，用于测试图片展示功能
+ * @returns 测试用的蝴蝶记忆数组
+ */
+export const getTestMemories = (): ButterflyMemory[] => {
+  const testImages = [
+    'https://oss.sprb.love/webps/七影蝶-3.webp',
+    'https://oss.sprb.love/webps/七影蝶-4.webp',
+    'https://oss.sprb.love/webps/sprb封面图.webp',
+    'https://oss.sprb.love/webps/神域摘要图.webp',
+    'https://oss.sprb.love/webps/首页图-未选中.png',
+    'https://oss.sprb.love/webps/首页图-选中.png',
+    'https://oss.sprb.love/webps/岛上cg.png',
+    'https://oss.sprb.love/webps/交通篇摘要图.png',
+    'https://oss.sprb.love/webps/需要准备的打卡图/1女木岛-山道.jpg',
+    'https://oss.sprb.love/webps/需要准备的打卡图/2女木岛-秘密基地山路.jpg',
+    'https://oss.sprb.love/webps/需要准备的打卡图/3女木岛-采石场入口.jpg',
+    'https://oss.sprb.love/webps/需要准备的打卡图/4女木岛-采石场-分岔路-有光.jpg'
+  ]
+
+  return [
+    {
+      id: 1,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户A',
+      content: '这是一张图片的测试记忆',
+      image_url: testImages[0], // 单张图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    },
+    {
+      id: 2,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户B',
+      content: '这是两张图片的测试记忆',
+      image_url: testImages.slice(0, 2).join(','), // 逗号分隔的两张图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    },
+    {
+      id: 3,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户C',
+      content: '这是三张图片的测试记忆',
+      image_url: testImages.slice(0, 3).join(','), // 逗号分隔的三张图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    },
+    {
+      id: 4,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户D',
+      content: '这是六张图片的测试记忆',
+      image_url: testImages.slice(0, 6).join(','), // 逗号分隔的六张图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    },
+    {
+      id: 5,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户E',
+      content: '这是九张图片的测试记忆',
+      image_url: testImages.slice(0, 9).join(','), // 逗号分隔的九张图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    },
+    {
+      id: 6,
+      created_at: new Date().toISOString(),
+      user_name: '测试用户F',
+      content: '这是多张图片的测试记忆（超过9张，会随机选择9张）',
+      image_url: testImages.join(','), // 逗号分隔的所有图片
+      audio_url: null,
+      web_url: null,
+      is_published: true
+    }
+  ]
+}
+

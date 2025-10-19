@@ -48,16 +48,19 @@ const LanternCustomCursor = () => {
       elementUnderMouse.tagName === 'INPUT' ||
       elementUnderMouse.tagName === 'SELECT' ||
       elementUnderMouse.tagName === 'TEXTAREA' ||
+      elementUnderMouse.tagName === 'IMG' || // 检测所有图片元素
       elementUnderMouse.getAttribute('role') === 'button' ||
       elementUnderMouse.classList.contains('clickable') ||
       elementUnderMouse.classList.contains('memory-butterfly') || // 检测七影蝶
       elementUnderMouse.classList.contains('divine-clickable') || // 检测神域页面按钮
       elementUnderMouse.classList.contains('memory-card-image') || // 检测七影蝶信息页面图片
       elementUnderMouse.classList.contains('memory-card-audio') || // 检测七影蝶信息页面音频
+      elementUnderMouse.classList.contains('grid-image') || // 检测九宫格图片
+      elementUnderMouse.classList.contains('grid-image-item') || // 检测九宫格图片容器
       elementUnderMouse.hasAttribute('data-divine-player-button') || // 检测神域音乐播放器
       (elementUnderMouse instanceof HTMLElement && elementUnderMouse.style.cursor === 'pointer') ||
       // 检查父元素是否可点击
-      elementUnderMouse.closest('a, button, [role="button"], .clickable, .memory-butterfly, .divine-clickable, .memory-card-image, .memory-card-audio, [data-divine-player-button]')
+      elementUnderMouse.closest('a, button, [role="button"], .clickable, .memory-butterfly, .divine-clickable, .memory-card-image, .memory-card-audio, .grid-image-item, [data-divine-player-button]')
     );
     
     setIsOnClickable(!!isClickable);

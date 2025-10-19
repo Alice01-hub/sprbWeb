@@ -98,8 +98,47 @@ const AnnouncementBoard = () => {
   const [isListExpanded, setIsListExpanded] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [showImageModal, setShowImageModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [imagesPerPage] = useState(9)
 
   const listRef = useRef<HTMLDivElement>(null)
+
+  // 分页相关函数
+  const getImageUrls = (imgUrl: any): string[] => {
+    let imageUrls: string[] = [];
+    try {
+      if (typeof imgUrl === 'string') {
+        imageUrls = JSON.parse(imgUrl);
+      } else if (Array.isArray(imgUrl)) {
+        imageUrls = imgUrl;
+      }
+    } catch (e) {
+      if (typeof imgUrl === 'string') {
+        imageUrls = imgUrl.split(',').map((url: string) => url.trim());
+      }
+    }
+    return imageUrls;
+  }
+
+  const getPaginatedImages = (imageUrls: string[]) => {
+    const totalPages = Math.ceil(imageUrls.length / imagesPerPage);
+    const startIndex = (currentPage - 1) * imagesPerPage;
+    const endIndex = startIndex + imagesPerPage;
+    return {
+      images: imageUrls.slice(startIndex, endIndex),
+      totalPages,
+      hasNextPage: currentPage < totalPages,
+      hasPrevPage: currentPage > 1
+    };
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  }
+
+  const resetPagination = () => {
+    setCurrentPage(1);
+  }
 
   // 格式化公告内容的函数
   const formatAnnouncementContent = (content: string) => {
@@ -267,6 +306,7 @@ const AnnouncementBoard = () => {
     setSelectedAnnouncement(announcement)
     setSelectedIndex(index)
     setShowModal(true)
+    resetPagination() // 重置分页到第一页
   }
 
   const handleMouseEnter = (index: number) => {
@@ -492,30 +532,15 @@ const AnnouncementBoard = () => {
                 {formatAnnouncementContent(selectedAnnouncement.content)}
                 
                 {/* 多图九宫格显示区域 */}
-                {selectedAnnouncement.img_url && (
-                  <div className="modal-images-container">
-                    <h4 className="images-title">📷 相关图片</h4>
-                    <div className="images-grid">
-                      {(() => {
-                        let imageUrls: string[] = [];
-                        try {
-                          // 尝试解析img_url，可能是JSON字符串或数组
-                          if (typeof selectedAnnouncement.img_url === 'string') {
-                            imageUrls = JSON.parse(selectedAnnouncement.img_url);
-                          } else if (Array.isArray(selectedAnnouncement.img_url)) {
-                            imageUrls = selectedAnnouncement.img_url;
-                          }
-                        } catch (e) {
-                          // 如果解析失败，尝试按逗号分割
-                          if (typeof selectedAnnouncement.img_url === 'string') {
-                            imageUrls = selectedAnnouncement.img_url.split(',').map((url: string) => url.trim());
-                          }
-                        }
-                        
-                        // 限制最多显示9张图片
-                        const displayImages = imageUrls.slice(0, 9);
-                        
-                        return displayImages.map((url, index) => (
+                {selectedAnnouncement.img_url && (() => {
+                  const imageUrls = getImageUrls(selectedAnnouncement.img_url);
+                  const { images, totalPages, hasNextPage, hasPrevPage } = getPaginatedImages(imageUrls);
+                  
+                  return (
+                    <div className="modal-images-container">
+                      <h4 className="images-title">📷 相关图片 ({imageUrls.length}张)</h4>
+                      <div className="images-grid">
+                        {images.map((url, index) => (
                           <div 
                             key={index} 
                             className="grid-image-item"
@@ -523,7 +548,7 @@ const AnnouncementBoard = () => {
                           >
                             <img 
                               src={url} 
-                              alt={`图片 ${index + 1}`}
+                              alt={`图片 ${(currentPage - 1) * imagesPerPage + index + 1}`}
                               className="grid-image"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -538,34 +563,38 @@ const AnnouncementBoard = () => {
                               <span>❌</span>
                             </div>
                           </div>
-                        ));
-                      })()}
-                    </div>
-                    {(() => {
-                      let imageUrls: string[] = [];
-                      try {
-                        if (typeof selectedAnnouncement.img_url === 'string') {
-                          imageUrls = JSON.parse(selectedAnnouncement.img_url);
-                        } else if (Array.isArray(selectedAnnouncement.img_url)) {
-                          imageUrls = selectedAnnouncement.img_url;
-                        }
-                      } catch (e) {
-                        if (typeof selectedAnnouncement.img_url === 'string') {
-                          imageUrls = selectedAnnouncement.img_url.split(',').map((url: string) => url.trim());
-                        }
-                      }
+                        ))}
+                      </div>
                       
-                      if (imageUrls.length > 9) {
-                        return (
-                          <p className="images-limit-note">
-                            共 {imageUrls.length} 张图片，仅显示前 9 张
-                          </p>
-                        );
-                      }
-                      return null;
-                    })()}
-                  </div>
-                )}
+                      {/* 分页控件 */}
+                      {totalPages > 1 && (
+                        <div className="pagination-controls">
+                          <button 
+                            className="pagination-btn prev-btn"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={!hasPrevPage}
+                          >
+                            ← 上一页
+                          </button>
+                          
+                          <div className="pagination-info">
+                            <span className="current-page">{currentPage}</span>
+                            <span className="page-separator">/</span>
+                            <span className="total-pages">{totalPages}</span>
+                          </div>
+                          
+                          <button 
+                            className="pagination-btn next-btn"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={!hasNextPage}
+                          >
+                            下一页 →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </motion.div>

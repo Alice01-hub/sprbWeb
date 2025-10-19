@@ -10,6 +10,8 @@ import MegijimaPage from './pages/MegijimaPage'
 import OgijimaPage from './pages/OgijimaPage'
 import NaoshimaPage from './pages/NaoshimaPage'
 import ProgressPage from './pages/ProgressPage'
+import MemoryTestPage from './pages/MemoryTestPage'
+import ImageGridTest from './components/ImageGridTest'
 
 import MusicPlayer from './components/MusicPlayer'
 import ButterflyCustomCursor from './components/ButterflyCustomCursor'
@@ -32,6 +34,8 @@ function App() {
             <Route path="/ogijima" element={<OgijimaPage />} />
             <Route path="/naoshima" element={<NaoshimaPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/test-memory" element={<MemoryTestPage />} />
+            <Route path="/test-images" element={<ImageGridTest />} />
 
           </Routes>
           <MusicPlayer />

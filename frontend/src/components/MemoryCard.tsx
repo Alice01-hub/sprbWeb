@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ButterflyMemory } from './MemoryButterfly'
 import { useAudio } from '../contexts/AudioContext'
+import './MemoryCard.css'
 
 interface MemoryCardProps {
   memory: ButterflyMemory | null
@@ -186,7 +187,7 @@ const AuthorName = styled.h2`
 `
 
 // 日期信息 - 柔和的夜色，居中显示
-const MetaInfo = styled.div`
+const MetaInfo = styled.div<{ hasOtherContent?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -194,7 +195,7 @@ const MetaInfo = styled.div`
   font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
   padding: 15px 0;
-  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+  border-bottom: ${props => props.hasOtherContent ? '1px solid rgba(135, 206, 235, 0.2)' : 'none'};
 `
 
 const DateDisplay = styled.span`
@@ -233,87 +234,6 @@ const Content = styled.div`
   }
 `
 
-// 图片容器
-const ImageContainer = styled.div`
-  margin: 25px 0;
-  border-radius: 12px;
-  overflow: hidden;
-  max-height: 450px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(5, 10, 31, 0.4);
-  border: 1px solid rgba(135, 206, 235, 0.2);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(135, 206, 235, 0.1);
-  transition: all 0.3s ease;
-  position: relative;
-  
-  &:hover {
-    border-color: rgba(135, 206, 235, 0.4);
-    box-shadow: 
-      0 12px 48px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(135, 206, 235, 0.3);
-    transform: translateY(-2px);
-  }
-  
-  &::after {
-    content: '🔍 点击查看大图';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.7) 0%,
-      transparent 100%
-    );
-    color: rgba(255, 255, 255, 0.9);
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  &:hover::after {
-    opacity: 1;
-  }
-`
-
-const ContentImage = styled.img`
-  width: 100%;
-  height: auto;
-  max-height: 450px;
-  object-fit: contain;
-`
-
-// 图片放大查看器
-const ImageLightbox = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-`
-
-const LightboxImage = styled(motion.img)`
-  max-width: 95%;
-  max-height: 95%;
-  object-fit: contain;
-  box-shadow: 
-    0 20px 100px rgba(0, 0, 0, 0.8),
-    0 0 80px rgba(135, 206, 235, 0.4);
-  border-radius: 8px;
-  cursor: default;
-`
 
 // 音频播放器 - 夜色主题
 const AudioPlayer = styled.audio`
@@ -402,10 +322,56 @@ const ErrorMessage = styled(motion.div)`
   }
 `
 
+/**
+ * 获取记忆的图片数组，从image_url字段中解析逗号分隔的图片URL
+ * @param memory 蝴蝶记忆数据
+ * @returns 图片URL数组
+ */
+const getMemoryImages = (memory: ButterflyMemory): string[] => {
+  if (!memory.image_url || !memory.image_url.trim()) {
+    return []
+  }
+  
+  // 按逗号分隔图片URL，并过滤空字符串
+  const images = memory.image_url
+    .split(',')
+    .map(url => url.trim())
+    .filter(url => url.length > 0)
+  
+  return images
+}
+
+/**
+ * 随机选择图片数组中的指定数量图片
+ * @param images 图片数组
+ * @param maxCount 最大选择数量
+ * @returns 随机选择的图片数组
+ */
+const selectRandomImages = (images: string[], maxCount: number): string[] => {
+  if (images.length <= maxCount) {
+    return images
+  }
+  
+  // 创建图片索引数组
+  const indices = Array.from({ length: images.length }, (_, i) => i)
+  
+  // 随机打乱数组
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[indices[i], indices[j]] = [indices[j], indices[i]]
+  }
+  
+  // 选择前maxCount个
+  return indices.slice(0, maxCount).map(index => images[index])
+}
+
 const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [isImageExpanded, setIsImageExpanded] = useState(false)
   const [linkError, setLinkError] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [selectedImages, setSelectedImages] = useState<string[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
   
   // 使用音频管理上下文
   const { 
@@ -415,6 +381,27 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
     isMemoryPlaying,
     setMemoryCardOpen 
   } = useAudio()
+
+  // 初始化图片选择 - 只在组件首次打开时执行
+  useEffect(() => {
+    if (memory && !isInitialized) {
+      const allImages = getMemoryImages(memory)
+      if (allImages.length > 0) {
+        const randomImages = selectRandomImages(allImages, 9)
+        setSelectedImages(randomImages)
+      }
+      setIsInitialized(true)
+    }
+  }, [memory, isInitialized])
+
+  // 当组件关闭时重置状态，确保下次打开时重新选择图片
+  useEffect(() => {
+    return () => {
+      // 组件卸载时重置状态
+      setIsInitialized(false)
+      setSelectedImages([])
+    }
+  }, [])
   
   // 音频播放控制 - 合并播放和停止功能
   const handleAudioToggle = () => {
@@ -480,18 +467,81 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isImageExpanded) {
-          setIsImageExpanded(false)
-        } else {
-          setMemoryCardOpen(false) // 先设置状态
-          onClose()
-        }
+        setMemoryCardOpen(false) // 先设置状态
+        onClose()
       }
     }
     
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose, isImageExpanded, setMemoryCardOpen])
+  }, [onClose, setMemoryCardOpen])
+
+  // 处理图片点击
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl)
+    setShowImageModal(true)
+  }
+
+  // 关闭图片模态框
+  const closeImageModal = () => {
+    setShowImageModal(false)
+    setSelectedImage(null)
+  }
+
+  // 调整预览框尺寸的函数
+  const adjustModalSize = (img: HTMLImageElement) => {
+    const modalContent = img.closest('.modal-content') as HTMLElement
+    
+    if (modalContent) {
+      // 获取图片的自然尺寸
+      const imgWidth = img.naturalWidth
+      const imgHeight = img.naturalHeight
+      
+      // 计算合适的显示尺寸（保持宽高比）
+      const maxWidth = window.innerWidth * 0.9 - 80 // 减去padding
+      const maxHeight = window.innerHeight * 0.9 - 120 // 减去header和padding
+      
+      let displayWidth = imgWidth
+      let displayHeight = imgHeight
+      
+      // 如果图片太大，按比例缩放
+      if (imgWidth > maxWidth || imgHeight > maxHeight) {
+        const widthRatio = maxWidth / imgWidth
+        const heightRatio = maxHeight / imgHeight
+        const ratio = Math.min(widthRatio, heightRatio)
+        
+        displayWidth = imgWidth * ratio
+        displayHeight = imgHeight * ratio
+      }
+      
+      // 设置模态框内容尺寸
+      modalContent.style.width = `${displayWidth + 40}px` // 40px是左右padding
+      modalContent.style.height = `${displayHeight + 100}px` // 100px是header和padding
+    }
+  }
+
+  // 处理图片加载完成，调整预览框尺寸
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.target as HTMLImageElement
+    adjustModalSize(img)
+  }
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      if (showImageModal && selectedImage) {
+        const img = document.querySelector('.modal-image-preview') as HTMLImageElement
+        if (img && img.complete) {
+          adjustModalSize(img)
+        }
+      }
+    }
+
+    if (showImageModal) {
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [showImageModal, selectedImage])
 
   // 验证并处理链接点击
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -545,26 +595,107 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
           {/* 作者名 - 重点突出显示 */}
           <AuthorName>{memory.user_name}</AuthorName>
           
-          {/* 日期信息 - 居中显示 */}
-          <MetaInfo>
-            <DateDisplay>{formatDate(memory.created_at)}</DateDisplay>
-          </MetaInfo>
-          
-          {/* 内容 - 如果存在则显示 */}
-          {memory.content && <Content>{memory.content}</Content>}
-          
-          {/* 图片 - 如果存在则显示，点击可放大 */}
-          {memory.image_url && (
-            <ImageContainer 
-              onClick={() => setIsImageExpanded(true)}
-              className="memory-card-image"
-            >
-              <ContentImage src={memory.image_url} alt={memory.user_name} />
-            </ImageContainer>
-          )}
-          
-          {/* 按钮区域 - 根据音频和链接的存在情况调整布局 */}
-          {(memory.audio_url || memory.web_url) && (
+          {/* 检查是否有其他内容 */}
+          {(() => {
+            const hasContent = memory.content && memory.content.trim().length > 0
+            const hasImages = selectedImages.length > 0
+            const hasAudio = memory.audio_url && memory.audio_url.trim().length > 0
+            const hasLink = memory.web_url && memory.web_url.trim().length > 0
+            const hasOtherContent = hasContent || hasImages || hasAudio || hasLink
+            
+            return (
+              <>
+                {/* 日期信息 - 居中显示 */}
+                <MetaInfo hasOtherContent={!!hasOtherContent}>
+                  <DateDisplay>{formatDate(memory.created_at)}</DateDisplay>
+                </MetaInfo>
+                
+                {/* 如果有其他内容才显示 */}
+                {hasOtherContent && (
+                  <>
+                    {/* 内容 - 如果存在则显示 */}
+                    {hasContent && <Content>{memory.content}</Content>}
+                    
+                    {/* 图片 - 根据数量选择展示方式 */}
+                    {(() => {
+                      if (selectedImages.length === 0) return null
+                      
+                      const allImages = getMemoryImages(memory)
+                      
+                      // 如果只有一张图片，使用单张展示
+                      if (selectedImages.length === 1) {
+                        return (
+                          <div className="memory-single-image-container">
+                            <h4 className="images-title">
+                              📷 记忆图片 (1张)
+                              {allImages.length > 1 && (
+                                <span className="random-note"> (从{allImages.length}张中随机选择)</span>
+                              )}
+                            </h4>
+                            <div className="single-image-wrapper">
+                              <img 
+                                src={selectedImages[0]} 
+                                alt="记忆图片"
+                                className="single-image"
+                                onClick={() => handleImageClick(selectedImages[0])}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const nextSibling = target.nextSibling as HTMLElement;
+                                  if (nextSibling) {
+                                    nextSibling.style.display = 'flex';
+                                  }
+                                }}
+                              />
+                              <div className="image-error-placeholder" style={{ display: 'none' }}>
+                                <span>❌</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      }
+                      
+                      // 多张图片使用九宫格展示
+                      return (
+                        <div className="memory-images-container">
+                          <h4 className="images-title">
+                            📷 记忆图片 ({selectedImages.length}张)
+                            {allImages.length > 9 && (
+                              <span className="random-note"> (从{allImages.length}张中随机选择)</span>
+                            )}
+                          </h4>
+                          <div className="images-grid">
+                            {selectedImages.map((url, index) => (
+                              <div 
+                                key={index} 
+                                className="grid-image-item"
+                                onClick={() => handleImageClick(url)}
+                              >
+                                <img 
+                                  src={url} 
+                                  alt={`记忆图片 ${index + 1}`}
+                                  className="grid-image"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    const nextSibling = target.nextSibling as HTMLElement;
+                                    if (nextSibling) {
+                                      nextSibling.style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                                <div className="image-error-placeholder" style={{ display: 'none' }}>
+                                  <span>❌</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })()}
+                    
+                    {/* 按钮区域 - 根据音频和链接的存在情况调整布局 */}
+                    {(hasAudio || hasLink) && (
             <div style={{ 
               margin: '25px 0',
               display: 'flex', 
@@ -623,41 +754,62 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onClose }) => {
                 </LinkButton>
               )}
             </div>
-          )}
-          
-          {/* 链接错误提示 */}
-          {memory.web_url && linkError && (
-            <ErrorMessage
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              {linkError}
-            </ErrorMessage>
-          )}
+                    )}
+                    
+                    {/* 链接错误提示 */}
+                    {memory.web_url && linkError && (
+                      <ErrorMessage
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {linkError}
+                      </ErrorMessage>
+                    )}
+                  </>
+                )}
+              </>
+            )
+          })()}
         </CardContainer>
       </Overlay>
-      
-      {/* 图片放大查看器 */}
-      {isImageExpanded && memory.image_url && (
-        <ImageLightbox
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={() => setIsImageExpanded(false)}
-        >
-          <LightboxImage
-            src={memory.image_url}
-            alt={memory.user_name}
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.8 }}
+
+      {/* 图片模态框 */}
+      <AnimatePresence>
+        {showImageModal && selectedImage && (
+          <motion.div 
+            className="modal-overlay" 
+            onClick={closeImageModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </ImageLightbox>
-      )}
+          >
+            <motion.div 
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <div className="modal-header">
+                <h2>图片预览</h2>
+                <button className="modal-close-btn" onClick={closeImageModal}>×</button>
+              </div>
+              <div className="modal-body">
+                <img 
+                  src={selectedImage} 
+                  alt="图片预览" 
+                  className="modal-image-preview"
+                  onLoad={handleImageLoad}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
     </AnimatePresence>
   )
 }
